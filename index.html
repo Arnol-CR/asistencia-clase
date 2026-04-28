@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ClassApp — Gestión de Aula</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<title>Asistencia — Programación I</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#0a0e1a;--bg2:#111827;--bg3:#1a2234;--card:#141c2e;
@@ -13,256 +12,252 @@
   --text:#e8eaf0;--muted:#6b7280;
   --green:#10b981;--green-dim:rgba(16,185,129,0.12);
   --red:#ef4444;--red-dim:rgba(239,68,68,0.1);
-  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);
   --accent:#6366f1;--accent-dim:rgba(99,102,241,0.15);
   --radius:12px;--radius-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 
-/* ═══ SETUP ═══ */
-#screen-setup{min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px 16px}
-.setup-shell{width:100%;max-width:460px}
-.setup-brand{text-align:center;margin-bottom:36px}
-.setup-logo{font-family:'Space Mono',monospace;font-size:24px;font-weight:700;color:var(--text);margin-bottom:6px}
-.setup-logo span{color:var(--accent)}
-.setup-sub{font-size:13px;color:var(--muted)}
-.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:14px}
-.setup-section{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
-.field{margin-bottom:14px}
-.field:last-child{margin-bottom:0}
-.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500}
-.field input{width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
-.field input:focus{border-color:var(--accent)}
-.dur-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
-.dur-btn{padding:9px 4px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;background:var(--bg2);color:var(--muted);text-align:center;transition:all .2s;font-family:'DM Sans',sans-serif}
-.dur-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--text);font-weight:600}
-.dur-btn:hover:not(.active){border-color:var(--border2);color:var(--text)}
-.start-btn{width:100%;padding:14px;font-size:15px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
-.start-btn:hover{background:#4f46e5;transform:translateY(-1px)}
+/* MODO ALUMNO */
+#modo-alumno{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
+.student-shell{width:100%;max-width:420px}
+.student-brand{text-align:center;margin-bottom:32px}
+.brand-dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);display:inline-block;margin-bottom:12px}
+.brand-name{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;margin-bottom:4px}
+.brand-title{font-size:26px;font-weight:600;color:var(--text);margin-bottom:4px}
+.brand-prof{font-size:13px;color:var(--muted)}
+.s-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.s-field{margin-bottom:16px}
+.s-field:last-child{margin-bottom:0}
+.s-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:7px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.s-field input{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.s-field input:focus{border-color:var(--accent)}
+.s-field input.highlight{border:2px solid var(--accent);box-shadow:0 0 0 3px var(--accent-dim);background:var(--bg2)}
+.s-field input.highlight::placeholder{color:#818cf8}
+.dev-chip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);margin-bottom:16px;word-break:break-all}
+.s-hint{font-size:11px;color:var(--muted);text-align:center;margin-bottom:14px}
+.s-btn{width:100%;padding:14px;font-size:15px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
+.s-btn:hover{background:#4f46e5;transform:translateY(-1px)}
+.s-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.alert{border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:14px;display:none;line-height:1.5}
+.alert.show{display:block}
+.a-err{background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);color:#fca5a5}
+.a-warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:#fcd34d}
+.s-success{background:var(--green-dim);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius);padding:40px 24px;text-align:center;display:none}
+.s-success.show{display:block}
+.s-check{width:56px;height:56px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.s-suc-name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.s-suc-sub{font-size:14px;color:var(--muted)}
+.s-suc-badge{display:inline-block;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-top:12px;background:var(--green-dim);color:var(--green)}
 
-/* ═══ PROFESOR ═══ */
-#screen-prof{display:none}
-.app{max-width:960px;margin:0 auto;padding:20px 16px}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px}
-.topbar-left{display:flex;align-items:center;gap:12px}
-.topbar-logo{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--accent)}
-.session-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 14px;display:flex;align-items:center;gap:12px}
-.sb-class{font-size:13px;font-weight:600;color:var(--text)}
-.sb-teacher{font-size:11px;color:var(--muted)}
-.sb-timer{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--green);margin-left:8px}
-.topbar-right{display:flex;gap:8px;align-items:center}
-.fb-pill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:4px 10px}
-.fb-dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
-.fb-dot.on{background:var(--green);box-shadow:0 0 4px var(--green)}
-.tabs{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:24px}
-.tab{padding:8px 20px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);border-radius:var(--radius-sm);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+/* MODO PROFESOR */
+#modo-profesor{display:none}
+.app{max-width:960px;margin:0 auto;padding:24px 16px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.logo-text{font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.05em}
+.header-right{text-align:right}
+.header-title{font-size:20px;font-weight:600;color:var(--text)}
+.header-prof{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:28px;overflow-x:auto}
+.tab{padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);border-radius:var(--radius-sm);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
 .tab.active{background:var(--accent);color:#fff}
 .tab:hover:not(.active){color:var(--text);background:var(--bg3)}
 .view{display:none}.view.active{display:block}
-
-/* Stats */
-.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
-.sn{font-size:28px;font-weight:700;font-family:'Space Mono',monospace}
+.sn{font-size:28px;font-weight:600;font-family:'Space Mono',monospace}
 .sl{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.07em}
 .ng{color:var(--text)}.np{color:var(--green)}.nb{color:var(--red)}
-
-/* Prog bar */
-.prog-wrap{margin-bottom:20px}
-.prog-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:7px}
+.prog-wrap{margin-bottom:24px}
+.prog-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
 .prog-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s;border-radius:2px}
-
-/* Grid */
-.reg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:20px}
-.rc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;animation:fadeIn .3s ease}
+.reg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:24px}
+.rc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:all .2s;animation:fadeIn .3s ease}
+.rc:hover{border-color:var(--border2)}
 .rc.present{border-left:3px solid var(--green)}
-.rc-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
-.av{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:'Space Mono',monospace;background:var(--green-dim);color:var(--green)}
+.rc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:'Space Mono',monospace;background:var(--green-dim);color:var(--green)}
 .rc-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
 .rc-time{font-size:11px;color:var(--muted)}
-.rc-dev{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;background:var(--bg3);padding:2px 7px;border-radius:4px;margin-top:5px;display:inline-block}
-.rc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:7px}
-.badge-p{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--green-dim);color:var(--green)}
-.expel-btn{padding:2px 9px;font-size:11px;border:1px solid rgba(239,68,68,0.3);border-radius:5px;cursor:pointer;background:transparent;color:#fca5a5;transition:all .2s;font-family:'DM Sans',sans-serif}
-.expel-btn:hover{background:var(--red-dim)}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
-
-/* Fraud */
-.fraud-box{margin-bottom:16px}
-.fraud-title{font-size:11px;font-weight:700;color:var(--red);margin-bottom:7px;text-transform:uppercase;letter-spacing:.07em}
-.fi{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);margin-bottom:5px;font-size:12px;color:#fca5a5}
-.fdot{width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px}
-
-/* Sesión */
-.session-layout{display:flex;gap:16px;flex-wrap:wrap}
-.session-main{flex:1;min-width:240px}
-.big-code-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;margin-bottom:14px}
-.big-code-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600}
-.big-code{font-family:'Space Mono',monospace;font-size:42px;font-weight:700;color:var(--text);letter-spacing:.2em;line-height:1}
-.big-code-sub{font-size:12px;color:var(--muted);margin-top:10px}
-.timer-strip{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:14px}
-.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.tdot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
-.tdot.warn{background:var(--amber);box-shadow:0 0 6px var(--amber)}
-.tdot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
-.tlbl{font-size:13px;font-weight:500;color:var(--text)}
-.tnum{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text);margin-left:auto}
-.share-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
-.share-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:600}
-.share-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:9px}
-.share-row:last-child{margin-bottom:0}
-.share-text{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.copy-btn{padding:5px 12px;font-size:12px;font-weight:600;border:1px solid var(--border2);border-radius:6px;cursor:pointer;background:var(--bg3);color:var(--text);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0}
-.copy-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
-.copy-btn.copied{background:var(--green-dim);border-color:var(--green);color:var(--green)}
-.preview-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.9}
-.session-side{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;flex:1;min-width:210px}
-.ir{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
-.ir:last-child{border-bottom:none}
-.il{color:var(--muted)}.iv{font-weight:500;color:var(--text);font-family:'Space Mono',monospace;font-size:11px}
-.log-item{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
-.log-item:last-child{border-bottom:none}
-
-/* Botones */
+.rc-dev{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;background:var(--bg3);padding:3px 7px;border-radius:4px;margin-top:6px;display:inline-block}
+.rc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--green-dim);color:var(--green)}
+.expel-btn{padding:3px 10px;font-size:11px;border:1px solid rgba(239,68,68,0.3);border-radius:6px;cursor:pointer;background:transparent;color:#fca5a5;transition:all .2s;font-family:'DM Sans',sans-serif}
+.expel-btn:hover{background:var(--red-dim);border-color:var(--red)}
+.fraud-section{margin-bottom:20px}
+.fraud-title{font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em}
+.fi{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);margin-bottom:6px;font-size:12px;color:#fca5a5}
+.fdot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px}
+.bottom-bar{display:flex;gap:8px;flex-wrap:wrap}
 .btn{padding:8px 18px;font-size:13px;font-weight:500;border:1px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;background:var(--bg3);color:var(--text);transition:all .2s;font-family:'DM Sans',sans-serif}
 .btn:hover{background:var(--card);border-color:var(--accent);color:#fff}
 .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn-primary:hover{background:#4f46e5}
-.btn-green{background:var(--green-dim);border-color:var(--green);color:var(--green)}
-.btn-green:hover{background:rgba(16,185,129,0.2)}
-.btn-red{background:var(--red-dim);border-color:rgba(239,68,68,0.4);color:#fca5a5}
-.btn-red:hover{background:rgba(239,68,68,0.2)}
-.bottom-bar{display:flex;gap:8px;flex-wrap:wrap}
+.btn-excel{background:rgba(16,185,129,0.15);border-color:var(--green);color:var(--green)}
+.btn-excel:hover{background:rgba(16,185,129,0.25)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.empty-icon{width:40px;height:40px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;opacity:.5}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* Ruleta */
-.ruleta-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center}
-.wheel-container{position:relative;width:260px;height:260px;margin:0 auto 20px}
+/* SESIÓN */
+.session-layout{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.session-main{flex:1;min-width:240px}
+.session-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;margin-bottom:14px}
+.session-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600}
+.session-code{font-family:'Space Mono',monospace;font-size:44px;font-weight:700;color:var(--text);letter-spacing:.22em;line-height:1}
+.session-code-sub{font-size:12px;color:var(--muted);margin-top:10px}
+.timer-strip{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:14px}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tdot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
+.tdot.warn{background:#f59e0b;box-shadow:0 0 6px #f59e0b}
+.tdot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
+.timer-label{font-size:13px;font-weight:500;color:var(--text)}
+.timer-count{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text);margin-left:auto}
+.share-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.share-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:600}
+.share-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px}
+.share-row:last-child{margin-bottom:0}
+.share-row-text{font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.copy-btn{padding:5px 12px;font-size:12px;font-weight:600;border:1px solid var(--border2);border-radius:6px;cursor:pointer;background:var(--bg3);color:var(--text);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.copy-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.copy-btn.copied{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.preview-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.8}
+.session-info{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;flex:1;min-width:220px}
+.ir{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.ir:last-child{border-bottom:none}
+.il{color:var(--muted)}.iv{font-weight:500;color:var(--text);font-family:'Space Mono',monospace;font-size:12px}
+.log-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.log-item:last-child{border-bottom:none}
+.fb-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:20px}
+.fb-dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+.fb-dot.connected{background:var(--green);box-shadow:0 0 4px var(--green)}
+
+/* RULETA */
+.roulette-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center}
+.roulette-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.roulette-sub{font-size:12px;color:var(--muted);margin-bottom:24px}
+.wheel-container{position:relative;width:260px;height:260px;margin:0 auto 24px}
 .wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:22px solid var(--text);filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
 .wheel-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:var(--bg);border:3px solid var(--border2)}
-.spin-result{min-height:48px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.spin-name{font-size:20px;font-weight:700;font-family:'Space Mono',monospace;color:var(--text);animation:fadeIn .4s ease}
+.roulette-result{min-height:52px;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.result-name{font-size:22px;font-weight:700;color:var(--text);font-family:'Space Mono',monospace;animation:fadeIn .4s ease}
+.result-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;margin-left:10px;background:var(--accent-dim);color:#a5b4fc;font-weight:600;vertical-align:middle}
+.roulette-count{font-size:12px;color:var(--muted);margin-top:8px}
 .spin-btn{padding:12px 32px;font-size:14px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
 .spin-btn:hover:not(:disabled){background:#4f46e5;transform:translateY(-1px)}
 .spin-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.no-students{padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px}
 
-/* Modales */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+/* Modal fin de sesión */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal-overlay.show{display:flex}
-.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:28px;max-width:400px;width:100%;text-align:center}
-.modal-icon{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:32px;max-width:400px;width:100%;text-align:center}
+.modal-icon{width:52px;height:52px;border-radius:50%;background:var(--green-dim);border:1px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
 .modal-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px}
-.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6}
-.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
-.ms{background:var(--bg2);border-radius:var(--radius-sm);padding:14px;text-align:center}
-.ms-n{font-size:24px;font-weight:700;font-family:'Space Mono',monospace}
-.ms-l{font-size:11px;color:var(--muted);margin-top:3px}
-.modal-btns{display:flex;flex-direction:column;gap:8px}
-
-/* ═══ ALUMNO ═══ */
-#screen-student{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
-.student-shell{width:100%;max-width:420px}
-.student-brand{text-align:center;margin-bottom:28px}
-.s-dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);display:inline-block;margin-bottom:12px}
-.s-class{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;margin-bottom:4px}
-.s-title{font-size:24px;font-weight:700;color:var(--text);margin-bottom:4px}
-.s-prof{font-size:13px;color:var(--muted)}
-.s-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:14px}
-.s-field{margin-bottom:14px}
-.s-field:last-child{margin-bottom:0}
-.s-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-.s-field input{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
-.s-field input:focus{border-color:var(--accent)}
-.s-field input.highlight{border:2px solid var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.s-field input.highlight::placeholder{color:#818cf8}
-.dev-chip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);margin-bottom:14px;word-break:break-all}
-.s-hint{font-size:11px;color:var(--muted);text-align:center;margin-bottom:13px}
-.s-btn{width:100%;padding:13px;font-size:15px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
-.s-btn:hover{background:#4f46e5;transform:translateY(-1px)}
-.s-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.s-alert{border-radius:var(--radius-sm);padding:11px 13px;font-size:13px;margin-bottom:13px;display:none;line-height:1.5}
-.s-alert.show{display:block}
-.a-err{background:var(--red-dim);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
-.a-warn{background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);color:#fcd34d}
-.s-success{background:var(--green-dim);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius);padding:36px 24px;text-align:center;display:none}
-.s-success.show{display:block}
-.s-check{width:52px;height:52px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px}
+.modal-stat{background:var(--bg2);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.modal-stat-n{font-size:24px;font-weight:600;font-family:'Space Mono',monospace;color:var(--green)}
+.modal-stat-l{font-size:11px;color:var(--muted);margin-top:2px}
+.modal-btns{display:flex;gap:8px;flex-direction:column}
 
 @media(max-width:600px){
-  .stats3{grid-template-columns:repeat(3,1fr)}
+  .stats{grid-template-columns:repeat(3,1fr)}
   .session-layout{flex-direction:column}
   .wheel-container{width:220px;height:220px}
   #wheel-canvas{width:220px!important;height:220px!important}
-  .big-code{font-size:30px}
-  .tabs{overflow-x:auto}
+  .session-code{font-size:28px}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ SETUP ═══ -->
-<div id="screen-setup">
-  <div class="setup-shell">
-    <div class="setup-brand">
-      <div class="setup-logo">Class<span>App</span></div>
-      <div class="setup-sub">Pase de lista digital</div>
+<!-- MODAL FIN DE SESIÓN -->
+<div class="modal-overlay" id="modal-fin">
+  <div class="modal">
+    <div class="modal-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
-    <div class="setup-card">
-      <div class="setup-section">Información de la sesión</div>
-      <div class="field">
-        <label>Nombre del docente</label>
-        <input type="text" id="setup-teacher" placeholder="Ej: Ing. Arnol Carranza"/>
-      </div>
-      <div class="field">
-        <label>Nombre de la clase</label>
-        <input type="text" id="setup-class" placeholder="Ej: Programación I"/>
-      </div>
-      <div class="field">
-        <label>Duración de la sesión</label>
-        <div class="dur-grid">
-          <div class="dur-btn" onclick="selDur(30,this)">30 min</div>
-          <div class="dur-btn active" onclick="selDur(60,this)">1 hora</div>
-          <div class="dur-btn" onclick="selDur(90,this)">1:30 h</div>
-          <div class="dur-btn" onclick="selDur(120,this)">2 horas</div>
-        </div>
-        <input type="number" id="setup-custom" placeholder="O escribe minutos personalizados..." style="width:100%;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-top:8px" oninput="customDur(this.value)"/>
-      </div>
+    <div class="modal-title">Sesión finalizada</div>
+    <div class="modal-sub">Programación I · Ing. Arnol Carranza</div>
+    <div class="modal-stats">
+      <div class="modal-stat"><div class="modal-stat-n" id="m-total">0</div><div class="modal-stat-l">Presentes</div></div>
+      <div class="modal-stat"><div class="modal-stat-n" id="m-fraud" style="color:var(--red)">0</div><div class="modal-stat-l">Bloqueados</div></div>
     </div>
-    <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión →</button>
+    <div class="modal-btns">
+      <button class="btn btn-excel" style="width:100%;justify-content:center;display:flex;align-items:center;gap:8px" onclick="exportExcel()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Descargar Excel
+      </button>
+      <button class="btn" style="width:100%" onclick="cerrarModal()">Nueva sesión</button>
+    </div>
   </div>
 </div>
 
-<!-- ═══ PROFESOR ═══ -->
-<div id="screen-prof">
-  <div class="app">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="topbar-logo">ClassApp</div>
-        <div class="session-bar">
-          <div>
-            <div class="sb-class" id="tb-class">—</div>
-            <div class="sb-teacher" id="tb-teacher">—</div>
-          </div>
-          <div class="sb-timer" id="tb-timer">—</div>
+<!-- MODO ALUMNO -->
+<div id="modo-alumno">
+  <div class="student-shell">
+    <div class="student-brand">
+      <div class="brand-dot"></div>
+      <div class="brand-name">PROGRAMACIÓN I</div>
+      <div class="brand-title">Registro de asistencia</div>
+      <div class="brand-prof">Ing. Arnol Carranza</div>
+    </div>
+    <div class="alert a-warn" id="s-dev-warn">Tu dispositivo ya tiene un registro en esta sesión.</div>
+    <div class="alert a-err" id="s-err"></div>
+    <div id="s-form">
+      <div class="s-card">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">Tu dispositivo</div>
+        <div class="dev-chip" id="s-dev-chip">Calculando...</div>
+        <div class="s-field">
+          <label>Código de sesión</label>
+          <input type="text" id="s-code" placeholder="Ej: TECH-A3F2" style="text-transform:uppercase;letter-spacing:.1em;font-family:'Space Mono',monospace" oninput="this.value=this.value.toUpperCase()"/>
+        </div>
+        <div class="s-field">
+          <label>✏️ Tu nombre completo</label>
+          <input type="text" id="s-nombre" class="highlight" placeholder="👉 Escribe aquí tu nombre y apellido" autocomplete="name"/>
         </div>
       </div>
-      <div class="topbar-right">
-        <div class="fb-pill"><div class="fb-dot" id="fb-dot"></div><span id="fb-lbl">Conectando</span></div>
-        <button class="btn btn-red" onclick="pedirConfirmar()">Terminar sesión</button>
+      <div class="s-hint">Un solo registro por dispositivo por sesión</div>
+      <button class="s-btn" id="s-submit-btn" onclick="registrarAlumno()">Confirmar asistencia</button>
+    </div>
+    <div class="s-success" id="s-success">
+      <div class="s-check">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div class="s-suc-name" id="s-suc-name"></div>
+      <div class="s-suc-sub" id="s-suc-sub"></div>
+      <div class="s-suc-badge">PRESENTE ✓</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODO PROFESOR -->
+<div id="modo-profesor">
+  <div class="app">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        <span class="logo-text">ASISTENCIA.APP</span>
+      </div>
+      <div class="header-right">
+        <div class="header-title">Programación I</div>
+        <div class="header-prof">Ing. Arnol Carranza</div>
       </div>
     </div>
-
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('asistencia',this)">Asistencia</button>
-      <button class="tab" onclick="switchTab('sesion',this)">Sesión / Enlace</button>
+      <button class="tab active" onclick="switchTab('panel',this)">Panel</button>
+      <button class="tab" onclick="switchTab('sesion',this)">Sesión activa</button>
       <button class="tab" onclick="switchTab('ruleta',this)">Ruleta</button>
     </div>
 
-    <!-- ASISTENCIA -->
-    <div id="view-asistencia" class="view active">
-      <div class="stats3">
+    <!-- PANEL -->
+    <div id="view-panel" class="view active">
+      <div class="fb-status"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Conectando...</span></div>
+      <div class="stats">
         <div class="stat"><div class="sn ng" id="st-total">0</div><div class="sl">Registrados</div></div>
         <div class="stat"><div class="sn np" id="st-present">0</div><div class="sl">Presentes</div></div>
         <div class="stat"><div class="sn nb" id="st-fraud">0</div><div class="sl">Bloqueados</div></div>
@@ -271,15 +266,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="prog-top"><span>Registros en tiempo real</span><span id="prog-time" style="font-family:'Space Mono',monospace;font-size:11px"></span></div>
         <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
       </div>
-      <div id="fraud-box" class="fraud-box" style="display:none">
+      <div id="fraud-section" class="fraud-section" style="display:none">
         <div class="fraud-title">Intentos bloqueados</div>
         <div id="fraud-log"></div>
       </div>
       <div id="reg-grid" class="reg-grid">
-        <div class="empty-state">Esperando registros de alumnos...</div>
+        <div class="empty-state">
+          <div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          Esperando registros de alumnos...
+        </div>
       </div>
       <div class="bottom-bar">
-        <button class="btn btn-green" onclick="exportExcel()">Descargar Excel</button>
+        <button class="btn" onclick="terminarSesion()">Terminar sesión</button>
+        <button class="btn btn-excel" onclick="exportExcel()">Descargar Excel</button>
       </div>
     </div>
 
@@ -287,34 +286,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div id="view-sesion" class="view">
       <div class="session-layout">
         <div class="session-main">
-          <div class="big-code-card">
-            <div class="big-code-label">Código de sesión</div>
-            <div class="big-code" id="big-code">——</div>
-            <div class="big-code-sub">Dicta o proyecta este código a tus alumnos</div>
+          <div class="session-card">
+            <div class="session-label">Código de sesión activo</div>
+            <div class="session-code" id="p-code-big">——</div>
+            <div class="session-code-sub">Dicta o proyecta este código a tus alumnos</div>
           </div>
           <div class="timer-strip">
-            <div class="tdot ok" id="s-tdot"></div>
-            <span class="tlbl" id="s-tlbl">Sesión activa</span>
-            <span class="tnum" id="s-tnum">—</span>
+            <div class="tdot ok" id="tdot"></div>
+            <span class="timer-label" id="tlabel">Sesión activa</span>
+            <span class="timer-count" id="tcountdown">30:00</span>
+            <button class="btn" style="padding:5px 14px;font-size:12px" onclick="renewCode()">Renovar</button>
           </div>
           <div class="share-card">
             <div class="share-title">Compartir con alumnos</div>
             <div class="share-row">
-              <span class="share-text" id="share-link-text">—</span>
+              <span class="share-row-text" id="share-link-text">—</span>
               <button class="copy-btn" id="copy-link-btn" onclick="copyLink()">Copiar enlace</button>
             </div>
             <div class="share-row">
-              <span class="share-text">Mensaje completo para WhatsApp</span>
+              <span class="share-row-text">Mensaje completo para WhatsApp</span>
               <button class="copy-btn" id="copy-msg-btn" onclick="copyMsg()">Copiar mensaje</button>
             </div>
           </div>
           <div class="preview-box" id="preview-msg"></div>
         </div>
-        <div class="session-side">
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:13px;text-transform:uppercase;letter-spacing:.07em">Estado</div>
+        <div class="session-info">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.07em">Estado</div>
           <div class="ir"><span class="il">Código</span><span class="iv" id="inf-code">—</span></div>
-          <div class="ir"><span class="il">Clase</span><span class="iv" id="inf-class">—</span></div>
-          <div class="ir"><span class="il">Docente</span><span class="iv" id="inf-teacher">—</span></div>
+          <div class="ir"><span class="il">Fecha</span><span class="iv" id="inf-date">—</span></div>
           <div class="ir"><span class="il">Registros</span><span class="iv" id="inf-regs">0</span></div>
           <div class="ir"><span class="il">Bloqueados</span><span class="iv" style="color:var(--red)" id="inf-fraud2">0</span></div>
           <div style="margin-top:14px">
@@ -327,261 +326,185 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
     <!-- RULETA -->
     <div id="view-ruleta" class="view">
-      <div class="ruleta-wrap">
-        <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Ruleta de participación</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:22px">Selecciona un alumno al azar</div>
-        <div id="no-alumnos" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px;display:none">No hay alumnos registrados aún.</div>
+      <div class="roulette-wrap">
+        <div class="roulette-title">Ruleta de participación</div>
+        <div class="roulette-sub">Selecciona un alumno al azar</div>
+        <div id="no-students-msg" class="no-students" style="display:none">No hay alumnos registrados aún.</div>
         <div class="wheel-container">
           <canvas id="wheel-canvas" width="260" height="260"></canvas>
           <div class="wheel-pointer"></div>
           <div class="wheel-center"></div>
         </div>
-        <div class="spin-result"><div id="spin-result" style="color:var(--muted);font-size:13px">Girá la ruleta para seleccionar</div></div>
+        <div class="roulette-result">
+          <div id="result-display" style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</div>
+        </div>
         <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
-        <div id="spin-count" style="font-size:12px;color:var(--muted);margin-top:10px"></div>
+        <div class="roulette-count" id="roulette-count"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ ALUMNO ═══ -->
-<div id="screen-student">
-  <div class="student-shell">
-    <div class="student-brand">
-      <div class="s-dot"></div>
-      <div class="s-class" id="s-class-lbl">CARGANDO...</div>
-      <div class="s-title">Registro de asistencia</div>
-      <div class="s-prof" id="s-prof-lbl">—</div>
-    </div>
-    <div class="s-alert a-warn" id="s-dev-warn">Tu dispositivo ya tiene un registro en esta sesión.</div>
-    <div class="s-alert a-err" id="s-err"></div>
-    <div id="s-form">
-      <div class="s-card">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em">Tu dispositivo</div>
-        <div class="dev-chip" id="s-dev-chip">Calculando...</div>
-        <div class="s-field">
-          <label>Código de sesión</label>
-          <input type="text" id="s-code" readonly style="text-transform:uppercase;letter-spacing:.08em;font-family:'Space Mono',monospace;color:var(--muted);cursor:default;background:var(--bg3)"/>
-        </div>
-        <div class="s-field">
-          <label>✏️ Tu nombre completo</label>
-          <input type="text" id="s-nombre" class="highlight" placeholder="👉 Escribe aquí tu nombre y apellido" autocomplete="name"/>
-        </div>
-      </div>
-      <div class="s-hint">Un solo registro por dispositivo por sesión</div>
-      <button class="s-btn" id="s-submit-btn" onclick="registrarAlumno()">Confirmar asistencia</button>
-    </div>
-    <div class="s-success" id="s-success">
-      <div class="s-check">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-      </div>
-      <div style="font-size:19px;font-weight:700;color:var(--text)" id="s-suc-name"></div>
-      <div style="font-size:13px;color:var(--muted);margin-top:5px" id="s-suc-time"></div>
-      <div style="display:inline-block;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;margin-top:12px;background:var(--green-dim);color:var(--green)">PRESENTE ✓</div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal confirmar terminar -->
-<div class="modal-overlay" id="modal-confirmar">
-  <div class="modal">
-    <div class="modal-icon" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.4)">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </div>
-    <div class="modal-title">¿Terminar la sesión?</div>
-    <div class="modal-sub">Los alumnos ya no podrán registrarse.<br>Tenés <strong id="confirm-count" style="color:var(--text)">0</strong> alumnos registrados.</div>
-    <div class="modal-stats">
-      <div class="ms"><div class="ms-n np" id="cf-present">0</div><div class="ms-l">Presentes</div></div>
-      <div class="ms"><div class="ms-n nb" id="cf-fraud">0</div><div class="ms-l">Bloqueados</div></div>
-    </div>
-    <div class="modal-btns">
-      <button class="btn btn-red" style="width:100%" onclick="confirmarTerminar()">Sí, terminar sesión</button>
-      <button class="btn" style="width:100%" onclick="cancelarTerminar()">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal fin sesión -->
-<div class="modal-overlay" id="modal-fin">
-  <div class="modal">
-    <div class="modal-icon" style="background:var(--green-dim);border:1px solid rgba(16,185,129,0.4)">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-    </div>
-    <div class="modal-title">Sesión finalizada</div>
-    <div class="modal-sub" id="fin-sub">—</div>
-    <div class="modal-stats">
-      <div class="ms"><div class="ms-n np" id="fin-present">0</div><div class="ms-l">Presentes</div></div>
-      <div class="ms"><div class="ms-n nb" id="fin-fraud">0</div><div class="ms-l">Bloqueados</div></div>
-    </div>
-    <div class="modal-btns">
-      <button class="btn btn-green" style="width:100%" onclick="exportExcel()">Descargar Excel</button>
-      <button class="btn" style="width:100%" onclick="nuevaSesion()">Nueva sesión</button>
-    </div>
-  </div>
-</div>
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, update, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const FB = {
-  apiKey:"AIzaSyCYoLzwxFu-e8xpKfRnYxdqkX2oJggROrc",
-  authDomain:"asistencia-clase-d6d29.firebaseapp.com",
-  databaseURL:"https://asistencia-clase-d6d29-default-rtdb.firebaseio.com",
-  projectId:"asistencia-clase-d6d29",
-  storageBucket:"asistencia-clase-d6d29.firebasestorage.app",
-  messagingSenderId:"273968342203",
-  appId:"1:273968342203:web:9ead8ca3ed3c2f1184359e"
+const firebaseConfig = {
+  apiKey: "AIzaSyCYoLzwxFu-e8xpKfRnYxdqkX2oJggROrc",
+  authDomain: "asistencia-clase-d6d29.firebaseapp.com",
+  databaseURL: "https://asistencia-clase-d6d29-default-rtdb.firebaseio.com",
+  projectId: "asistencia-clase-d6d29",
+  storageBucket: "asistencia-clase-d6d29.firebasestorage.app",
+  messagingSenderId: "273968342203",
+  appId: "1:273968342203:web:9ead8ca3ed3c2f1184359e"
 };
-const db = getDatabase(initializeApp(FB));
-const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#e11d48','#a855f7','#22c55e','#eab308'];
 
-let SESSION_CODE='', timerSec=0, timerInt=null;
-let TEACHER='', CLASS_NAME='';
-let registros=[], fraudLog=[];
-let isSpinning=false, wheelAngle=0;
-let selectedDur=60;
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#e11d48','#0ea5e9','#a855f7','#22c55e','#eab308'];
+
+let SESSION_CODE = genCode();
+let timerSec = 1800; // 30 minutos
+let registros = [];
+let registroKeys = {}; // nombre -> firebaseKey para poder expulsar
+let fraudLog = [];
+let isSpinning = false;
+let wheelAngle = 0;
+let recentLogs = [];
 
 function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
-function initials(n){return n.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'??';}
-function getPageURL(){return window.location.origin+window.location.pathname;}
 
 function getFingerprint(){
-  // Primero intentar recuperar ID guardado en este dispositivo/navegador
-  let stored = localStorage.getItem('classapp_device_id');
-  if(stored) return stored;
-  // Generar ID único combinando datos del dispositivo + aleatorio
   const s=window.screen,n=navigator;
   const raw=[n.language||'',n.platform||'',s.colorDepth||'',s.width+'x'+s.height,n.hardwareConcurrency||'',Intl.DateTimeFormat().resolvedOptions().timeZone||'',n.userAgent.replace(/\s+/g,'').slice(0,50)].join('|');
   let h=0;for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
-  const base=Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
-  // Agregar parte aleatoria para que dos celulares iguales sean distintos
-  const rand=Math.random().toString(36).substr(2,4).toUpperCase();
-  const fp=base.slice(0,4)+'-'+base.slice(4,8)+'-'+rand;
-  localStorage.setItem('classapp_device_id', fp);
-  return fp;
+  const hex=Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
+  return hex.slice(0,4)+'-'+hex.slice(4);
 }
-const MY_FP = getFingerprint();
 
-/* ── ARRANQUE ── */
+const MY_FP = getFingerprint();
 const urlParams = new URLSearchParams(window.location.search);
 const urlCode = urlParams.get('code');
+const IS_STUDENT = !!urlCode;
 
-if(urlCode){
-  // MODO ALUMNO — vino con ?code= en el enlace
-  SESSION_CODE = urlCode.toUpperCase();
-  document.getElementById('screen-student').style.display='flex';
+if(IS_STUDENT){
+  document.getElementById('modo-alumno').style.display='flex';
   document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
-  document.getElementById('s-code').value=SESSION_CODE;
-  initStudent();
+  document.getElementById('s-code').value=urlCode.toUpperCase();
+  SESSION_CODE = urlCode.toUpperCase();
+  checkDuplicate();
 } else {
-  // MODO PROFESOR — verificar si hay sesión guardada
-  const saved = JSON.parse(localStorage.getItem('classapp_session')||'null');
-  const now = Date.now();
-  if(saved && saved.code && saved.expiresAt && now < saved.expiresAt){
-    // Restaurar sesión activa
-    SESSION_CODE = saved.code;
-    TEACHER = saved.teacher;
-    CLASS_NAME = saved.className;
-    timerSec = Math.max(0, Math.floor((saved.expiresAt - now) / 1000));
-    selectedDur = saved.durMin;
-    document.getElementById('screen-prof').style.display='block';
-    initProf();
-  } else {
-    // Nueva sesión
-    localStorage.removeItem('classapp_session');
-    document.getElementById('screen-setup').style.display='flex';
+  document.getElementById('modo-profesor').style.display='block';
+  initProfesor();
+}
+
+/* ── ALUMNO ── */
+async function checkDuplicate(){
+  const snap = await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+MY_FP));
+  if(snap.exists()){
+    document.getElementById('s-dev-warn').classList.add('show');
+    document.getElementById('s-form').style.opacity='0.45';
+    document.getElementById('s-form').style.pointerEvents='none';
   }
 }
 
-/* ── SETUP ── */
-window.selDur=function(min,btn){
-  selectedDur=min;
-  document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('setup-custom').value='';
-}
-window.customDur=function(v){
-  if(v&&parseInt(v)>0){
-    selectedDur=parseInt(v);
-    document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('active'));
-  }
-}
+window.registrarAlumno = async function(){
+  const code = document.getElementById('s-code').value.trim().toUpperCase();
+  const nombre = document.getElementById('s-nombre').value.trim();
+  const errEl = document.getElementById('s-err');
+  errEl.className='alert a-err';
 
-window.iniciarSesion=function(){
-  const teacher=document.getElementById('setup-teacher').value.trim();
-  const className=document.getElementById('setup-class').value.trim();
-  if(!teacher||!className){alert('Por favor completá el nombre del docente y la clase.');return;}
-  TEACHER=teacher; CLASS_NAME=className;
-  timerSec=selectedDur*60;
-  SESSION_CODE=genCode();
-  // Guardar sesión para restaurar al recargar
-  localStorage.setItem('classapp_session', JSON.stringify({
-    code:SESSION_CODE, teacher:TEACHER, className:CLASS_NAME,
-    durMin:selectedDur, expiresAt:Date.now()+(timerSec*1000)
-  }));
-  document.getElementById('screen-setup').style.display='none';
-  document.getElementById('screen-prof').style.display='block';
-  initProf();
+  if(!nombre||nombre.length<3){
+    errEl.textContent='Escribe tu nombre completo (mínimo 3 caracteres).';
+    errEl.className='alert a-err show';return;
+  }
+
+  const btn=document.getElementById('s-submit-btn');
+  btn.disabled=true;btn.textContent='Registrando...';
+
+  const sesSnap = await get(ref(db,'sesiones/'+code+'/activa'));
+  if(!sesSnap.exists()||!sesSnap.val()){
+    errEl.textContent='Código incorrecto o sesión expirada.';
+    errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
+  }
+
+  const devSnap = await get(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP));
+  if(devSnap.exists()){
+    const prev=devSnap.val();
+    await push(ref(db,'sesiones/'+code+'/fraudes'),{nombre,prevName:prev.nombre,device:'DEV-'+MY_FP,time:new Date().toISOString()});
+    errEl.textContent='Este dispositivo ya registró a "'+prev.nombre+'". Un solo registro por celular.';
+    errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
+  }
+
+  const now=new Date();
+  const timeStr=now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+
+  await push(ref(db,'sesiones/'+code+'/registros'),{nombre,status:'present',device:'DEV-'+MY_FP,time:timeStr,timestamp:now.toISOString()});
+  await set(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP),{nombre,time:timeStr});
+
+  document.getElementById('s-form').style.display='none';
+  document.getElementById('s-suc-name').textContent=nombre;
+  document.getElementById('s-suc-sub').textContent=timeStr+' · '+now.toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('s-success').className='s-success show';
 }
 
 /* ── PROFESOR ── */
-function initProf(){
-  document.getElementById('tb-class').textContent=CLASS_NAME;
-  document.getElementById('tb-teacher').textContent=TEACHER;
-  document.getElementById('inf-class').textContent=CLASS_NAME;
-  document.getElementById('inf-teacher').textContent=TEACHER;
+function initProfesor(){
   updateSessionPanel();
   updateTimerUI();
-  // update en lugar de set para NO borrar registros existentes
-  update(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{activa:true,teacher:TEACHER,className:CLASS_NAME,start:new Date().toISOString()});
-  // suscribir DESPUES de escribir meta
   suscribir();
-  timerInt=setInterval(()=>{
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+
+  setInterval(()=>{
     if(timerSec>0){timerSec--;updateTimerUI();}
-    else{clearInterval(timerInt);pedirConfirmar();}
+    else{ terminarSesion(); }
   },1000);
 }
 
 function suscribir(){
-  console.log('[ClassApp] Suscribiendo a sesión:', SESSION_CODE);
-  onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'),snap=>{
-    registros=[];
-    if(snap.exists()){
-      snap.forEach(c=>{
-        const val=c.val();
-        console.log('[ClassApp] Alumno encontrado:', c.key, val);
-        registros.push({...val, _key:c.key});
-      });
-      console.log('[ClassApp] Total registros:', registros.length);
-    } else {
-      console.log('[ClassApp] Nodo registros vacío o no existe');
-    }
-    updateGrid();
-    updateStats();
-    renderWheel();
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'), snap=>{
+    registros=[];registroKeys={};
+    if(snap.exists()) snap.forEach(child=>{
+      registros.push({...child.val(), _key: child.key});
+      registroKeys[child.val().nombre] = child.key;
+    });
+    updateGrid();updateStats();renderWheel();
+    document.getElementById('fb-dot').className='fb-dot connected';
+    document.getElementById('fb-label').textContent='Conectado — tiempo real';
     updateRecentLog();
-    document.getElementById('fb-dot').className='fb-dot on';
-    document.getElementById('fb-lbl').textContent='En vivo · '+registros.length+' alumnos';
-  }, err=>{
-    console.error('[ClassApp] Error en listener registros:', err);
-    document.getElementById('fb-dot').className='fb-dot';
-    document.getElementById('fb-lbl').textContent='Error: '+err.message;
   });
-  onValue(ref(db,'sesiones/'+SESSION_CODE+'/fraudes'),snap=>{
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/fraudes'), snap=>{
     fraudLog=[];
-    if(snap.exists()) snap.forEach(c=>fraudLog.push(c.val()));
+    if(snap.exists()) snap.forEach(child=>fraudLog.push(child.val()));
     updateFraud();
   });
 }
 
+function initials(n){return n.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'??';}
+
+window.switchTab = function(t,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('view-'+t).classList.add('active');
+  if(t==='sesion') updateSessionPanel();
+  if(t==='ruleta') renderWheel();
+}
+
+function getPageURL(){return window.location.origin+window.location.pathname;}
+
 function updateSessionPanel(){
   const link=getPageURL()+'?code='+SESSION_CODE;
-  document.getElementById('big-code').textContent=SESSION_CODE;
+  document.getElementById('p-code-big').textContent=SESSION_CODE;
   document.getElementById('inf-code').textContent=SESSION_CODE;
+  document.getElementById('inf-date').textContent=new Date().toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
   const slt=document.getElementById('share-link-text');if(slt)slt.textContent=link;
   const pm=document.getElementById('preview-msg');
-  if(pm)pm.innerHTML='📚 <strong style="color:var(--text)">'+CLASS_NAME+'</strong><br>'+TEACHER+'<br><br>🔗 <span style="color:#818cf8">'+link+'</span><br>📝 Código: <strong style="color:var(--text);letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
+  if(pm)pm.innerHTML='📚 <strong style="color:var(--text)">Registro de asistencia</strong><br>Programación I · Ing. Arnol Carranza<br><br>🔗 <span style="color:#818cf8">'+link+'</span><br>📝 Código: <strong style="color:var(--text);letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
 }
 
 window.copyLink=function(){
@@ -589,7 +512,7 @@ window.copyLink=function(){
 }
 window.copyMsg=function(){
   const link=getPageURL()+'?code='+SESSION_CODE;
-  const msg='📚 *'+CLASS_NAME+'*\n'+TEACHER+'\n\n🔗 '+link+'\n📝 Código: *'+SESSION_CODE+'*\n\nAbre el enlace y escribe tu nombre.';
+  const msg='📚 *Registro de asistencia*\nProgramación I · Ing. Arnol Carranza\n\n🔗 '+link+'\n📝 Código: *'+SESSION_CODE+'*\n\nAbre el enlace y escribe tu nombre.';
   navigator.clipboard.writeText(msg).then(()=>flashCopy('copy-msg-btn','¡Copiado!'));
 }
 function flashCopy(id,txt){
@@ -598,14 +521,38 @@ function flashCopy(id,txt){
   setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
 }
 
-function updateTimerUI(){
-  const m=Math.floor(timerSec/60),s=timerSec%60,str=m+':'+(s<10?'0':'')+s;
-  document.getElementById('tb-timer').textContent=str;
-  const tnum=document.getElementById('s-tnum');if(tnum)tnum.textContent=str;
-  const dot=document.getElementById('s-tdot'),lbl=document.getElementById('s-tlbl');if(!dot)return;
-  if(timerSec>300){dot.className='tdot ok';lbl.textContent='Sesión activa';}
-  else if(timerSec>0){dot.className='tdot warn';lbl.textContent='Expira pronto';}
-  else{dot.className='tdot err';lbl.textContent='Expirada';}
+window.expulsarAlumno = async function(nombre, fp){
+  if(!confirm('¿Expulsar a '+nombre+'? Podrá volver a registrarse.')) return;
+  // Buscar y eliminar registro
+  const snap = await get(ref(db,'sesiones/'+SESSION_CODE+'/registros'));
+  if(snap.exists()) snap.forEach(child=>{
+    if(child.val().nombre===nombre) remove(ref(db,'sesiones/'+SESSION_CODE+'/registros/'+child.key));
+  });
+  // Eliminar huella del dispositivo
+  const devSnap = await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos'));
+  if(devSnap.exists()) devSnap.forEach(child=>{
+    if(child.val().nombre===nombre) remove(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+child.key));
+  });
+}
+
+function updateGrid(){
+  const g=document.getElementById('reg-grid');
+  if(!registros.length){
+    g.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>Esperando registros de alumnos...</div>';
+    return;
+  }
+  g.innerHTML=registros.map(r=>`
+    <div class="rc present">
+      <div class="rc-top">
+        <div class="av">${initials(r.nombre)}</div>
+        <div><div class="rc-name">${r.nombre}</div><div class="rc-time">${r.time}</div></div>
+      </div>
+      <div class="rc-dev">${r.device}</div>
+      <div class="rc-footer">
+        <span class="badge">PRESENTE</span>
+        <button class="expel-btn" onclick="expulsarAlumno('${r.nombre.replace(/'/g,"\\'")}','${r.device}')">Expulsar</button>
+      </div>
+    </div>`).join('');
 }
 
 function updateStats(){
@@ -618,128 +565,114 @@ function updateStats(){
   document.getElementById('prog-time').textContent=new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
 }
 
-function updateGrid(){
-  const g=document.getElementById('reg-grid');
-  g.innerHTML='';
-  if(!registros.length){
-    g.innerHTML='<div class="empty-state">Esperando registros de alumnos...</div>';
-    return;
-  }
-  registros.forEach(r=>{
-    const div=document.createElement('div');
-    div.className='rc present';
-    const top=document.createElement('div');top.className='rc-top';
-    const av=document.createElement('div');av.className='av';av.textContent=initials(r.nombre);
-    const info=document.createElement('div');
-    const nm=document.createElement('div');nm.className='rc-name';nm.textContent=r.nombre;
-    const tm=document.createElement('div');tm.className='rc-time';tm.textContent=r.time;
-    info.appendChild(nm);info.appendChild(tm);
-    top.appendChild(av);top.appendChild(info);
-    const dev=document.createElement('div');dev.className='rc-dev';dev.textContent=r.device;
-    const footer=document.createElement('div');footer.className='rc-footer';
-    const badge=document.createElement('span');badge.className='badge-p';badge.textContent='PRESENTE';
-    const btn=document.createElement('button');btn.className='expel-btn';btn.textContent='Expulsar';
-    btn.addEventListener('click',()=>expulsar(r.nombre));
-    footer.appendChild(badge);footer.appendChild(btn);
-    div.appendChild(top);div.appendChild(dev);div.appendChild(footer);
-    g.appendChild(div);
-  });
-}
-
 function updateRecentLog(){
-  const last=registros.slice(-5).reverse();
-  document.getElementById('recent-log').innerHTML=!last.length
+  const last5=registros.slice(-5).reverse();
+  document.getElementById('recent-log').innerHTML=!last5.length
     ?'<div style="font-size:12px;color:var(--muted)">Sin registros aún</div>'
-    :last.map(r=>`<div class="log-item"><span style="color:var(--text)">${r.nombre}</span><span style="color:var(--green);font-family:'Space Mono',monospace;font-size:11px">${r.time}</span></div>`).join('');
+    :last5.map(r=>`<div class="log-item"><span style="color:var(--text)">${r.nombre}</span><span style="color:var(--green);font-family:'Space Mono',monospace;font-size:11px">${r.time}</span></div>`).join('');
 }
 
 function updateFraud(){
-  if(!fraudLog.length){document.getElementById('fraud-box').style.display='none';return;}
-  document.getElementById('fraud-box').style.display='block';
-  document.getElementById('fraud-log').innerHTML=fraudLog.map(f=>`
-    <div class="fi"><div class="fdot"></div>
-    <span>Intento: <strong>${f.nombre}</strong> — ya registrado como <strong>${f.prevName}</strong></span></div>`).join('');
+  if(!fraudLog.length){document.getElementById('fraud-section').style.display='none';return;}
+  document.getElementById('fraud-section').style.display='block';
+  document.getElementById('fraud-log').innerHTML=fraudLog.map(f=>`<div class="fi"><div class="fdot"></div><span>Intento: <strong>${f.nombre}</strong> — dispositivo ya registrado como <strong>${f.prevName}</strong></span></div>`).join('');
 }
 
-window.expulsar=async function(nombre){
-  if(!confirm('¿Expulsar a '+nombre+'? Podrá volver a registrarse.'))return;
-  const snap=await get(ref(db,'sesiones/'+SESSION_CODE+'/registros'));
-  if(snap.exists()) snap.forEach(c=>{if(c.val().nombre===nombre) remove(ref(db,'sesiones/'+SESSION_CODE+'/registros/'+c.key));});
-  const dSnap=await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos'));
-  if(dSnap.exists()) dSnap.forEach(c=>{if(c.val().nombre===nombre) remove(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+c.key));});
-}
-
-window.switchTab=function(t,btn){
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('view-'+t).classList.add('active');
-  if(t==='sesion') updateSessionPanel();
-  if(t==='ruleta') renderWheel();
-}
-
-window.pedirConfirmar=function(){
-  document.getElementById('confirm-count').textContent=registros.length;
-  document.getElementById('cf-present').textContent=registros.length;
-  document.getElementById('cf-fraud').textContent=fraudLog.length;
-  document.getElementById('modal-confirmar').className='modal-overlay show';
-}
-window.cancelarTerminar=function(){document.getElementById('modal-confirmar').className='modal-overlay';}
-window.confirmarTerminar=function(){
-  document.getElementById('modal-confirmar').className='modal-overlay';
-  clearInterval(timerInt);
-  localStorage.removeItem('classapp_session');
-  set(ref(db,'sesiones/'+SESSION_CODE+'/meta/activa'),false);
-  document.getElementById('fin-sub').textContent=CLASS_NAME+' · '+TEACHER;
-  document.getElementById('fin-present').textContent=registros.length;
-  document.getElementById('fin-fraud').textContent=fraudLog.length;
+window.terminarSesion = function(){
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
+  document.getElementById('m-total').textContent=registros.length;
+  document.getElementById('m-fraud').textContent=fraudLog.length;
   document.getElementById('modal-fin').className='modal-overlay show';
 }
 
-window.nuevaSesion=function(){
+window.cerrarModal = function(){
   document.getElementById('modal-fin').className='modal-overlay';
-  document.getElementById('screen-prof').style.display='none';
-  document.getElementById('setup-teacher').value=TEACHER;
-  document.getElementById('setup-class').value=CLASS_NAME;
-  document.getElementById('screen-setup').style.display='flex';
   registros=[];fraudLog=[];
+  SESSION_CODE=genCode();timerSec=1800;
+  updateGrid();updateStats();updateFraud();updateTimerUI();renderWheel();
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  suscribir();
+  updateSessionPanel();
 }
 
-window.exportExcel=function(){
+window.renewCode = function(){
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
+  SESSION_CODE=genCode();timerSec=1800;
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  suscribir();
+  updateSessionPanel();updateTimerUI();
+}
+
+window.exportExcel = function(){
   const date=new Date();
-  const wb=XLSX.utils.book_new();
+  const dateStr=date.toLocaleDateString('es',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const timeStr=date.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+
+  const wb = XLSX.utils.book_new();
+
+  // Hoja de asistencia
   const wsData=[
     ['ACTA DE ASISTENCIA'],
-    ['Clase:',CLASS_NAME],['Docente:',TEACHER],
-    ['Fecha:',date.toLocaleDateString('es',{weekday:'long',year:'numeric',month:'long',day:'numeric'})],
-    ['Código de sesión:',SESSION_CODE],[],
-    ['#','Nombre completo','Hora de registro','Dispositivo','Estado'],
-    ...registros.map((r,i)=>[i+1,r.nombre,r.time,r.device,'PRESENTE']),
-    [],['Total presentes:',registros.length],['Intentos bloqueados:',fraudLog.length],
+    ['Clase:', 'Programación I'],
+    ['Profesor:', 'Ing. Arnol Carranza'],
+    ['Fecha:', dateStr],
+    ['Hora de cierre:', timeStr],
+    ['Código de sesión:', SESSION_CODE],
+    [],
+    ['#','Nombre','Hora de registro','Dispositivo','Estado'],
+    ...registros.map((r,i)=>[i+1, r.nombre, r.time, r.device, 'PRESENTE']),
+    [],
+    ['Total presentes:', registros.length],
+    ['Intentos bloqueados:', fraudLog.length],
   ];
-  const ws=XLSX.utils.aoa_to_sheet(wsData);
-  ws['!cols']=[{wch:4},{wch:34},{wch:14},{wch:16},{wch:10}];
-  XLSX.utils.book_append_sheet(wb,ws,'Asistencia');
+
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Ancho de columnas
+  ws['!cols']=[{wch:5},{wch:35},{wch:18},{wch:18},{wch:12}];
+
+  // Hoja de fraudes si hay
   if(fraudLog.length){
-    const wf=XLSX.utils.aoa_to_sheet([['INTENTOS BLOQUEADOS'],[],['Nombre intentado','Ya registrado como'],[...fraudLog.map(f=>[f.nombre,f.prevName])]]);
-    wf['!cols']=[{wch:34},{wch:34}];
-    XLSX.utils.book_append_sheet(wb,wf,'Bloqueados');
+    const wfData=[
+      ['INTENTOS BLOQUEADOS'],
+      [],
+      ['Nombre intentado','Nombre registrado previo','Dispositivo'],
+      ...fraudLog.map(f=>[f.nombre, f.prevName, f.device||'—']),
+    ];
+    const wf=XLSX.utils.aoa_to_sheet(wfData);
+    wf['!cols']=[{wch:30},{wch:30},{wch:18}];
+    XLSX.utils.book_append_sheet(wb, wf, 'Bloqueados');
   }
-  XLSX.writeFile(wb,'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Asistencia');
+  XLSX.writeFile(wb, 'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
 }
 
-/* ── RULETA ── */
+function updateTimerUI(){
+  const m=Math.floor(timerSec/60),s=timerSec%60;
+  const el=document.getElementById('tcountdown');if(el)el.textContent=m+':'+(s<10?'0':'')+s;
+  const dot=document.getElementById('tdot'),lbl=document.getElementById('tlabel');if(!dot)return;
+  if(timerSec>300){dot.className='tdot ok';lbl.textContent='Sesión activa';}
+  else if(timerSec>0){dot.className='tdot warn';lbl.textContent='Sesión expira pronto';}
+  else{dot.className='tdot err';lbl.textContent='Sesión expirada';}
+}
+
+/* RULETA */
 function renderWheel(){
   const canvas=document.getElementById('wheel-canvas');if(!canvas)return;
   const ctx=canvas.getContext('2d');
   const names=registros.map(r=>r.nombre);
   const size=canvas.width,cx=size/2,cy=size/2,r=size/2-4;
   ctx.clearRect(0,0,size,size);
-  document.getElementById('no-alumnos').style.display=names.length===0?'block':'none';
-  document.getElementById('spin-btn').disabled=names.length===0;
-  document.getElementById('spin-count').textContent=names.length>0?names.length+' alumno'+(names.length!==1?'s':'')+' en ruleta':'';
+  const noMsg=document.getElementById('no-students-msg');
+  const spinBtn=document.getElementById('spin-btn');
+  const countEl=document.getElementById('roulette-count');
+  if(noMsg)noMsg.style.display=names.length===0?'block':'none';
+  if(spinBtn)spinBtn.disabled=names.length===0;
+  if(countEl)countEl.textContent=names.length>0?names.length+' alumno'+(names.length!==1?'s':'')+' en ruleta':'';
   if(!names.length){
     ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#1a2234';ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=2;ctx.stroke();
     ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='13px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText('Sin alumnos',cx,cy);return;
   }
@@ -762,83 +695,25 @@ function renderWheel(){
 
 window.spinWheel=function(){
   if(isSpinning||!registros.length)return;
-  isSpinning=true;document.getElementById('spin-btn').disabled=true;
-  document.getElementById('spin-result').innerHTML='<span style="color:var(--muted)">Girando...</span>';
+  isSpinning=true;
+  document.getElementById('spin-btn').disabled=true;
+  document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Girando...</span>';
   const names=registros.map(r=>r.nombre);
   const winner=Math.floor(Math.random()*names.length);
   const slice=(Math.PI*2)/names.length;
-  const total=(Math.PI*2)*5+(Math.PI*2-winner*slice-slice/2)-wheelAngle%(Math.PI*2)+(Math.PI*2)*(3+Math.random()*3);
-  const dur=4000+Math.random()*1500,t0=performance.now(),a0=wheelAngle;
+  const totalSpins=(Math.PI*2)*5+(Math.PI*2-winner*slice-slice/2)-wheelAngle%(Math.PI*2)+(Math.PI*2)*(3+Math.random()*3);
+  const duration=4000+Math.random()*1500;
+  const t0=performance.now(),a0=wheelAngle;
   function ease(t){return 1-Math.pow(1-t,3);}
   function frame(now){
-    const t=Math.min((now-t0)/dur,1);wheelAngle=a0+total*ease(t);renderWheel();
+    const t=Math.min((now-t0)/duration,1);
+    wheelAngle=a0+totalSpins*ease(t);renderWheel();
     if(t<1){requestAnimationFrame(frame);return;}
     isSpinning=false;document.getElementById('spin-btn').disabled=false;
-    document.getElementById('spin-result').innerHTML=`<span class="spin-name">🎯 ${registros[winner].nombre}</span>`;
+    const w=registros[winner];
+    document.getElementById('result-display').innerHTML=`<div><span class="result-name">${w.nombre}</span><span class="result-badge">PRESENTE</span></div>`;
   }
   requestAnimationFrame(frame);
-}
-
-/* ── ALUMNO ── */
-async function initStudent(){
-  document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
-  const metaSnap=await get(ref(db,'sesiones/'+SESSION_CODE+'/meta'));
-  if(metaSnap.exists()){
-    const meta=metaSnap.val();
-    document.getElementById('s-class-lbl').textContent=(meta.className||'').toUpperCase();
-    document.getElementById('s-prof-lbl').textContent=meta.teacher||'';
-    if(!meta.activa){
-      document.getElementById('s-err').textContent='Esta sesión ya finalizó. Pedile al profesor un nuevo enlace.';
-      document.getElementById('s-err').className='s-alert a-err show';
-      document.getElementById('s-form').style.opacity='0.35';
-      document.getElementById('s-form').style.pointerEvents='none';
-      return;
-    }
-  } else {
-    document.getElementById('s-err').textContent='Sesión no encontrada. Verificá el enlace.';
-    document.getElementById('s-err').className='s-alert a-err show';
-    document.getElementById('s-form').style.opacity='0.35';
-    document.getElementById('s-form').style.pointerEvents='none';
-    return;
-  }
-  const devSnap=await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+MY_FP));
-  if(devSnap.exists()){
-    document.getElementById('s-dev-warn').classList.add('show');
-    document.getElementById('s-form').style.opacity='0.4';
-    document.getElementById('s-form').style.pointerEvents='none';
-    const d=devSnap.val();
-    document.getElementById('s-suc-name').textContent=d.nombre;
-    document.getElementById('s-suc-time').textContent='Ya registrado · '+d.time;
-    document.getElementById('s-success').className='s-success show';
-  }
-}
-
-window.registrarAlumno=async function(){
-  const code=SESSION_CODE; // Siempre usar el código del URL, no el campo
-  const nombre=document.getElementById('s-nombre').value.trim();
-  const errEl=document.getElementById('s-err');errEl.className='s-alert a-err';
-  if(!nombre||nombre.length<3){errEl.textContent='Escribí tu nombre completo (mínimo 3 caracteres).';errEl.className='s-alert a-err show';return;}
-  const btn=document.getElementById('s-submit-btn');btn.disabled=true;btn.textContent='Registrando...';
-  const sesSnap=await get(ref(db,'sesiones/'+code+'/meta'));
-  if(!sesSnap.exists()||!sesSnap.val().activa){
-    errEl.textContent='Código incorrecto o sesión no activa. Pedile el código al profesor.';
-    errEl.className='s-alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
-  }
-  const devSnap=await get(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP));
-  if(devSnap.exists()){
-    const prev=devSnap.val();
-    await push(ref(db,'sesiones/'+code+'/fraudes'),{nombre,prevName:prev.nombre,device:'DEV-'+MY_FP,time:new Date().toISOString()});
-    errEl.textContent='Este dispositivo ya registró a "'+prev.nombre+'". Un solo registro por celular.';
-    errEl.className='s-alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
-  }
-  const now=new Date();
-  const timeStr=now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
-  await push(ref(db,'sesiones/'+code+'/registros'),{nombre,status:'present',device:'DEV-'+MY_FP,time:timeStr,timestamp:now.toISOString()});
-  await set(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP),{nombre,time:timeStr});
-  document.getElementById('s-form').style.display='none';
-  document.getElementById('s-suc-name').textContent=nombre;
-  document.getElementById('s-suc-time').textContent=timeStr+' · '+now.toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('s-success').className='s-success show';
 }
 </script>
 </body>
