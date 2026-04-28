@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -361,7 +362,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="dev-chip" id="s-dev-chip">Calculando...</div>
         <div class="s-field">
           <label>Código de sesión</label>
-          <input type="text" id="s-code" placeholder="Ej: TECH-A3F2" style="text-transform:uppercase;letter-spacing:.08em;font-family:'Space Mono',monospace" oninput="this.value=this.value.toUpperCase()"/>
+          <input type="text" id="s-code" readonly style="text-transform:uppercase;letter-spacing:.08em;font-family:'Space Mono',monospace;color:var(--muted);cursor:default;background:var(--bg3)"/>
         </div>
         <div class="s-field">
           <label>✏️ Tu nombre completo</label>
@@ -542,12 +543,18 @@ function initProf(){
 }
 
 function suscribir(){
+  console.log('[ClassApp] Suscribiendo a sesión:', SESSION_CODE);
   onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'),snap=>{
     registros=[];
-    if(snap.exists()) snap.forEach(c=>registros.push({...c.val(),_key:c.key}));
+    if(snap.exists()){
+      snap.forEach(c=>registros.push({...c.val(),_key:c.key}));
+      console.log('[ClassApp] Registros recibidos:', registros.length, registros.map(r=>r.nombre));
+    } else {
+      console.log('[ClassApp] Sin registros aún');
+    }
     updateGrid();updateStats();renderWheel();updateRecentLog();
     document.getElementById('fb-dot').className='fb-dot on';
-    document.getElementById('fb-lbl').textContent='En vivo';
+    document.getElementById('fb-lbl').textContent='En vivo · '+registros.length+' alumnos';
   });
   onValue(ref(db,'sesiones/'+SESSION_CODE+'/fraudes'),snap=>{
     fraudLog=[];
@@ -783,7 +790,7 @@ async function initStudent(){
 }
 
 window.registrarAlumno=async function(){
-  const code=document.getElementById('s-code').value.trim().toUpperCase();
+  const code=SESSION_CODE; // Siempre usar el código del URL, no el campo
   const nombre=document.getElementById('s-nombre').value.trim();
   const errEl=document.getElementById('s-err');errEl.className='s-alert a-err';
   if(!nombre||nombre.length<3){errEl.textContent='Escribí tu nombre completo (mínimo 3 caracteres).';errEl.className='s-alert a-err show';return;}
