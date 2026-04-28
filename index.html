@@ -422,7 +422,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, update, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const FB = {
   apiKey:"AIzaSyCYoLzwxFu-e8xpKfRnYxdqkX2oJggROrc",
@@ -533,8 +533,10 @@ function initProf(){
   document.getElementById('inf-teacher').textContent=TEACHER;
   updateSessionPanel();
   updateTimerUI();
+  // update en lugar de set para NO borrar registros existentes
+  update(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{activa:true,teacher:TEACHER,className:CLASS_NAME,start:new Date().toISOString()});
+  // suscribir DESPUES de escribir meta
   suscribir();
-  set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{activa:true,teacher:TEACHER,className:CLASS_NAME,start:new Date().toISOString()});
   timerInt=setInterval(()=>{
     if(timerSec>0){timerSec--;updateTimerUI();}
     else{clearInterval(timerInt);pedirConfirmar();}
@@ -546,14 +548,25 @@ function suscribir(){
   onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'),snap=>{
     registros=[];
     if(snap.exists()){
-      snap.forEach(c=>registros.push({...c.val(),_key:c.key}));
-      console.log('[ClassApp] Registros recibidos:', registros.length, registros.map(r=>r.nombre));
+      snap.forEach(c=>{
+        const val=c.val();
+        console.log('[ClassApp] Alumno encontrado:', c.key, val);
+        registros.push({...val, _key:c.key});
+      });
+      console.log('[ClassApp] Total registros:', registros.length);
     } else {
-      console.log('[ClassApp] Sin registros aún');
+      console.log('[ClassApp] Nodo registros vacío o no existe');
     }
-    updateGrid();updateStats();renderWheel();updateRecentLog();
+    updateGrid();
+    updateStats();
+    renderWheel();
+    updateRecentLog();
     document.getElementById('fb-dot').className='fb-dot on';
     document.getElementById('fb-lbl').textContent='En vivo · '+registros.length+' alumnos';
+  }, err=>{
+    console.error('[ClassApp] Error en listener registros:', err);
+    document.getElementById('fb-dot').className='fb-dot';
+    document.getElementById('fb-lbl').textContent='Error: '+err.message;
   });
   onValue(ref(db,'sesiones/'+SESSION_CODE+'/fraudes'),snap=>{
     fraudLog=[];
