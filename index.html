@@ -3,378 +3,402 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Asistencia — Programación I</title>
-<title>Ing. Arnol Carranza</title>
+<title>Asistencia — Tecnología y Programación</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --bg: #0a0e1a;
-  --bg2: #111827;
-  --bg3: #1a2234;
-  --card: #141c2e;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
-  --text: #e8eaf0;
-  --muted: #6b7280;
-  --green: #10b981;
-  --green-dim: rgba(16,185,129,0.12);
-  --amber: #f59e0b;
-  --amber-dim: rgba(245,158,11,0.12);
-  --red: #ef4444;
-  --red-dim: rgba(239,68,68,0.1);
-  --blue: #3b82f6;
-  --blue-dim: rgba(59,130,246,0.1);
-  --accent: #6366f1;
-  --accent-dim: rgba(99,102,241,0.15);
-  --radius: 12px;
-  --radius-sm: 8px;
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1a2234;--card:#141c2e;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e8eaf0;--muted:#6b7280;
+  --green:#10b981;--green-dim:rgba(16,185,129,0.12);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);
+  --red:#ef4444;--red-dim:rgba(239,68,68,0.1);
+  --accent:#6366f1;--accent-dim:rgba(99,102,241,0.15);
+  --radius:12px;--radius-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
-.app{max-width:960px;margin:0 auto;padding:24px 16px}
 
-/* Header */
+/* MODO ALUMNO */
+#modo-alumno{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
+.student-shell{width:100%;max-width:420px}
+.student-brand{text-align:center;margin-bottom:32px}
+.brand-dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);display:inline-block;margin-bottom:12px}
+.brand-name{font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;margin-bottom:6px}
+.brand-title{font-size:26px;font-weight:600;color:var(--text)}
+.s-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.s-field{margin-bottom:16px}
+.s-field:last-child{margin-bottom:0}
+.s-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:7px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.s-field input{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.s-field input:focus{border-color:var(--accent)}
+.dev-chip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);margin-bottom:16px;word-break:break-all}
+.s-hint{font-size:11px;color:var(--muted);text-align:center;margin-bottom:14px}
+.s-btn{width:100%;padding:14px;font-size:15px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
+.s-btn:hover{background:#4f46e5;transform:translateY(-1px)}
+.s-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.alert{border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:14px;display:none;line-height:1.5}
+.alert.show{display:block}
+.a-err{background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);color:#fca5a5}
+.a-warn{background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:#fcd34d}
+.a-ok{background:var(--green-dim);border:1px solid rgba(16,185,129,0.25);color:#6ee7b7}
+.s-success{background:var(--green-dim);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius);padding:40px 24px;text-align:center;display:none}
+.s-success.show{display:block}
+.s-check{width:56px;height:56px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.s-suc-name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.s-suc-sub{font-size:14px;color:var(--muted)}
+.s-suc-badge{display:inline-block;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-top:12px}
+.sb-p{background:var(--green-dim);color:var(--green)}.sb-t{background:var(--amber-dim);color:var(--amber)}
+
+/* MODO PROFESOR */
+#modo-profesor{display:none}
+.app{max-width:960px;margin:0 auto;padding:24px 16px}
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
 .logo-text{font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.05em}
 .header-title{font-size:20px;font-weight:600;color:var(--text)}
-
-/* Tabs */
 .tabs{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:28px;overflow-x:auto}
 .tab{padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);border-radius:var(--radius-sm);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
 .tab.active{background:var(--accent);color:#fff}
 .tab:hover:not(.active){color:var(--text);background:var(--bg3)}
 .view{display:none}.view.active{display:block}
-
-/* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;transition:border-color .2s}
-.stat:hover{border-color:var(--border2)}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
 .sn{font-size:28px;font-weight:600;font-family:'Space Mono',monospace}
 .sl{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.07em}
 .ng{color:var(--text)}.np{color:var(--green)}.nt{color:var(--amber)}.nb{color:var(--red)}
-
-/* Progress */
 .prog-wrap{margin-bottom:24px}
 .prog-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
 .prog-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s;border-radius:2px}
-
-/* Cards grid */
 .reg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;margin-bottom:24px}
-.rc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:all .2s}
+.rc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:all .2s;animation:fadeIn .3s ease}
 .rc:hover{border-color:var(--border2)}
-.rc.present{border-left:3px solid var(--green)}
-.rc.late{border-left:3px solid var(--amber)}
+.rc.present{border-left:3px solid var(--green)}.rc.late{border-left:3px solid var(--amber)}
 .rc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:'Space Mono',monospace}
-.av.present{background:var(--green-dim);color:var(--green)}
-.av.late{background:var(--amber-dim);color:var(--amber)}
+.av.present{background:var(--green-dim);color:var(--green)}.av.late{background:var(--amber-dim);color:var(--amber)}
 .rc-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
 .rc-time{font-size:11px;color:var(--muted)}
-.rc-dev{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;background:var(--bg3);padding:3px 7px;border-radius:4px;margin-top:6px;display:inline-block;letter-spacing:.03em}
-.badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;margin-top:5px;letter-spacing:.04em}
+.rc-dev{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;background:var(--bg3);padding:3px 7px;border-radius:4px;margin-top:6px;display:inline-block}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;margin-top:5px}
 .bp{background:var(--green-dim);color:var(--green)}.bt{background:var(--amber-dim);color:var(--amber)}
-
-/* Fraud log */
 .fraud-section{margin-bottom:20px}
 .fraud-title{font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em}
 .fi{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);margin-bottom:6px;font-size:12px;color:#fca5a5}
 .fdot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px}
-
-/* Bottom bar */
 .bottom-bar{display:flex;gap:8px;flex-wrap:wrap}
 .btn{padding:8px 18px;font-size:13px;font-weight:500;border:1px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;background:var(--bg3);color:var(--text);transition:all .2s;font-family:'DM Sans',sans-serif}
 .btn:hover{background:var(--card);border-color:var(--accent);color:#fff}
 .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn-primary:hover{background:#4f46e5;border-color:#4f46e5}
+.btn-primary:hover{background:#4f46e5}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.empty-icon{width:40px;height:40px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;opacity:.5}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* Timer row */
-.timer-row{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+/* SESIÓN */
+.session-layout{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.session-main{flex:1;min-width:240px}
+.session-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;margin-bottom:14px}
+.session-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600}
+.session-code{font-family:'Space Mono',monospace;font-size:44px;font-weight:700;color:var(--text);letter-spacing:.22em;line-height:1}
+.session-code-sub{font-size:12px;color:var(--muted);margin-top:10px}
+.timer-strip{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:14px}
 .tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .tdot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
 .tdot.warn{background:var(--amber);box-shadow:0 0 6px var(--amber)}
 .tdot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
 .timer-label{font-size:13px;font-weight:500;color:var(--text)}
-.timer-count{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--text);margin-left:auto}
-
-/* QR layout */
-.qr-layout{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}
-.qr-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center;flex:1;min-width:220px}
-.qr-card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
-.qr-card-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
-.qr-canvas-wrap{background:#fff;border-radius:var(--radius-sm);padding:12px;display:inline-block}
-.qr-code-label{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--text);margin-top:14px;letter-spacing:.15em}
-.qr-code-sub{font-size:11px;color:var(--muted);margin-top:4px}
-.info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;flex:1;min-width:220px}
-.info-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.07em}
+.timer-count{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text);margin-left:auto}
+.share-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.share-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:600}
+.share-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px}
+.share-row:last-child{margin-bottom:0}
+.share-row-text{font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.copy-btn{padding:5px 12px;font-size:12px;font-weight:600;border:1px solid var(--border2);border-radius:6px;cursor:pointer;background:var(--bg3);color:var(--text);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.copy-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.copy-btn.copied{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.preview-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.8}
+.session-info{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;flex:1;min-width:220px}
 .ir{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
 .ir:last-child{border-bottom:none}
 .il{color:var(--muted)}.iv{font-weight:500;color:var(--text);font-family:'Space Mono',monospace;font-size:12px}
 .log-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
 .log-item:last-child{border-bottom:none}
 
-/* Student view */
-.sv-wrap{max-width:400px;margin:0 auto}
-.sv-header{text-align:center;margin-bottom:24px}
-.sv-logo{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.08em;margin-bottom:6px}
-.sv-title{font-size:22px;font-weight:600;color:var(--text)}
-.sv-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
-.sv-field{margin-bottom:14px}
-.sv-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
-.sv-field input{width:100%;padding:10px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
-.sv-field input:focus{border-color:var(--accent)}
-.dev-chip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);margin-bottom:14px;word-break:break-all;letter-spacing:.03em}
-.sv-btn{width:100%;padding:12px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif;letter-spacing:.02em}
-.sv-btn:hover{background:#4f46e5;transform:translateY(-1px)}
-.sv-btn:active{transform:translateY(0)}
-.alert{border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:12px;display:none;line-height:1.5}
-.alert.show{display:block}
-.a-ok{background:var(--green-dim);border:1px solid rgba(16,185,129,0.25);color:#6ee7b7}
-.a-err{background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);color:#fca5a5}
-.a-warn{background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);color:#fcd34d}
-.success-box{background:var(--green-dim);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius);padding:32px 20px;text-align:center;display:none}
-.success-box.show{display:block}
-.check-circle{width:48px;height:48px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
-.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
-.empty-icon{width:40px;height:40px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;opacity:.5}
-
-/* Roulette */
-.roulette-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:20px}
+/* RULETA */
+.roulette-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center}
 .roulette-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
 .roulette-sub{font-size:12px;color:var(--muted);margin-bottom:24px}
 .wheel-container{position:relative;width:260px;height:260px;margin:0 auto 24px}
-#wheel-canvas{border-radius:50%;display:block}
 .wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:22px solid var(--text);filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
 .wheel-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:var(--bg);border:3px solid var(--border2)}
 .roulette-result{min-height:52px;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
-.result-name{font-size:22px;font-weight:700;color:var(--text);font-family:'Space Mono',monospace;letter-spacing:.04em;animation:fadeIn .4s ease}
+.result-name{font-size:22px;font-weight:700;color:var(--text);font-family:'Space Mono',monospace;animation:fadeIn .4s ease}
 .result-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;margin-left:10px;background:var(--accent-dim);color:#a5b4fc;font-weight:600;vertical-align:middle}
 .roulette-count{font-size:12px;color:var(--muted);margin-top:8px}
-@keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-.spin-btn{padding:12px 32px;font-size:14px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif;letter-spacing:.03em}
+.spin-btn{padding:12px 32px;font-size:14px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
 .spin-btn:hover:not(:disabled){background:#4f46e5;transform:translateY(-1px)}
 .spin-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.no-students{padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--muted);text-align:center}
+.no-students{padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px}
+
+/* Firebase status */
+.fb-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:20px}
+.fb-dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+.fb-dot.connected{background:var(--green);box-shadow:0 0 4px var(--green)}
 
 @media(max-width:600px){
   .stats{grid-template-columns:repeat(2,1fr)}
-  .qr-layout{flex-direction:column}
+  .session-layout{flex-direction:column}
   .wheel-container{width:220px;height:220px}
   #wheel-canvas{width:220px!important;height:220px!important}
+  .session-code{font-size:32px}
 }
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <div class="logo">
-      <div class="logo-dot"></div>
-      <span class="logo-text">ASISTENCIA.APP</span>
-    </div>
-    <div class="header-title">Tecnología y Programación</div>
-  </div>
 
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('profesor',this)">Panel del profesor</button>
-    <button class="tab" onclick="switchTab('qr',this)">QR de sesión</button>
-    <button class="tab" onclick="switchTab('alumno',this)">Registro (alumno)</button>
-    <button class="tab" onclick="switchTab('ruleta',this)">Ruleta</button>
-  </div>
-
-  <!-- PROFESOR -->
-  <div id="view-profesor" class="view active">
-    <div class="stats">
-      <div class="stat"><div class="sn ng" id="st-total">0</div><div class="sl">Registrados</div></div>
-      <div class="stat"><div class="sn np" id="st-present">0</div><div class="sl">Presentes</div></div>
-      <div class="stat"><div class="sn nt" id="st-late">0</div><div class="sl">Tardanzas</div></div>
-      <div class="stat"><div class="sn nb" id="st-fraud">0</div><div class="sl">Bloqueados</div></div>
+<!-- MODO ALUMNO -->
+<div id="modo-alumno">
+  <div class="student-shell">
+    <div class="student-brand">
+      <div class="brand-dot"></div>
+      <div class="brand-name">Programación I</div>
+      <div class="brand-title">Registro de asistencia</div>
     </div>
-    <div class="prog-wrap">
-      <div class="prog-top"><span>Registros en tiempo real</span><span id="prog-time" style="font-family:'Space Mono',monospace;font-size:11px"></span></div>
-      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-    </div>
-    <div id="fraud-section" class="fraud-section" style="display:none">
-      <div class="fraud-title">Intentos bloqueados</div>
-      <div id="fraud-log"></div>
-    </div>
-    <div id="reg-grid" class="reg-grid">
-      <div class="empty-state">
-        <div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
-        Esperando registros de alumnos...
-      </div>
-    </div>
-    <div class="bottom-bar">
-      <button class="btn" onclick="resetSesion()">Nueva sesión</button>
-      <button class="btn btn-primary" onclick="exportar()">Exportar acta</button>
-    </div>
-  </div>
-
-  <!-- QR -->
-  <div id="view-qr" class="view">
-    <div class="timer-row">
-      <div class="tdot ok" id="tdot"></div>
-      <span class="timer-label" id="tlabel">QR activo</span>
-      <span class="timer-count" id="tcountdown">5:00</span>
-      <button class="btn" style="padding:6px 14px;font-size:12px" onclick="renewQR()">Renovar</button>
-    </div>
-    <div class="qr-layout">
-      <div class="qr-card">
-        <div class="qr-card-title">Escanea para registrar asistencia</div>
-        <div class="qr-card-sub">Los alumnos abren el enlace — también puedes compartir el código</div>
-        <div class="qr-canvas-wrap"><canvas id="qr-canvas" width="200" height="200"></canvas></div>
-        <div class="qr-code-label" id="qr-code-label">—</div>
-        <div class="qr-code-sub">Código de sesión · válido 5 min</div>
-      </div>
-      <div class="info-card">
-        <div class="info-title">Estado de sesión</div>
-        <div class="ir"><span class="il">Código activo</span><span class="iv" id="inf-code">—</span></div>
-        <div class="ir"><span class="il">Fecha</span><span class="iv" id="inf-date">—</span></div>
-        <div class="ir"><span class="il">Registros</span><span class="iv" id="inf-regs">0</span></div>
-        <div class="ir"><span class="il">Dispositivos únicos</span><span class="iv" id="inf-devs">0</span></div>
-        <div class="ir"><span class="il">Bloqueados</span><span class="iv" style="color:var(--red)" id="inf-fraud2">0</span></div>
-        <div style="margin-top:14px">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Últimos registros</div>
-          <div id="recent-log"><div style="font-size:12px;color:var(--muted)">Sin registros aún</div></div>
+    <div class="alert a-warn" id="s-dev-warn">Tu dispositivo ya tiene un registro en esta sesión.</div>
+    <div class="alert a-err" id="s-err"></div>
+    <div class="alert a-ok" id="s-ok"></div>
+    <div id="s-form">
+      <div class="s-card">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">Tu dispositivo</div>
+        <div class="dev-chip" id="s-dev-chip">Calculando...</div>
+        <div class="s-field">
+          <label>Código de sesión</label>
+          <input type="text" id="s-code" placeholder="Ej: TECH-A3F2" style="text-transform:uppercase;letter-spacing:.1em;font-family:'Space Mono',monospace" oninput="this.value=this.value.toUpperCase()"/>
+        </div>
+        <div class="s-field">
+          <label>Tu nombre completo</label>
+          <input type="text" id="s-nombre" placeholder="Escribe tu nombre y apellido..."/>
         </div>
       </div>
+      <div class="s-hint">Un solo registro por dispositivo por sesión</div>
+      <button class="s-btn" id="s-submit-btn" onclick="registrarAlumno()">Confirmar asistencia</button>
     </div>
-  </div>
-
-  <!-- ALUMNO -->
-  <div id="view-alumno" class="view">
-    <div class="sv-wrap">
-      <div class="sv-header">
-        <div class="sv-logo">UNIV · 2024</div>
-        <div class="sv-title">Registro de asistencia</div>
+    <div class="s-success" id="s-success">
+      <div class="s-check">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
       </div>
-      <div class="alert a-warn" id="sv-dev-warn">Tu dispositivo ya tiene un registro en esta sesión. Solo se permite un registro por celular.</div>
-      <div class="alert a-err" id="sv-err"></div>
-      <div id="sv-form">
-        <div class="sv-card">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Tu dispositivo identificado como</div>
-          <div class="dev-chip" id="sv-dev-display">Calculando huella...</div>
-          <div class="sv-field">
-            <label>Código de sesión</label>
-            <input type="text" id="sv-code" placeholder="Ej: TECH-A3F2" style="text-transform:uppercase;letter-spacing:.1em;font-family:'Space Mono',monospace" oninput="this.value=this.value.toUpperCase()"/>
-          </div>
-          <div class="sv-field" style="margin-bottom:0">
-            <label>Tu nombre completo</label>
-            <input type="text" id="sv-nombre" placeholder="Escribe tu nombre y apellido..."/>
-          </div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:12px">Un solo registro por dispositivo por sesión</div>
-        <button class="sv-btn" onclick="registrar()">Confirmar asistencia</button>
-      </div>
-      <div class="success-box" id="sv-success">
-        <div class="check-circle">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-        </div>
-        <div style="font-size:18px;font-weight:700;color:var(--text)" id="sv-suc-name"></div>
-        <div style="font-size:13px;color:var(--muted);margin-top:6px" id="sv-suc-sub"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RULETA -->
-  <div id="view-ruleta" class="view">
-    <div class="roulette-wrap">
-      <div class="roulette-title">Ruleta de participación</div>
-      <div class="roulette-sub">Selecciona un alumno al azar de los registrados</div>
-      <div id="no-students-msg" class="no-students" style="display:none;margin-bottom:20px">No hay alumnos registrados aún. Espera a que se registren.</div>
-      <div class="wheel-container" id="wheel-container">
-        <canvas id="wheel-canvas" width="260" height="260"></canvas>
-        <div class="wheel-pointer"></div>
-        <div class="wheel-center"></div>
-      </div>
-      <div class="roulette-result">
-        <div id="result-display" style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</div>
-      </div>
-      <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
-      <div class="roulette-count" id="roulette-count"></div>
+      <div class="s-suc-name" id="s-suc-name"></div>
+      <div class="s-suc-sub" id="s-suc-sub"></div>
+      <div class="s-suc-badge" id="s-suc-badge"></div>
     </div>
   </div>
 </div>
 
-<script>
-const COLORS = [
-  '#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899',
-  '#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16',
-  '#e11d48','#0ea5e9','#a855f7','#22c55e','#eab308'
-];
+<!-- MODO PROFESOR -->
+<div id="modo-profesor">
+  <div class="app">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        <span class="logo-text">ASISTENCIA.APP</span>
+      </div>
+      <div class="header-title">Programación I</div>
+       <div class="header-title">Ing. Arnol Carranza</div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('panel',this)">Panel</button>
+      <button class="tab" onclick="switchTab('sesion',this)">Sesión activa</button>
+      <button class="tab" onclick="switchTab('ruleta',this)">Ruleta</button>
+    </div>
+
+    <!-- PANEL -->
+    <div id="view-panel" class="view active">
+      <div class="fb-status"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Conectando a Firebase...</span></div>
+      <div class="stats">
+        <div class="stat"><div class="sn ng" id="st-total">0</div><div class="sl">Registrados</div></div>
+        <div class="stat"><div class="sn np" id="st-present">0</div><div class="sl">Presentes</div></div>
+        <div class="stat"><div class="sn nt" id="st-late">0</div><div class="sl">Tardanzas</div></div>
+        <div class="stat"><div class="sn nb" id="st-fraud">0</div><div class="sl">Bloqueados</div></div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-top"><span>Registros en tiempo real</span><span id="prog-time" style="font-family:'Space Mono',monospace;font-size:11px"></span></div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div id="fraud-section" class="fraud-section" style="display:none">
+        <div class="fraud-title">Intentos bloqueados</div>
+        <div id="fraud-log"></div>
+      </div>
+      <div id="reg-grid" class="reg-grid">
+        <div class="empty-state">
+          <div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          Esperando registros de alumnos...
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <button class="btn" onclick="resetSesion()">Nueva sesión</button>
+        <button class="btn btn-primary" onclick="exportar()">Exportar acta</button>
+      </div>
+    </div>
+
+    <!-- SESIÓN -->
+    <div id="view-sesion" class="view">
+      <div class="session-layout">
+        <div class="session-main">
+          <div class="session-card">
+            <div class="session-label">Código de sesión activo</div>
+            <div class="session-code" id="p-code-big">——</div>
+            <div class="session-code-sub">Dicta o proyecta este código a tus alumnos</div>
+          </div>
+          <div class="timer-strip">
+            <div class="tdot ok" id="tdot"></div>
+            <span class="timer-label" id="tlabel">Sesión activa</span>
+            <span class="timer-count" id="tcountdown">5:00</span>
+            <button class="btn" style="padding:5px 14px;font-size:12px" onclick="renewCode()">Renovar</button>
+          </div>
+          <div class="share-card">
+            <div class="share-title">Compartir con alumnos</div>
+            <div class="share-row">
+              <span class="share-row-text" id="share-link-text">—</span>
+              <button class="copy-btn" id="copy-link-btn" onclick="copyLink()">Copiar enlace</button>
+            </div>
+            <div class="share-row">
+              <span class="share-row-text">Mensaje completo para WhatsApp</span>
+              <button class="copy-btn" id="copy-msg-btn" onclick="copyMsg()">Copiar mensaje</button>
+            </div>
+          </div>
+          <div class="preview-box" id="preview-msg"></div>
+        </div>
+        <div class="session-info">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.07em">Estado</div>
+          <div class="ir"><span class="il">Código</span><span class="iv" id="inf-code">—</span></div>
+          <div class="ir"><span class="il">Fecha</span><span class="iv" id="inf-date">—</span></div>
+          <div class="ir"><span class="il">Registros</span><span class="iv" id="inf-regs">0</span></div>
+          <div class="ir"><span class="il">Bloqueados</span><span class="iv" style="color:var(--red)" id="inf-fraud2">0</span></div>
+          <div style="margin-top:14px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Últimos registros</div>
+            <div id="recent-log"><div style="font-size:12px;color:var(--muted)">Sin registros aún</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RULETA -->
+    <div id="view-ruleta" class="view">
+      <div class="roulette-wrap">
+        <div class="roulette-title">Ruleta de participación</div>
+        <div class="roulette-sub">Selecciona un alumno al azar de los registrados</div>
+        <div id="no-students-msg" class="no-students" style="display:none">No hay alumnos registrados aún.</div>
+        <div class="wheel-container">
+          <canvas id="wheel-canvas" width="260" height="260"></canvas>
+          <div class="wheel-pointer"></div>
+          <div class="wheel-center"></div>
+        </div>
+        <div class="roulette-result">
+          <div id="result-display" style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</div>
+        </div>
+        <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
+        <div class="roulette-count" id="roulette-count"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCYoLzwxFu-e8xpKfRnYxdqkX2oJggROrc",
+  authDomain: "asistencia-clase-d6d29.firebaseapp.com",
+  databaseURL: "https://asistencia-clase-d6d29-default-rtdb.firebaseio.com",
+  projectId: "asistencia-clase-d6d29",
+  storageBucket: "asistencia-clase-d6d29.firebasestorage.app",
+  messagingSenderId: "273968342203",
+  appId: "1:273968342203:web:9ead8ca3ed3c2f1184359e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#e11d48','#0ea5e9','#a855f7','#22c55e','#eab308'];
 
 let SESSION_CODE = genCode();
 let timerSec = 300;
-let timerInt = null;
 let registros = [];
-let deviceRegistry = {};
 let fraudLog = [];
-let recentLogs = [];
 let isSpinning = false;
 let wheelAngle = 0;
 
-function genCode() {
-  return 'TECH-' + Math.random().toString(36).substr(2,4).toUpperCase();
-}
+function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
 
-function getFingerprint() {
-  const s = window.screen, n = navigator;
-  const raw = [n.language||'',n.platform||'',s.colorDepth||'',
-    s.width+'x'+s.height,n.hardwareConcurrency||'',
-    Intl.DateTimeFormat().resolvedOptions().timeZone||'',
-    n.userAgent.replace(/\s+/g,'').slice(0,50)].join('|');
-  let h = 0;
-  for (let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
-  const hex = Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
+function getFingerprint(){
+  const s=window.screen,n=navigator;
+  const raw=[n.language||'',n.platform||'',s.colorDepth||'',s.width+'x'+s.height,n.hardwareConcurrency||'',Intl.DateTimeFormat().resolvedOptions().timeZone||'',n.userAgent.replace(/\s+/g,'').slice(0,50)].join('|');
+  let h=0;for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
+  const hex=Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
   return hex.slice(0,4)+'-'+hex.slice(4);
 }
 
 const MY_FP = getFingerprint();
-document.getElementById('sv-dev-display').textContent = 'DEV-' + MY_FP;
+const urlParams = new URLSearchParams(window.location.search);
+const urlCode = urlParams.get('code');
+const IS_STUDENT = !!urlCode;
 
-function initials(name) {
-  return name.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'??';
+/* ── MODO ── */
+if(IS_STUDENT){
+  document.getElementById('modo-alumno').style.display='flex';
+  document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
+  document.getElementById('s-code').value=urlCode.toUpperCase();
+  SESSION_CODE = urlCode.toUpperCase();
+  checkDuplicateDevice();
+} else {
+  document.getElementById('modo-profesor').style.display='block';
+  initProfesor();
 }
 
-function switchTab(t, btn) {
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('view-'+t).classList.add('active');
-  if (t==='qr') renderQR();
-  if (t==='alumno') checkDeviceWarn();
-  if (t==='ruleta') renderWheel();
-}
-
-function checkDeviceWarn() {
-  if (deviceRegistry[MY_FP]) {
-    document.getElementById('sv-dev-warn').classList.add('show');
-    document.getElementById('sv-form').style.opacity='0.45';
-    document.getElementById('sv-form').style.pointerEvents='none';
+/* ── ALUMNO ── */
+async function checkDuplicateDevice(){
+  const snap = await get(ref(db, 'sesiones/'+SESSION_CODE+'/dispositivos/'+MY_FP));
+  if(snap.exists()){
+    document.getElementById('s-dev-warn').classList.add('show');
+    document.getElementById('s-form').style.opacity='0.45';
+    document.getElementById('s-form').style.pointerEvents='none';
   }
 }
 
-function registrar() {
-  const code = document.getElementById('sv-code').value.trim().toUpperCase();
-  const nombre = document.getElementById('sv-nombre').value.trim();
-  const errEl = document.getElementById('sv-err');
-  errEl.className = 'alert a-err';
+window.registrarAlumno = async function(){
+  const code = document.getElementById('s-code').value.trim().toUpperCase();
+  const nombre = document.getElementById('s-nombre').value.trim();
+  const errEl = document.getElementById('s-err');
+  errEl.className='alert a-err';
 
-  if (!nombre || nombre.length < 3) {
-    errEl.textContent = 'Escribe tu nombre completo (al menos 3 caracteres).';
-    errEl.className = 'alert a-err show'; return;
+  if(!nombre||nombre.length<3){
+    errEl.textContent='Escribe tu nombre completo (mínimo 3 caracteres).';
+    errEl.className='alert a-err show';return;
   }
-  if (code !== SESSION_CODE) {
-    errEl.textContent = 'Código de sesión incorrecto. Verifica el código proyectado o pregunta al profesor.';
-    errEl.className = 'alert a-err show'; return;
+
+  const btn = document.getElementById('s-submit-btn');
+  btn.disabled=true;btn.textContent='Registrando...';
+
+  // Verificar código válido en Firebase
+  const sesSnap = await get(ref(db,'sesiones/'+code+'/activa'));
+  if(!sesSnap.exists()||!sesSnap.val()){
+    errEl.textContent='Código de sesión incorrecto o expirado. Pídele el código al profesor.';
+    errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
   }
-  if (deviceRegistry[MY_FP]) {
-    const prev = deviceRegistry[MY_FP];
-    fraudLog.push({nombre, prevName:prev.nombre, device:MY_FP, time:new Date()});
-    updateFraud(); updateStats();
-    errEl.textContent = 'Este dispositivo ya registró a "'+prev.nombre+'". Un solo registro por celular por sesión.';
-    errEl.className = 'alert a-err show'; return;
+
+  // Verificar dispositivo duplicado
+  const devSnap = await get(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP));
+  if(devSnap.exists()){
+    const prev = devSnap.val();
+    // Guardar intento de fraude
+    await push(ref(db,'sesiones/'+code+'/fraudes'),{nombre,prevName:prev.nombre,device:'DEV-'+MY_FP,time:new Date().toISOString()});
+    errEl.textContent='Este dispositivo ya registró a "'+prev.nombre+'". Un solo registro por celular.';
+    errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
   }
 
   const now = new Date();
@@ -382,224 +406,226 @@ function registrar() {
   const status = isLate?'late':'present';
   const timeStr = now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
 
-  deviceRegistry[MY_FP] = {nombre, status, time:timeStr};
-  registros.push({nombre, status, device:'DEV-'+MY_FP, time:timeStr});
-  recentLogs.unshift({nombre, status, time:timeStr});
-  if (recentLogs.length>5) recentLogs.pop();
+  // Guardar registro en Firebase
+  await push(ref(db,'sesiones/'+code+'/registros'),{nombre,status,device:'DEV-'+MY_FP,time:timeStr,timestamp:now.toISOString()});
+  // Marcar dispositivo usado
+  await set(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP),{nombre,status,time:timeStr});
 
-  updateGrid(); updateStats(); updateRecentLog();
-
-  document.getElementById('sv-form').style.display='none';
-  document.getElementById('sv-suc-name').textContent = nombre;
-  document.getElementById('sv-suc-sub').textContent = (isLate?'Registrado con tardanza':'Asistencia confirmada') + ' · ' + timeStr;
-  document.getElementById('sv-success').className = 'success-box show';
+  document.getElementById('s-form').style.display='none';
+  document.getElementById('s-suc-name').textContent=nombre;
+  document.getElementById('s-suc-sub').textContent=timeStr+' · '+now.toLocaleDateString('es',{day:'numeric',month:'long'});
+  const badge=document.getElementById('s-suc-badge');
+  badge.textContent=isLate?'TARDANZA':'PRESENTE';
+  badge.className='s-suc-badge '+(isLate?'sb-t':'sb-p');
+  document.getElementById('s-success').className='s-success show';
 }
 
-function updateGrid() {
-  const grid = document.getElementById('reg-grid');
-  if (registros.length===0) {
-    grid.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>Esperando registros de alumnos...</div>';
+/* ── PROFESOR ── */
+function initProfesor(){
+  updateSessionPanel();
+  updateTimerUI();
+
+  // Escuchar registros en tiempo real desde Firebase
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'), snap=>{
+    registros=[];
+    if(snap.exists()) snap.forEach(child=>registros.push(child.val()));
+    updateGrid();updateStats();renderWheel();
+    document.getElementById('fb-dot').className='fb-dot connected';
+    document.getElementById('fb-label').textContent='Conectado — tiempo real';
+  });
+
+  // Escuchar fraudes
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/fraudes'), snap=>{
+    fraudLog=[];
+    if(snap.exists()) snap.forEach(child=>fraudLog.push(child.val()));
+    updateFraud();
+  });
+
+  // Activar sesión en Firebase
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+
+  setInterval(()=>{
+    if(timerSec>0){timerSec--;updateTimerUI();}
+    else{
+      // Desactivar sesión vieja
+      set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
+      SESSION_CODE=genCode();timerSec=300;
+      activarNuevaSesion();
+    }
+  },1000);
+}
+
+function activarNuevaSesion(){
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'), snap=>{
+    registros=[];
+    if(snap.exists()) snap.forEach(child=>registros.push(child.val()));
+    updateGrid();updateStats();renderWheel();
+  });
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/fraudes'), snap=>{
+    fraudLog=[];
+    if(snap.exists()) snap.forEach(child=>fraudLog.push(child.val()));
+    updateFraud();
+  });
+  updateSessionPanel();updateTimerUI();
+}
+
+function initials(n){return n.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'??';}
+
+window.switchTab = function(t,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('view-'+t).classList.add('active');
+  if(t==='sesion') updateSessionPanel();
+  if(t==='ruleta') renderWheel();
+}
+
+function getPageURL(){return window.location.origin+window.location.pathname;}
+
+function updateSessionPanel(){
+  const link=getPageURL()+'?code='+SESSION_CODE;
+  document.getElementById('p-code-big').textContent=SESSION_CODE;
+  document.getElementById('inf-code').textContent=SESSION_CODE;
+  document.getElementById('inf-date').textContent=new Date().toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
+  const el=document.getElementById('share-link-text');if(el)el.textContent=link;
+  const pm=document.getElementById('preview-msg');
+  if(pm)pm.innerHTML='📚 <strong style="color:var(--text)">Registro de asistencia</strong><br>Tecnología y Programación<br><br>🔗 <span style="color:#818cf8">'+link+'</span><br>📝 Código: <strong style="color:var(--text);letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
+}
+
+window.copyLink=function(){
+  navigator.clipboard.writeText(getPageURL()+'?code='+SESSION_CODE).then(()=>flashCopy('copy-link-btn','¡Copiado!'));
+}
+window.copyMsg=function(){
+  const link=getPageURL()+'?code='+SESSION_CODE;
+  const msg='📚 *Registro de asistencia*\nTecnología y Programación\n\n🔗 '+link+'\n📝 Código: *'+SESSION_CODE+'*\n\nAbre el enlace y escribe tu nombre.';
+  navigator.clipboard.writeText(msg).then(()=>flashCopy('copy-msg-btn','¡Copiado!'));
+}
+
+function flashCopy(id,txt){
+  const btn=document.getElementById(id);const orig=btn.textContent;
+  btn.textContent=txt;btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
+}
+
+function updateGrid(){
+  const g=document.getElementById('reg-grid');
+  if(!registros.length){
+    g.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>Esperando registros de alumnos...</div>';
     return;
   }
-  grid.innerHTML = registros.map(r=>`
-    <div class="rc ${r.status}">
-      <div class="rc-top">
-        <div class="av ${r.status}">${initials(r.nombre)}</div>
-        <div><div class="rc-name">${r.nombre}</div><div class="rc-time">${r.time}</div></div>
-      </div>
-      <div class="rc-dev">${r.device}</div>
-      <span class="badge ${r.status==='present'?'bp':'bt'}">${r.status==='present'?'PRESENTE':'TARDANZA'}</span>
-    </div>`).join('');
+  g.innerHTML=registros.map(r=>`<div class="rc ${r.status}"><div class="rc-top"><div class="av ${r.status}">${initials(r.nombre)}</div><div><div class="rc-name">${r.nombre}</div><div class="rc-time">${r.time}</div></div></div><div class="rc-dev">${r.device}</div><span class="badge ${r.status==='present'?'bp':'bt'}">${r.status==='present'?'PRESENTE':'TARDANZA'}</span></div>`).join('');
 }
 
-function updateStats() {
-  const p = registros.filter(r=>r.status==='present').length;
-  const t = registros.filter(r=>r.status==='late').length;
-  document.getElementById('st-total').textContent = registros.length;
-  document.getElementById('st-present').textContent = p;
-  document.getElementById('st-late').textContent = t;
-  document.getElementById('st-fraud').textContent = fraudLog.length;
-  document.getElementById('inf-regs').textContent = registros.length;
-  document.getElementById('inf-devs').textContent = Object.keys(deviceRegistry).length;
-  document.getElementById('inf-fraud2').textContent = fraudLog.length;
-  const pct = Math.min(100, Math.round((registros.length/30)*100));
-  document.getElementById('prog-fill').style.width = pct+'%';
-  document.getElementById('prog-time').textContent = new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+function updateStats(){
+  const p=registros.filter(r=>r.status==='present').length;
+  const t=registros.filter(r=>r.status==='late').length;
+  document.getElementById('st-total').textContent=registros.length;
+  document.getElementById('st-present').textContent=p;
+  document.getElementById('st-late').textContent=t;
+  document.getElementById('st-fraud').textContent=fraudLog.length;
+  document.getElementById('inf-regs').textContent=registros.length;
+  document.getElementById('inf-fraud2').textContent=fraudLog.length;
+  document.getElementById('prog-fill').style.width=Math.min(100,Math.round((registros.length/30)*100))+'%';
+  document.getElementById('prog-time').textContent=new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
 }
 
-function updateRecentLog() {
-  document.getElementById('recent-log').innerHTML = recentLogs.length===0
-    ? '<div style="font-size:12px;color:var(--muted)">Sin registros aún</div>'
-    : recentLogs.map(r=>`<div class="log-item"><span style="color:var(--text)">${r.nombre}</span><span style="color:${r.status==='present'?'var(--green)':'var(--amber)'};font-family:\'Space Mono\',monospace;font-size:11px">${r.time}</span></div>`).join('');
-}
-
-function updateFraud() {
-  document.getElementById('st-fraud').textContent = fraudLog.length;
-  document.getElementById('inf-fraud2').textContent = fraudLog.length;
-  if (fraudLog.length===0){document.getElementById('fraud-section').style.display='none';return;}
+function updateFraud(){
+  if(!fraudLog.length){document.getElementById('fraud-section').style.display='none';return;}
   document.getElementById('fraud-section').style.display='block';
-  document.getElementById('fraud-log').innerHTML = fraudLog.map(f=>`
-    <div class="fi"><div class="fdot"></div>
-    <span>Intento: <strong>${f.nombre}</strong> — dispositivo ya registrado como <strong>${f.prevName}</strong> · ${f.time.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})}</span>
-    </div>`).join('');
+  document.getElementById('fraud-log').innerHTML=fraudLog.map(f=>`<div class="fi"><div class="fdot"></div><span>Intento: <strong>${f.nombre}</strong> — dispositivo ya registrado como <strong>${f.prevName}</strong></span></div>`).join('');
 }
 
-function resetSesion() {
-  registros=[];deviceRegistry={};fraudLog=[];recentLogs=[];
+window.resetSesion = function(){
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
+  registros=[];fraudLog=[];
   SESSION_CODE=genCode();timerSec=300;
   document.getElementById('fraud-section').style.display='none';
-  updateGrid();updateStats();updateRecentLog();updateFraud();updateTimerUI();renderWheel();
-  document.getElementById('sv-form').style.cssText='';
-  document.getElementById('sv-dev-warn').className='alert a-warn';
-  document.getElementById('sv-success').className='success-box';
-  document.getElementById('sv-err').className='alert a-err';
-  document.getElementById('sv-code').value='';
-  document.getElementById('sv-nombre').value='';
+  updateGrid();updateStats();updateFraud();updateTimerUI();renderWheel();
+  activarNuevaSesion();
 }
 
-function exportar() {
+window.renewCode = function(){
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
+  SESSION_CODE=genCode();timerSec=300;
+  activarNuevaSesion();
+}
+
+window.exportar = function(){
   const p=registros.filter(r=>r.status==='present').map(r=>r.nombre).join(', ')||'ninguno';
   const t=registros.filter(r=>r.status==='late').map(r=>r.nombre).join(', ')||'ninguno';
   const date=new Date().toLocaleDateString('es',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const content=`ACTA DE ASISTENCIA\nTecnología y Programación\n${date}\nCódigo de sesión: ${SESSION_CODE}\n\nPRESENTES (${registros.filter(r=>r.status==='present').length}):\n${p}\n\nTARDANZAS (${registros.filter(r=>r.status==='late').length}):\n${t}\n\nINTENTOS BLOQUEADOS: ${fraudLog.length}\nTOTAL REGISTRADO: ${registros.length}`;
-  const blob=new Blob([content],{type:'text/plain;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='asistencia-'+SESSION_CODE+'.txt';
-  a.click();
+  const blob=new Blob([`ACTA DE ASISTENCIA\nTecnología y Programación\n${date}\nCódigo: ${SESSION_CODE}\n\nPRESENTES (${registros.filter(r=>r.status==='present').length}):\n${p}\n\nTARDANZAS (${registros.filter(r=>r.status==='late').length}):\n${t}\n\nBLOQUEADOS: ${fraudLog.length}\nTOTAL: ${registros.length}`],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='asistencia-'+SESSION_CODE+'.txt';a.click();
 }
 
-function renewQR() { SESSION_CODE=genCode();timerSec=300;renderQR();updateTimerUI(); }
-
-function renderQR() {
-  document.getElementById('qr-code-label').textContent = SESSION_CODE;
-  document.getElementById('inf-code').textContent = SESSION_CODE;
-  document.getElementById('inf-date').textContent = new Date().toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
-  const canvas=document.getElementById('qr-canvas');
-  if(!canvas)return;
-  drawQR(canvas.getContext('2d'), SESSION_CODE, 200);
-}
-
-function drawQR(ctx, text, size) {
-  const mod=27, cell=Math.floor(size/mod);
-  let hash=0;
-  for(let i=0;i<text.length;i++){hash=((hash<<5)-hash)+text.charCodeAt(i);hash|=0;}
-  const rand=(x,y)=>{let n=(x*37+y*101+hash)%256;return n<0?n+256:n;};
-  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,size,size);
-  ctx.fillStyle='#0a0e1a';
-  for(let y=0;y<mod;y++) for(let x=0;x<mod;x++){
-    const inC=(x<7&&y<7)||(x>=mod-7&&y<7)||(x<7&&y>=mod-7);
-    const inner=(x>=1&&x<=5&&y>=1&&y<=5)||(x>=1&&x<=5&&y>=mod-6&&y<=mod-2)||(x>=mod-6&&x<=mod-2&&y>=1&&y<=5);
-    if(inC){
-      const border=(x===0||x===6)&&y<7||(y===0||y===6)&&x<7||(x===0||x===6)&&y>=mod-7||(y===0||y===6)&&x>=mod-7;
-      if(border) ctx.fillRect(x*cell,y*cell,cell,cell);
-    } else if(!inner && rand(x,y)>115) ctx.fillRect(x*cell,y*cell,cell,cell);
-  }
-  [[0,0],[0,(mod-7)*cell],[(mod-7)*cell,0]].forEach(([ox,oy])=>{
-    const cs=7*cell,ip=2*cell;
-    ctx.fillStyle='#ffffff';ctx.fillRect(ox+cell,oy+cell,cs-2*cell,cs-2*cell);
-    ctx.fillStyle='#0a0e1a';ctx.fillRect(ox+ip,oy+ip,cs-2*ip,cs-2*ip);
-  });
-  ctx.fillStyle='#6366f1';
-  const cx=Math.floor(size/2)-cell,cy=Math.floor(size/2)-cell;
-  ctx.fillRect(cx,cy,2*cell,2*cell);
-}
-
-function updateTimerUI() {
+function updateTimerUI(){
   const m=Math.floor(timerSec/60),s=timerSec%60;
-  document.getElementById('tcountdown').textContent=m+':'+(s<10?'0':'')+s;
-  const dot=document.getElementById('tdot'),lbl=document.getElementById('tlabel');
-  if(timerSec>60){dot.className='tdot ok';lbl.textContent='QR activo';}
-  else if(timerSec>0){dot.className='tdot warn';lbl.textContent='QR expira pronto';}
-  else{dot.className='tdot err';lbl.textContent='QR expirado';}
+  const el=document.getElementById('tcountdown');if(el)el.textContent=m+':'+(s<10?'0':'')+s;
+  const dot=document.getElementById('tdot'),lbl=document.getElementById('tlabel');if(!dot)return;
+  if(timerSec>60){dot.className='tdot ok';lbl.textContent='Sesión activa';}
+  else if(timerSec>0){dot.className='tdot warn';lbl.textContent='Código expira pronto';}
+  else{dot.className='tdot err';lbl.textContent='Código expirado';}
 }
 
-/* ---- RULETA ---- */
-function renderWheel() {
-  const canvas = document.getElementById('wheel-canvas');
-  const ctx = canvas.getContext('2d');
-  const names = registros.map(r=>r.nombre);
-  const size = canvas.width;
-  const cx = size/2, cy = size/2, r = size/2 - 4;
-
+/* RULETA */
+function renderWheel(){
+  const canvas=document.getElementById('wheel-canvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const names=registros.map(r=>r.nombre);
+  const size=canvas.width,cx=size/2,cy=size/2,r=size/2-4;
   ctx.clearRect(0,0,size,size);
-
-  document.getElementById('no-students-msg').style.display = names.length===0?'block':'none';
-  document.getElementById('spin-btn').disabled = names.length===0;
-  document.getElementById('roulette-count').textContent = names.length>0 ? names.length+' alumno'+(names.length!==1?'s':'') +' en ruleta':'';
-
-  if (names.length===0) {
-    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
-    ctx.fillStyle='#1a2234';ctx.fill();
+  const noMsg=document.getElementById('no-students-msg');
+  const spinBtn=document.getElementById('spin-btn');
+  const countEl=document.getElementById('roulette-count');
+  if(noMsg)noMsg.style.display=names.length===0?'block':'none';
+  if(spinBtn)spinBtn.disabled=names.length===0;
+  if(countEl)countEl.textContent=names.length>0?names.length+' alumno'+(names.length!==1?'s':'')+' en ruleta':'';
+  if(!names.length){
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#1a2234';ctx.fill();
     ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=2;ctx.stroke();
-    ctx.fillStyle='rgba(255,255,255,0.2)';
-    ctx.font='13px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('Sin alumnos',cx,cy);
-    return;
+    ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='13px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('Sin alumnos',cx,cy);return;
   }
-
-  const slice = (Math.PI*2)/names.length;
+  const slice=(Math.PI*2)/names.length;
   names.forEach((name,i)=>{
-    const start = wheelAngle + i*slice - Math.PI/2;
-    const end = start + slice;
+    const start=wheelAngle+i*slice-Math.PI/2,end=start+slice;
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
-    ctx.fillStyle = COLORS[i%COLORS.length];ctx.fill();
-    ctx.strokeStyle='rgba(10,14,26,0.6)';ctx.lineWidth=2;ctx.stroke();
-
+    ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();
+    ctx.strokeStyle='rgba(10,14,26,0.5)';ctx.lineWidth=2;ctx.stroke();
     ctx.save();ctx.translate(cx,cy);ctx.rotate(start+slice/2);
-    ctx.textAlign='right';ctx.fillStyle='#fff';
-    const fontSize = Math.min(13, Math.max(9, 180/names.length));
-    ctx.font=`600 ${fontSize}px DM Sans`;
-    const label = name.split(' ')[0].slice(0,10);
-    ctx.fillText(label, r-10, 4);
+    ctx.textAlign='right';ctx.fillStyle='rgba(255,255,255,0.95)';
+    const fs=Math.min(13,Math.max(9,180/names.length));
+    ctx.font=`600 ${fs}px DM Sans`;
+    ctx.fillText(name.split(' ')[0].slice(0,10),r-10,4);
     ctx.restore();
   });
-
-  ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);
-  ctx.fillStyle='#0a0e1a';ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fillStyle='#0a0e1a';ctx.fill();
   ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=2;ctx.stroke();
 }
 
-function spinWheel() {
-  if (isSpinning || registros.length===0) return;
-  isSpinning = true;
-  document.getElementById('spin-btn').disabled = true;
-  document.getElementById('result-display').innerHTML = '<span style="color:var(--muted);font-size:13px">Girando...</span>';
-
-  const names = registros.map(r=>r.nombre);
-  const winner = Math.floor(Math.random()*names.length);
-  const slice = (Math.PI*2)/names.length;
-  const targetAngle = (Math.PI*2)*5 + (Math.PI*2 - winner*slice - slice/2) - wheelAngle % (Math.PI*2);
-  const totalSpins = targetAngle + Math.PI*2 * (3+Math.random()*3);
-
-  const duration = 4000 + Math.random()*1500;
-  const start = performance.now();
-  const startAngle = wheelAngle;
-
-  function ease(t) { return t<1 ? 1-Math.pow(1-t,3) : 1; }
-
-  function frame(now) {
-    const elapsed = now - start;
-    const t = Math.min(elapsed/duration, 1);
-    wheelAngle = startAngle + totalSpins * ease(t);
-    renderWheel();
-    if (t<1) { requestAnimationFrame(frame); return; }
-    isSpinning = false;
-    document.getElementById('spin-btn').disabled = false;
-    const w = registros[winner];
-    document.getElementById('result-display').innerHTML =
-      `<div><span class="result-name">${w.nombre}</span><span class="result-badge">${w.status==='present'?'PRESENTE':'TARDANZA'}</span></div>`;
+window.spinWheel = function(){
+  if(isSpinning||!registros.length)return;
+  isSpinning=true;
+  document.getElementById('spin-btn').disabled=true;
+  document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Girando...</span>';
+  const names=registros.map(r=>r.nombre);
+  const winner=Math.floor(Math.random()*names.length);
+  const slice=(Math.PI*2)/names.length;
+  const totalSpins=(Math.PI*2)*5+(Math.PI*2-winner*slice-slice/2)-wheelAngle%(Math.PI*2)+(Math.PI*2)*(3+Math.random()*3);
+  const duration=4000+Math.random()*1500;
+  const t0=performance.now(),a0=wheelAngle;
+  function ease(t){return 1-Math.pow(1-t,3);}
+  function frame(now){
+    const t=Math.min((now-t0)/duration,1);
+    wheelAngle=a0+totalSpins*ease(t);renderWheel();
+    if(t<1){requestAnimationFrame(frame);return;}
+    isSpinning=false;document.getElementById('spin-btn').disabled=false;
+    const w=registros[winner];
+    document.getElementById('result-display').innerHTML=`<div><span class="result-name">${w.nombre}</span><span class="result-badge">${w.status==='present'?'PRESENTE':'TARDANZA'}</span></div>`;
   }
-
   requestAnimationFrame(frame);
 }
-
-timerInt = setInterval(()=>{
-  if(timerSec>0){timerSec--;updateTimerUI();}
-  else{SESSION_CODE=genCode();timerSec=300;renderQR();}
-},1000);
-
-renderQR();updateStats();updateTimerUI();renderWheel();
 </script>
 </body>
 </html>
