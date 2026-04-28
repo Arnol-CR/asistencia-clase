@@ -20,18 +20,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 /* SETUP */
 #modo-setup{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
-.setup-shell{width:100%;max-width:440px}
+.setup-shell{width:100%;max-width:460px}
 .setup-brand{text-align:center;margin-bottom:32px}
 .setup-logo{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
 .setup-logo span{color:var(--accent)}
 .setup-sub{font-size:13px;color:var(--muted)}
-.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:14px}
 .setup-section{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
 .setup-field{margin-bottom:14px}
 .setup-field:last-child{margin-bottom:0}
 .setup-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500}
 .setup-field input{width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
 .setup-field input:focus{border-color:var(--accent)}
+.dur-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.dur-btn{padding:10px 4px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;background:var(--bg2);color:var(--muted);text-align:center;transition:all .2s;font-family:'DM Sans',sans-serif;line-height:1.3}
+.dur-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--text);font-weight:600}
+.dur-btn:hover:not(.active){color:var(--text)}
+.dur-btn .dur-label{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.dur-custom{width:100%;padding:9px 14px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;text-align:center}
+.dur-custom:focus{border-color:var(--accent)}
 .setup-err{font-size:12px;color:#fca5a5;margin-top:8px;display:none}
 .setup-err.show{display:block}
 .start-btn{width:100%;padding:14px;font-size:15px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
@@ -201,7 +208,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
     <div class="modal-title">Sesión finalizada</div>
-    <div class="modal-sub" id="modal-sub">Programación I · Ing. Arnol Carranza</div>
+    <div class="modal-sub">Programación I · Ing. Arnol Carranza</div>
     <div class="modal-stats">
       <div class="modal-stat"><div class="modal-stat-n" id="m-total">0</div><div class="modal-stat-l">Presentes</div></div>
       <div class="modal-stat"><div class="modal-stat-n" id="m-fraud" style="color:var(--red)">0</div><div class="modal-stat-l">Bloqueados</div></div>
@@ -221,7 +228,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="setup-shell">
     <div class="setup-brand">
       <div class="setup-logo">ASISTENCIA<span>.</span>APP</div>
-      <div class="setup-sub">Configura tu sesión de clase antes de iniciar</div>
+      <div class="setup-sub">Configura tu sesión antes de iniciar</div>
     </div>
     <div class="setup-card">
       <div class="setup-section">Información de la clase</div>
@@ -233,9 +240,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <label>Nombre del docente</label>
         <input type="text" id="setup-docente" placeholder="Ej: Ing. Arnol Carranza..." autocomplete="off"/>
       </div>
-      <div class="setup-err" id="setup-err">Por favor completa ambos campos.</div>
     </div>
-    <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión de clase</button>
+    <div class="setup-card">
+      <div class="setup-section">Duración de la sesión</div>
+      <div class="dur-grid">
+        <button class="dur-btn" onclick="selDur(30,this)">30 min<span class="dur-label">Media clase</span></button>
+        <button class="dur-btn active" onclick="selDur(60,this)">1 hora<span class="dur-label">Predeterminado</span></button>
+        <button class="dur-btn" onclick="selDur(90,this)">1:30 h<span class="dur-label">Extendida</span></button>
+        <button class="dur-btn" onclick="selDur(120,this)">2 horas<span class="dur-label">Doble</span></button>
+        <button class="dur-btn" onclick="selDur(180,this)">3 horas<span class="dur-label">Taller</span></button>
+        <button class="dur-btn" onclick="selDur(0,this)">Otro<span class="dur-label">Personalizado</span></button>
+      </div>
+      <input type="number" class="dur-custom" id="dur-custom" placeholder="Minutos personalizados (ej: 45)" style="display:none" oninput="customDur(this.value)"/>
+      <div class="setup-err" id="setup-err">Por favor completa todos los campos.</div>
+    </div>
+    <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión de clase →</button>
   </div>
 </div>
 
@@ -410,7 +429,8 @@ const db = getDatabase(app);
 const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#e11d48','#0ea5e9','#a855f7','#22c55e','#eab308'];
 
 let SESSION_CODE = genCode();
-let timerSec = 1800;
+let timerSec = 3600; // 1 hora predeterminado
+let selectedDurMin = 60;
 let registros = [];
 let registroKeys = {};
 let fraudLog = [];
@@ -435,17 +455,56 @@ const urlParams = new URLSearchParams(window.location.search);
 const urlCode = urlParams.get('code');
 const IS_STUDENT = !!urlCode;
 
-// Aviso al recargar si hay sesión activa con alumnos
-window.addEventListener('beforeunload', e => {
-  if(!IS_STUDENT && registros.length > 0){
-    e.preventDefault(); e.returnValue='';
-  }
+// Aviso al cerrar/recargar si hay alumnos
+window.addEventListener('beforeunload', e=>{
+  if(!IS_STUDENT && registros.length>0){e.preventDefault();e.returnValue='';}
 });
 
+/* ── SETUP functions ── */
+window.selDur = function(min, btn){
+  selectedDurMin = min;
+  document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const custom = document.getElementById('dur-custom');
+  if(min===0){ custom.style.display='block'; custom.focus(); }
+  else { custom.style.display='none'; custom.value=''; }
+}
+window.customDur = function(v){
+  if(v && parseInt(v)>0) selectedDurMin = parseInt(v);
+}
+window.iniciarSesion = function(){
+  const clase = document.getElementById('setup-clase').value.trim();
+  const docente = document.getElementById('setup-docente').value.trim();
+  const errEl = document.getElementById('setup-err');
+  const durMin = selectedDurMin || parseInt(document.getElementById('dur-custom').value||'0');
+  if(!clase||!docente||durMin<1){errEl.className='setup-err show';return;}
+  errEl.className='setup-err';
+  CLASE=clase; DOCENTE=docente;
+  SESSION_CODE=genCode(); timerSec=durMin*60;
+  localStorage.setItem('asistencia_session',JSON.stringify({
+    code:SESSION_CODE,clase:CLASE,docente:DOCENTE,
+    expiresAt:Date.now()+(timerSec*1000)
+  }));
+  document.getElementById('modo-setup').style.display='none';
+  document.getElementById('modo-profesor').style.display='block';
+  aplicarNombres();
+  initProfesor(true);
+}
+
+function aplicarNombres(){
+  document.getElementById('header-clase').textContent=CLASE;
+  document.getElementById('header-docente').textContent=DOCENTE;
+}
+
+function guardarEstado(){
+  localStorage.setItem('asistencia_session',JSON.stringify({
+    code:SESSION_CODE,clase:CLASE,docente:DOCENTE,
+    expiresAt:Date.now()+(timerSec*1000)
+  }));
+}
+
 if(IS_STUDENT){
-  // Modo alumno: viene con ?code= en el enlace
-  SESSION_CODE = urlCode.toUpperCase();
-  // Cargar clase/docente desde Firebase para mostrar en la pantalla
+  SESSION_CODE=urlCode.toUpperCase();
   get(ref(db,'sesiones/'+SESSION_CODE+'/meta')).then(snap=>{
     if(snap.exists()){
       const m=snap.val();
@@ -458,56 +517,17 @@ if(IS_STUDENT){
   document.getElementById('s-code').value=SESSION_CODE;
   checkDuplicate();
 } else {
-  // Modo profesor: verificar si hay sesión guardada en localStorage
-  const saved = JSON.parse(localStorage.getItem('asistencia_session')||'null');
-  const now = Date.now();
-  if(saved && saved.code && saved.expiresAt && now < saved.expiresAt){
-    // Restaurar sesión activa
-    SESSION_CODE = saved.code;
-    CLASE = saved.clase;
-    DOCENTE = saved.docente;
-    timerSec = Math.max(0, Math.floor((saved.expiresAt - now)/1000));
+  const saved=JSON.parse(localStorage.getItem('asistencia_session')||'null');
+  const now=Date.now();
+  if(saved&&saved.code&&saved.expiresAt&&now<saved.expiresAt){
+    SESSION_CODE=saved.code; CLASE=saved.clase; DOCENTE=saved.docente;
+    timerSec=Math.max(0,Math.floor((saved.expiresAt-now)/1000));
     document.getElementById('modo-profesor').style.display='block';
     aplicarNombres();
-    initProfesor(false); // false = no sobreescribir meta en Firebase
+    initProfesor(false);
   } else {
-    // No hay sesión activa → mostrar pantalla de setup
     localStorage.removeItem('asistencia_session');
     document.getElementById('modo-setup').style.display='flex';
-  }
-}
-
-/* ── SETUP ── */
-window.iniciarSesion = function(){
-  const clase = document.getElementById('setup-clase').value.trim();
-  const docente = document.getElementById('setup-docente').value.trim();
-  const errEl = document.getElementById('setup-err');
-  if(!clase || !docente){ errEl.className='setup-err show'; return; }
-  errEl.className='setup-err';
-  CLASE = clase; DOCENTE = docente;
-  SESSION_CODE = genCode(); timerSec = 1800;
-  // Guardar en localStorage para persistir al recargar
-  localStorage.setItem('asistencia_session', JSON.stringify({
-    code: SESSION_CODE, clase: CLASE, docente: DOCENTE,
-    expiresAt: Date.now() + (timerSec * 1000)
-  }));
-  document.getElementById('modo-setup').style.display='none';
-  document.getElementById('modo-profesor').style.display='block';
-  aplicarNombres();
-  initProfesor(true);
-}
-
-function aplicarNombres(){
-  document.getElementById('header-clase').textContent = CLASE;
-  document.getElementById('header-docente').textContent = DOCENTE;
-}
-
-function guardarEstado(){
-  if(timerSec > 0){
-    localStorage.setItem('asistencia_session', JSON.stringify({
-      code: SESSION_CODE, clase: CLASE, docente: DOCENTE,
-      expiresAt: Date.now() + (timerSec * 1000)
-    }));
   }
 }
 
@@ -566,23 +586,11 @@ function initProfesor(isNew){
   updateSessionPanel();
   updateTimerUI();
   suscribir();
-  if(isNew){
-    // Guardar metadata en Firebase para que alumnos vean clase/docente
-    set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
-    set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE});
-  } else {
-    // Reconectar sin borrar datos
-    set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
-  }
-
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  if(isNew) set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE});
   setInterval(()=>{
-    if(timerSec>0){
-      timerSec--;
-      updateTimerUI();
-      guardarEstado(); // actualizar tiempo restante en localStorage
-    } else {
-      terminarSesion();
-    }
+    if(timerSec>0){timerSec--;updateTimerUI();guardarEstado();}
+    else{terminarSesion();}
   },1000);
 }
 
@@ -625,7 +633,7 @@ function updateSessionPanel(){
   document.getElementById('inf-date').textContent=new Date().toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
   const slt=document.getElementById('share-link-text');if(slt)slt.textContent=link;
   const pm=document.getElementById('preview-msg');
-  if(pm)pm.innerHTML='📚 <strong style="color:var(--text)">Registro de asistencia</strong><br>Programación I · Ing. Arnol Carranza<br><br>🔗 <span style="color:#818cf8">'+link+'</span><br>📝 Código: <strong style="color:var(--text);letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
+  if(pm)pm.innerHTML='📚 <strong style="color:var(--text)">Registro de asistencia</strong><br>'+CLASE+' · '+DOCENTE+'<br><br>🔗 <span style="color:#818cf8">'+link+'</span><br>📝 Código: <strong style="color:var(--text);letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
 }
 
 window.copyLink=function(){
@@ -633,7 +641,7 @@ window.copyLink=function(){
 }
 window.copyMsg=function(){
   const link=getPageURL()+'?code='+SESSION_CODE;
-  const msg='📚 *Registro de asistencia*\nProgramación I · Ing. Arnol Carranza\n\n🔗 '+link+'\n📝 Código: *'+SESSION_CODE+'*\n\nAbre el enlace y escribe tu nombre.';
+  const msg='📚 *Registro de asistencia*\n'+CLASE+' · '+DOCENTE+'\n\n🔗 '+link+'\n📝 Código: *'+SESSION_CODE+'*\n\nAbre el enlace y escribe tu nombre.';
   navigator.clipboard.writeText(msg).then(()=>flashCopy('copy-msg-btn','¡Copiado!'));
 }
 function flashCopy(id,txt){
@@ -704,16 +712,14 @@ window.terminarSesion = function(){
   localStorage.removeItem('asistencia_session');
   document.getElementById('m-total').textContent=registros.length;
   document.getElementById('m-fraud').textContent=fraudLog.length;
-  // Actualizar modal con clase/docente actuales
-  document.getElementById('modal-sub').textContent=CLASE+' · '+DOCENTE;
   document.getElementById('modal-fin').className='modal-overlay show';
 }
 
 window.cerrarModal = function(){
   document.getElementById('modal-fin').className='modal-overlay';
   registros=[];fraudLog=[];
-  // Volver a pantalla de setup para nueva sesión
   document.getElementById('modo-profesor').style.display='none';
+  // Pre-rellenar setup con datos anteriores
   document.getElementById('setup-clase').value=CLASE;
   document.getElementById('setup-docente').value=DOCENTE;
   document.getElementById('modo-setup').style.display='flex';
@@ -737,8 +743,8 @@ window.exportExcel = function(){
   // Hoja de asistencia
   const wsData=[
     ['ACTA DE ASISTENCIA'],
-    ['Clase:', CLASE||'Programación I'],
-    ['Profesor:', DOCENTE||'Ing. Arnol Carranza'],
+    ['Clase:', CLASE||'—'],
+    ['Profesor:', DOCENTE||'—'],
     ['Fecha:', dateStr],
     ['Hora de cierre:', timeStr],
     ['Código de sesión:', SESSION_CODE],
@@ -822,19 +828,32 @@ window.spinWheel=function(){
   isSpinning=true;
   document.getElementById('spin-btn').disabled=true;
   document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Girando...</span>';
+
   const names=registros.map(r=>r.nombre);
-  const winner=Math.floor(Math.random()*names.length);
   const slice=(Math.PI*2)/names.length;
-  const totalSpins=(Math.PI*2)*5+(Math.PI*2-winner*slice-slice/2)-wheelAngle%(Math.PI*2)+(Math.PI*2)*(3+Math.random()*3);
+
+  // Elegir ganador y calcular cuánto debe girar para que quede apuntado arriba
+  const winner=Math.floor(Math.random()*names.length);
+  // El ganador debe quedar en el tope (ángulo 0 = arriba = -PI/2 en canvas)
+  // Sector del ganador empieza en: wheelAngle + winner*slice - PI/2
+  // Para que quede centrado arriba: ángulo final = -(winner*slice + slice/2)
+  const spinsExtra=(Math.PI*2)*(5+Math.floor(Math.random()*4)); // 5-8 vueltas extra
+  const targetAngle=spinsExtra - (winner*slice + slice/2);
+  const totalRotation=targetAngle - (wheelAngle%(Math.PI*2));
+
   const duration=4000+Math.random()*1500;
   const t0=performance.now(),a0=wheelAngle;
   function ease(t){return 1-Math.pow(1-t,3);}
   function frame(now){
     const t=Math.min((now-t0)/duration,1);
-    wheelAngle=a0+totalSpins*ease(t);renderWheel();
+    wheelAngle=a0+totalRotation*ease(t);
+    renderWheel();
     if(t<1){requestAnimationFrame(frame);return;}
     isSpinning=false;document.getElementById('spin-btn').disabled=false;
-    const w=registros[winner];
+    // Ganador = el que quedó apuntado por el puntero (arriba = ángulo -PI/2)
+    const normalized=(((-wheelAngle)%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
+    const winnerIdx=Math.floor(normalized/slice)%names.length;
+    const w=registros[winnerIdx];
     document.getElementById('result-display').innerHTML=`<div><span class="result-name">${w.nombre}</span><span class="result-badge">PRESENTE</span></div>`;
   }
   requestAnimationFrame(frame);
