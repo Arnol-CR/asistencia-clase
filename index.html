@@ -447,11 +447,19 @@ function initials(n){return n.trim().split(/\s+/).map(w=>w[0]||'').join('').slic
 function getPageURL(){return window.location.origin+window.location.pathname;}
 
 function getFingerprint(){
+  // Primero intentar recuperar ID guardado en este dispositivo/navegador
+  let stored = localStorage.getItem('classapp_device_id');
+  if(stored) return stored;
+  // Generar ID único combinando datos del dispositivo + aleatorio
   const s=window.screen,n=navigator;
   const raw=[n.language||'',n.platform||'',s.colorDepth||'',s.width+'x'+s.height,n.hardwareConcurrency||'',Intl.DateTimeFormat().resolvedOptions().timeZone||'',n.userAgent.replace(/\s+/g,'').slice(0,50)].join('|');
   let h=0;for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
-  const hex=Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
-  return hex.slice(0,4)+'-'+hex.slice(4);
+  const base=Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
+  // Agregar parte aleatoria para que dos celulares iguales sean distintos
+  const rand=Math.random().toString(36).substr(2,4).toUpperCase();
+  const fp=base.slice(0,4)+'-'+base.slice(4,8)+'-'+rand;
+  localStorage.setItem('classapp_device_id', fp);
+  return fp;
 }
 const MY_FP = getFingerprint();
 
