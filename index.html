@@ -18,6 +18,25 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 
+/* SETUP */
+#modo-setup{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
+.setup-shell{width:100%;max-width:440px}
+.setup-brand{text-align:center;margin-bottom:32px}
+.setup-logo{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
+.setup-logo span{color:var(--accent)}
+.setup-sub{font-size:13px;color:var(--muted)}
+.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.setup-section{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.setup-field{margin-bottom:14px}
+.setup-field:last-child{margin-bottom:0}
+.setup-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.setup-field input{width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.setup-field input:focus{border-color:var(--accent)}
+.setup-err{font-size:12px;color:#fca5a5;margin-top:8px;display:none}
+.setup-err.show{display:block}
+.start-btn{width:100%;padding:14px;font-size:15px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
+.start-btn:hover{background:#4f46e5;transform:translateY(-1px)}
+
 /* MODO ALUMNO */
 #modo-alumno{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
 .student-shell{width:100%;max-width:420px}
@@ -182,7 +201,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
     <div class="modal-title">Sesión finalizada</div>
-    <div class="modal-sub">Programación I · Ing. Arnol Carranza</div>
+    <div class="modal-sub" id="modal-sub">Programación I · Ing. Arnol Carranza</div>
     <div class="modal-stats">
       <div class="modal-stat"><div class="modal-stat-n" id="m-total">0</div><div class="modal-stat-l">Presentes</div></div>
       <div class="modal-stat"><div class="modal-stat-n" id="m-fraud" style="color:var(--red)">0</div><div class="modal-stat-l">Bloqueados</div></div>
@@ -197,14 +216,37 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
+<!-- MODO SETUP -->
+<div id="modo-setup">
+  <div class="setup-shell">
+    <div class="setup-brand">
+      <div class="setup-logo">ASISTENCIA<span>.</span>APP</div>
+      <div class="setup-sub">Configura tu sesión de clase antes de iniciar</div>
+    </div>
+    <div class="setup-card">
+      <div class="setup-section">Información de la clase</div>
+      <div class="setup-field">
+        <label>Nombre de la clase</label>
+        <input type="text" id="setup-clase" placeholder="Ej: Programación I, Cálculo II..." autocomplete="off"/>
+      </div>
+      <div class="setup-field">
+        <label>Nombre del docente</label>
+        <input type="text" id="setup-docente" placeholder="Ej: Ing. Arnol Carranza..." autocomplete="off"/>
+      </div>
+      <div class="setup-err" id="setup-err">Por favor completa ambos campos.</div>
+    </div>
+    <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión de clase</button>
+  </div>
+</div>
+
 <!-- MODO ALUMNO -->
 <div id="modo-alumno">
   <div class="student-shell">
     <div class="student-brand">
       <div class="brand-dot"></div>
-      <div class="brand-name">PROGRAMACIÓN I</div>
+      <div class="brand-name" id="s-clase-lbl">PROGRAMACIÓN I</div>
       <div class="brand-title">Registro de asistencia</div>
-      <div class="brand-prof">Ing. Arnol Carranza</div>
+      <div class="brand-prof" id="s-docente-lbl">Ing. Arnol Carranza</div>
     </div>
     <div class="alert a-warn" id="s-dev-warn">Tu dispositivo ya tiene un registro en esta sesión.</div>
     <div class="alert a-err" id="s-err"></div>
@@ -244,8 +286,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <span class="logo-text">ASISTENCIA.APP</span>
       </div>
       <div class="header-right">
-        <div class="header-title">Programación I</div>
-        <div class="header-prof">Ing. Arnol Carranza</div>
+        <div class="header-title" id="header-clase">Programación I</div>
+        <div class="header-prof" id="header-docente">Ing. Arnol Carranza</div>
       </div>
     </div>
     <div class="tabs">
@@ -368,13 +410,15 @@ const db = getDatabase(app);
 const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#e11d48','#0ea5e9','#a855f7','#22c55e','#eab308'];
 
 let SESSION_CODE = genCode();
-let timerSec = 1800; // 30 minutos
+let timerSec = 1800;
 let registros = [];
-let registroKeys = {}; // nombre -> firebaseKey para poder expulsar
+let registroKeys = {};
 let fraudLog = [];
 let isSpinning = false;
 let wheelAngle = 0;
 let recentLogs = [];
+let CLASE = '';
+let DOCENTE = '';
 
 function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
 
@@ -391,15 +435,80 @@ const urlParams = new URLSearchParams(window.location.search);
 const urlCode = urlParams.get('code');
 const IS_STUDENT = !!urlCode;
 
+// Aviso al recargar si hay sesión activa con alumnos
+window.addEventListener('beforeunload', e => {
+  if(!IS_STUDENT && registros.length > 0){
+    e.preventDefault(); e.returnValue='';
+  }
+});
+
 if(IS_STUDENT){
+  // Modo alumno: viene con ?code= en el enlace
+  SESSION_CODE = urlCode.toUpperCase();
+  // Cargar clase/docente desde Firebase para mostrar en la pantalla
+  get(ref(db,'sesiones/'+SESSION_CODE+'/meta')).then(snap=>{
+    if(snap.exists()){
+      const m=snap.val();
+      document.getElementById('s-clase-lbl').textContent=(m.clase||'').toUpperCase();
+      document.getElementById('s-docente-lbl').textContent=m.docente||'';
+    }
+  });
   document.getElementById('modo-alumno').style.display='flex';
   document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
-  document.getElementById('s-code').value=urlCode.toUpperCase();
-  SESSION_CODE = urlCode.toUpperCase();
+  document.getElementById('s-code').value=SESSION_CODE;
   checkDuplicate();
 } else {
+  // Modo profesor: verificar si hay sesión guardada en localStorage
+  const saved = JSON.parse(localStorage.getItem('asistencia_session')||'null');
+  const now = Date.now();
+  if(saved && saved.code && saved.expiresAt && now < saved.expiresAt){
+    // Restaurar sesión activa
+    SESSION_CODE = saved.code;
+    CLASE = saved.clase;
+    DOCENTE = saved.docente;
+    timerSec = Math.max(0, Math.floor((saved.expiresAt - now)/1000));
+    document.getElementById('modo-profesor').style.display='block';
+    aplicarNombres();
+    initProfesor(false); // false = no sobreescribir meta en Firebase
+  } else {
+    // No hay sesión activa → mostrar pantalla de setup
+    localStorage.removeItem('asistencia_session');
+    document.getElementById('modo-setup').style.display='flex';
+  }
+}
+
+/* ── SETUP ── */
+window.iniciarSesion = function(){
+  const clase = document.getElementById('setup-clase').value.trim();
+  const docente = document.getElementById('setup-docente').value.trim();
+  const errEl = document.getElementById('setup-err');
+  if(!clase || !docente){ errEl.className='setup-err show'; return; }
+  errEl.className='setup-err';
+  CLASE = clase; DOCENTE = docente;
+  SESSION_CODE = genCode(); timerSec = 1800;
+  // Guardar en localStorage para persistir al recargar
+  localStorage.setItem('asistencia_session', JSON.stringify({
+    code: SESSION_CODE, clase: CLASE, docente: DOCENTE,
+    expiresAt: Date.now() + (timerSec * 1000)
+  }));
+  document.getElementById('modo-setup').style.display='none';
   document.getElementById('modo-profesor').style.display='block';
-  initProfesor();
+  aplicarNombres();
+  initProfesor(true);
+}
+
+function aplicarNombres(){
+  document.getElementById('header-clase').textContent = CLASE;
+  document.getElementById('header-docente').textContent = DOCENTE;
+}
+
+function guardarEstado(){
+  if(timerSec > 0){
+    localStorage.setItem('asistencia_session', JSON.stringify({
+      code: SESSION_CODE, clase: CLASE, docente: DOCENTE,
+      expiresAt: Date.now() + (timerSec * 1000)
+    }));
+  }
 }
 
 /* ── ALUMNO ── */
@@ -453,15 +562,27 @@ window.registrarAlumno = async function(){
 }
 
 /* ── PROFESOR ── */
-function initProfesor(){
+function initProfesor(isNew){
   updateSessionPanel();
   updateTimerUI();
   suscribir();
-  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  if(isNew){
+    // Guardar metadata en Firebase para que alumnos vean clase/docente
+    set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+    set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE});
+  } else {
+    // Reconectar sin borrar datos
+    set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  }
 
   setInterval(()=>{
-    if(timerSec>0){timerSec--;updateTimerUI();}
-    else{ terminarSesion(); }
+    if(timerSec>0){
+      timerSec--;
+      updateTimerUI();
+      guardarEstado(); // actualizar tiempo restante en localStorage
+    } else {
+      terminarSesion();
+    }
   },1000);
 }
 
@@ -580,19 +701,22 @@ function updateFraud(){
 
 window.terminarSesion = function(){
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
+  localStorage.removeItem('asistencia_session');
   document.getElementById('m-total').textContent=registros.length;
   document.getElementById('m-fraud').textContent=fraudLog.length;
+  // Actualizar modal con clase/docente actuales
+  document.getElementById('modal-sub').textContent=CLASE+' · '+DOCENTE;
   document.getElementById('modal-fin').className='modal-overlay show';
 }
 
 window.cerrarModal = function(){
   document.getElementById('modal-fin').className='modal-overlay';
   registros=[];fraudLog=[];
-  SESSION_CODE=genCode();timerSec=1800;
-  updateGrid();updateStats();updateFraud();updateTimerUI();renderWheel();
-  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
-  suscribir();
-  updateSessionPanel();
+  // Volver a pantalla de setup para nueva sesión
+  document.getElementById('modo-profesor').style.display='none';
+  document.getElementById('setup-clase').value=CLASE;
+  document.getElementById('setup-docente').value=DOCENTE;
+  document.getElementById('modo-setup').style.display='flex';
 }
 
 window.renewCode = function(){
@@ -613,8 +737,8 @@ window.exportExcel = function(){
   // Hoja de asistencia
   const wsData=[
     ['ACTA DE ASISTENCIA'],
-    ['Clase:', 'Programación I'],
-    ['Profesor:', 'Ing. Arnol Carranza'],
+    ['Clase:', CLASE||'Programación I'],
+    ['Profesor:', DOCENTE||'Ing. Arnol Carranza'],
     ['Fecha:', dateStr],
     ['Hora de cierre:', timeStr],
     ['Código de sesión:', SESSION_CODE],
@@ -718,4 +842,3 @@ window.spinWheel=function(){
 </script>
 </body>
 </html>
-q
