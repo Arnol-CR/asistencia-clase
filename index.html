@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -22,7 +21,7 @@
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 
 /* ═══ SETUP ═══ */
-#screen-setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+#screen-setup{min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px 16px}
 .setup-shell{width:100%;max-width:460px}
 .setup-brand{text-align:center;margin-bottom:36px}
 .setup-logo{font-family:'Space Mono',monospace;font-size:24px;font-weight:700;color:var(--text);margin-bottom:6px}
@@ -461,15 +460,30 @@ const urlParams = new URLSearchParams(window.location.search);
 const urlCode = urlParams.get('code');
 
 if(urlCode){
-  // MODO ALUMNO
+  // MODO ALUMNO — vino con ?code= en el enlace
   SESSION_CODE = urlCode.toUpperCase();
   document.getElementById('screen-student').style.display='flex';
   document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
   document.getElementById('s-code').value=SESSION_CODE;
   initStudent();
 } else {
-  // MODO PROFESOR
-  document.getElementById('screen-setup').style.display='flex';
+  // MODO PROFESOR — verificar si hay sesión guardada
+  const saved = JSON.parse(localStorage.getItem('classapp_session')||'null');
+  const now = Date.now();
+  if(saved && saved.code && saved.expiresAt && now < saved.expiresAt){
+    // Restaurar sesión activa
+    SESSION_CODE = saved.code;
+    TEACHER = saved.teacher;
+    CLASS_NAME = saved.className;
+    timerSec = Math.max(0, Math.floor((saved.expiresAt - now) / 1000));
+    selectedDur = saved.durMin;
+    document.getElementById('screen-prof').style.display='block';
+    initProf();
+  } else {
+    // Nueva sesión
+    localStorage.removeItem('classapp_session');
+    document.getElementById('screen-setup').style.display='flex';
+  }
 }
 
 /* ── SETUP ── */
@@ -493,6 +507,11 @@ window.iniciarSesion=function(){
   TEACHER=teacher; CLASS_NAME=className;
   timerSec=selectedDur*60;
   SESSION_CODE=genCode();
+  // Guardar sesión para restaurar al recargar
+  localStorage.setItem('classapp_session', JSON.stringify({
+    code:SESSION_CODE, teacher:TEACHER, className:CLASS_NAME,
+    durMin:selectedDur, expiresAt:Date.now()+(timerSec*1000)
+  }));
   document.getElementById('screen-setup').style.display='none';
   document.getElementById('screen-prof').style.display='block';
   initProf();
@@ -630,6 +649,7 @@ window.cancelarTerminar=function(){document.getElementById('modal-confirmar').cl
 window.confirmarTerminar=function(){
   document.getElementById('modal-confirmar').className='modal-overlay';
   clearInterval(timerInt);
+  localStorage.removeItem('classapp_session');
   set(ref(db,'sesiones/'+SESSION_CODE+'/meta/activa'),false);
   document.getElementById('fin-sub').textContent=CLASS_NAME+' · '+TEACHER;
   document.getElementById('fin-present').textContent=registros.length;
