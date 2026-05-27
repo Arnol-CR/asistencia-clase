@@ -711,9 +711,18 @@ function suscribir(){
     if(snap.exists()) snap.forEach(child=>fraudLog.push(child.val()));
     updateFraud();
   });
-  onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/respuestas'),snap=>{
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion'),snap=>{
     autoRespuestas=[];
-    if(snap.exists())snap.forEach(child=>autoRespuestas.push(child.val()));
+    if(snap.exists()){
+      const data=snap.val();
+      if(data.preguntas&&data.preguntas.length){
+        autoPreguntas=data.preguntas;
+        renderPreguntasDocente();
+      }
+      if(data.respuestas){
+        Object.values(data.respuestas).forEach(r=>autoRespuestas.push(r));
+      }
+    }
     updateAutoResults();
   });
   onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/activa'),snap=>{
