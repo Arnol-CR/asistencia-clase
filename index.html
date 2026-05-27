@@ -5,268 +5,198 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Asistencia & Autoevaluación</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --bg:#F4F7FB;--bg2:#FFFFFF;--bg3:#EBF1FA;--card:#FFFFFF;
   --border:#D0DCF0;--border2:#B5D4F4;
-  --text:#042C53;--muted:#5A7A9E;--muted2:#8AAAC8;
-  --blue:#0C447C;--blue-light:#E6F1FB;--blue-mid:#185FA5;--blue-dim:rgba(12,68,124,0.08);
-  --green:#0F6E56;--green-dim:#E1F5EE;--green-border:#5DCAA5;
-  --amber:#633806;--amber-dim:#FAEEDA;--amber-border:#EF9F27;
-  --red:#791F1F;--red-dim:#FCEBEB;--red-border:#F09595;
-  --purple:#3C3489;--purple-dim:#EEEDFE;
+  --text:#042C53;--muted:#5A7A9E;
+  --green:#0F6E56;--green-dim:#E1F5EE;
+  --red:#791F1F;--red-dim:#FCEBEB;
+  --accent:#0C447C;--accent-dim:#E6F1FB;
   --radius:12px;--radius-sm:8px;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 
-/* ── SETUP ── */
-#modo-setup{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px;}
-.setup-shell{width:100%;max-width:480px;}
-.setup-brand{text-align:center;margin-bottom:32px;}
-.setup-logo{font-size:22px;font-weight:600;color:var(--blue);margin-bottom:4px;}
-.setup-logo span{color:var(--blue-mid);}
-.setup-sub{font-size:13px;color:var(--muted);}
-.setup-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:14px;}
-.setup-section{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
-.setup-field{margin-bottom:14px;}
-.setup-field:last-child{margin-bottom:0;}
-.setup-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500;}
-.setup-field input{width:100%;padding:10px 13px;font-size:14px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;transition:border-color .2s;}
-.setup-field input:focus{border-color:var(--blue-mid);}
-.dur-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;}
-.dur-btn{padding:10px 4px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;background:var(--bg);color:var(--muted);text-align:center;transition:all .2s;font-family:'DM Sans',sans-serif;line-height:1.3;}
-.dur-btn.active{background:var(--blue-light);border-color:var(--blue-mid);color:var(--blue);font-weight:600;}
-.dur-btn .dur-label{font-size:11px;color:var(--muted2);display:block;margin-top:2px;}
-.dur-custom{width:100%;padding:9px 14px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;text-align:center;}
-.dur-custom:focus{border-color:var(--blue-mid);}
-.setup-err{font-size:12px;color:var(--red);margin-top:8px;display:none;}
-.setup-err.show{display:block;}
-.start-btn{width:100%;padding:13px;font-size:15px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--blue);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif;}
-.start-btn:hover{background:var(--blue-mid);}
+/* SETUP */
+#modo-setup{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
+.setup-shell{width:100%;max-width:460px}
+.setup-brand{text-align:center;margin-bottom:32px}
+.setup-logo{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
+.setup-logo span{color:var(--accent)}
+.setup-sub{font-size:13px;color:var(--muted)}
+.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:14px}
+.setup-section{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.setup-field{margin-bottom:14px}
+.setup-field:last-child{margin-bottom:0}
+.setup-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.setup-field input{width:100%;padding:11px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.setup-field input:focus{border-color:var(--accent)}
+.dur-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.dur-btn{padding:10px 4px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;background:var(--bg2);color:var(--muted);text-align:center;transition:all .2s;font-family:'DM Sans',sans-serif;line-height:1.3}
+.dur-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--text);font-weight:600}
+.dur-btn:hover:not(.active){color:var(--text)}
+.dur-btn .dur-label{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.dur-custom{width:100%;padding:9px 14px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;text-align:center}
+.dur-custom:focus{border-color:var(--accent)}
+.setup-err{font-size:12px;color:#fca5a5;margin-top:8px;display:none}
+.setup-err.show{display:block}
+.start-btn{width:100%;padding:14px;font-size:15px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
+.start-btn:hover{background:#4f46e5;transform:translateY(-1px)}
 
-/* ── ALUMNO ── */
-#modo-alumno{display:none;min-height:100vh;background:var(--bg);padding:24px 16px;}
-.student-shell{width:100%;max-width:440px;margin:0 auto;}
-.student-brand{text-align:center;margin-bottom:28px;}
-.brand-dot{width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;margin-bottom:10px;}
-.brand-name{font-size:11px;color:var(--muted);letter-spacing:.08em;margin-bottom:3px;text-transform:uppercase;}
-.brand-title{font-size:24px;font-weight:600;color:var(--blue);margin-bottom:3px;}
-.brand-prof{font-size:13px;color:var(--muted);}
-.s-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;}
-.s-field{margin-bottom:14px;}
-.s-field:last-child{margin-bottom:0;}
-.s-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;}
-.s-field input{width:100%;padding:11px 13px;font-size:15px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;transition:border-color .2s;}
-.s-field input:focus{border-color:var(--blue-mid);}
-.dev-chip{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);margin-bottom:14px;word-break:break-all;}
-.s-hint{font-size:11px;color:var(--muted2);text-align:center;margin-bottom:12px;}
-.s-btn{width:100%;padding:13px;font-size:15px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--blue);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif;}
-.s-btn:hover{background:var(--blue-mid);}
-.s-btn:disabled{opacity:.5;cursor:not-allowed;}
-.alert{border-radius:var(--radius-sm);padding:11px 14px;font-size:13px;margin-bottom:12px;display:none;line-height:1.5;}
-.alert.show{display:block;}
-.a-err{background:var(--red-dim);border:0.5px solid var(--red-border);color:var(--red);}
-.a-warn{background:var(--amber-dim);border:0.5px solid var(--amber-border);color:var(--amber);}
-.a-info{background:var(--blue-light);border:0.5px solid var(--border2);color:var(--blue);}
-.s-success{background:var(--green-dim);border:0.5px solid var(--green-border);border-radius:var(--radius);padding:36px 24px;text-align:center;display:none;}
-.s-success.show{display:block;}
-.s-check{width:52px;height:52px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
-.s-suc-name{font-size:20px;font-weight:600;color:var(--blue);margin-bottom:5px;}
-.s-suc-sub{font-size:13px;color:var(--muted);}
-.s-suc-badge{display:inline-block;font-size:12px;font-weight:600;padding:4px 14px;border-radius:20px;margin-top:10px;background:var(--green-dim);color:var(--green);border:0.5px solid var(--green-border);}
+/* MODO ALUMNO */
+#modo-alumno{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
+.student-shell{width:100%;max-width:420px}
+.student-brand{text-align:center;margin-bottom:32px}
+.brand-dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);display:inline-block;margin-bottom:12px}
+.brand-name{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;margin-bottom:4px}
+.brand-title{font-size:26px;font-weight:600;color:var(--text);margin-bottom:4px}
+.brand-prof{font-size:13px;color:var(--muted)}
+.s-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.s-field{margin-bottom:16px}
+.s-field:last-child{margin-bottom:0}
+.s-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:7px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.s-field input{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.s-field input:focus{border-color:var(--accent)}
+.s-field input.highlight{border:2px solid var(--accent);box-shadow:0 0 0 3px var(--accent-dim);background:var(--bg2)}
+.s-field input.highlight::placeholder{color:#818cf8}
+.dev-chip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);margin-bottom:16px;word-break:break-all}
+.s-hint{font-size:11px;color:var(--muted);text-align:center;margin-bottom:14px}
+.s-btn{width:100%;padding:14px;font-size:15px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
+.s-btn:hover{background:#4f46e5;transform:translateY(-1px)}
+.s-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.alert{border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:14px;display:none;line-height:1.5}
+.alert.show{display:block}
+.a-err{background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);color:#fca5a5}
+.a-warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:#fcd34d}
+.s-success{background:var(--green-dim);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius);padding:40px 24px;text-align:center;display:none}
+.s-success.show{display:block}
+.s-check{width:56px;height:56px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.s-suc-name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.s-suc-sub{font-size:14px;color:var(--muted)}
+.s-suc-badge{display:inline-block;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-top:12px;background:var(--green-dim);color:var(--green)}
 
-/* AUTOEVALUACION ALUMNO */
-.auto-waiting{background:var(--blue-light);border:0.5px solid var(--border2);border-radius:var(--radius);padding:28px 24px;text-align:center;margin-bottom:14px;}
-.auto-waiting p{font-size:13px;color:var(--blue);}
-.auto-waiting .aw-icon{font-size:28px;margin-bottom:10px;}
-.auto-form{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
-.auto-head{background:var(--blue);padding:12px 18px;}
-.auto-head h3{font-size:14px;font-weight:500;color:#E6F1FB;}
-.auto-head p{font-size:11px;color:#85B7EB;margin-top:2px;}
-.auto-instruc{padding:9px 16px;background:var(--blue-light);border-bottom:0.5px solid var(--border2);font-size:12px;color:var(--blue);}
-.scale-legend{display:flex;gap:14px;padding:9px 16px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;}
-.leg-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text);}
-.leg-dot{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
-.l-mb{background:var(--blue-light);color:var(--blue);}
-.l-b{background:var(--green-dim);color:var(--green);}
-.l-r{background:var(--amber-dim);color:var(--amber);}
-.auto-item{display:flex;align-items:center;border-bottom:0.5px solid var(--border);}
-.auto-item:last-child{border-bottom:none;}
-.auto-item-text{flex:1;padding:10px 14px;font-size:12.5px;color:var(--text);line-height:1.5;}
-.auto-options{display:flex;flex-shrink:0;}
-.opt-btn{width:66px;height:46px;border:none;border-left:0.5px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);transition:background .15s,color .15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
-.opt-btn:hover{background:var(--bg3);}
-.opt-btn.sel-mb{background:var(--blue-light);color:var(--blue);}
-.opt-btn.sel-b{background:var(--green-dim);color:var(--green);}
-.opt-btn.sel-r{background:var(--amber-dim);color:var(--amber);}
-.auto-open{padding:14px 16px;border-top:0.5px solid var(--border);background:var(--bg);}
-.auto-open label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px;}
-.auto-open textarea{width:100%;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;resize:none;outline:none;color:var(--text);background:var(--card);line-height:1.5;}
-.auto-open textarea:focus{border-color:var(--blue-mid);}
-.result-msg-box{margin:0 16px 14px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--blue-light);border-left:3px solid var(--blue-mid);font-size:13px;color:var(--blue);line-height:1.6;display:none;}
-.result-counts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px;background:var(--bg3);border-top:0.5px solid var(--border);}
-.rc-cell{text-align:center;padding:8px;border-radius:var(--radius-sm);border:0.5px solid var(--border);}
-.rc-num{font-size:20px;font-weight:600;}
-.rc-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
-.rc-mb{background:var(--blue-light);} .rc-mb .rc-num{color:var(--blue);}
-.rc-b{background:var(--green-dim);} .rc-b .rc-num{color:var(--green);}
-.rc-r{background:var(--amber-dim);} .rc-r .rc-num{color:var(--amber);}
-
-/* ── PROFESOR ── */
-#modo-profesor{display:none;}
-.app{max-width:980px;margin:0 auto;padding:24px 16px;}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
-.logo{display:flex;align-items:center;gap:8px;}
-.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
-.logo-text{font-size:13px;color:var(--muted);letter-spacing:.05em;font-weight:500;}
-.header-right{text-align:right;}
-.header-title{font-size:20px;font-weight:600;color:var(--blue);}
-.header-prof{font-size:13px;color:var(--muted);}
-.tabs{display:flex;gap:4px;background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:24px;overflow-x:auto;}
-.tab{padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);border-radius:var(--radius-sm);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;}
-.tab.active{background:var(--blue);color:#fff;}
-.tab:hover:not(.active){color:var(--blue);background:var(--blue-light);}
-.view{display:none;} .view.active{display:block;}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
-.stat{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
-.sn{font-size:28px;font-weight:600;font-family:'Space Mono',monospace;}
-.sl{font-size:11px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
-.ng{color:var(--blue);} .np{color:var(--green);} .nb{color:var(--red);}
-.prog-wrap{margin-bottom:20px;}
-.prog-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
-.prog-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue-mid),var(--green));transition:width .5s;border-radius:2px;}
-.reg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
-.rc{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;transition:all .2s;animation:fadeIn .3s ease;}
-.rc:hover{border-color:var(--border2);}
-.rc.present{border-left:3px solid var(--green);}
-.rc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:'Space Mono',monospace;background:var(--blue-light);color:var(--blue);}
-.rc-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.3;}
-.rc-time{font-size:11px;color:var(--muted);}
-.rc-dev{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;background:var(--bg3);padding:3px 7px;border-radius:4px;margin-top:5px;display:inline-block;}
-.rc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
-.badge-p{display:inline-block;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--green-dim);color:var(--green);border:0.5px solid var(--green-border);}
-.expel-btn{padding:3px 10px;font-size:11px;border:0.5px solid var(--red-border);border-radius:6px;cursor:pointer;background:transparent;color:var(--red);transition:all .2s;font-family:'DM Sans',sans-serif;}
-.expel-btn:hover{background:var(--red-dim);}
-.fraud-section{margin-bottom:18px;}
-.fraud-title{font-size:12px;font-weight:600;color:var(--red);margin-bottom:7px;text-transform:uppercase;letter-spacing:.06em;}
-.fi{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;background:var(--red-dim);border:0.5px solid var(--red-border);border-radius:var(--radius-sm);margin-bottom:5px;font-size:12px;color:var(--red);}
-.fdot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;}
-.bottom-bar{display:flex;gap:8px;flex-wrap:wrap;}
-.btn{padding:8px 16px;font-size:13px;font-weight:500;border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;background:var(--card);color:var(--blue);transition:all .2s;font-family:'DM Sans',sans-serif;}
-.btn:hover{background:var(--blue-light);border-color:var(--border2);}
-.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff;}
-.btn-primary:hover{background:var(--blue-mid);}
-.btn-green{background:var(--green-dim);border-color:var(--green-border);color:var(--green);}
-.btn-green:hover{background:#c8eee3;}
-.btn-red{background:var(--red-dim);border-color:var(--red-border);color:var(--red);}
-.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
+/* MODO PROFESOR */
+#modo-profesor{display:none}
+.app{max-width:960px;margin:0 auto;padding:24px 16px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.logo-text{font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.05em}
+.header-right{text-align:right}
+.header-title{font-size:20px;font-weight:600;color:var(--text)}
+.header-prof{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:28px;overflow-x:auto}
+.tab{padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);border-radius:var(--radius-sm);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.tab.active{background:var(--accent);color:#fff}
+.tab:hover:not(.active){color:var(--text);background:var(--bg3)}
+.view{display:none}.view.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.sn{font-size:28px;font-weight:600;font-family:'Space Mono',monospace}
+.sl{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.07em}
+.ng{color:var(--text)}.np{color:var(--green)}.nb{color:var(--red)}
+.prog-wrap{margin-bottom:24px}
+.prog-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
+.prog-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s;border-radius:2px}
+.reg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:24px}
+.rc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:all .2s;animation:fadeIn .3s ease}
+.rc:hover{border-color:var(--border2)}
+.rc.present{border-left:3px solid var(--green)}
+.rc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:'Space Mono',monospace;background:var(--green-dim);color:var(--green)}
+.rc-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
+.rc-time{font-size:11px;color:var(--muted)}
+.rc-dev{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;background:var(--bg3);padding:3px 7px;border-radius:4px;margin-top:6px;display:inline-block}
+.rc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--green-dim);color:var(--green)}
+.expel-btn{padding:3px 10px;font-size:11px;border:1px solid rgba(239,68,68,0.3);border-radius:6px;cursor:pointer;background:transparent;color:#fca5a5;transition:all .2s;font-family:'DM Sans',sans-serif}
+.expel-btn:hover{background:var(--red-dim);border-color:var(--red)}
+.fraud-section{margin-bottom:20px}
+.fraud-title{font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em}
+.fi{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);margin-bottom:6px;font-size:12px;color:#fca5a5}
+.fdot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px}
+.bottom-bar{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:8px 18px;font-size:13px;font-weight:500;border:1px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;background:var(--bg3);color:var(--text);transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn:hover{background:var(--card);border-color:var(--accent);color:#fff}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:#4f46e5}
+.btn-excel{background:rgba(16,185,129,0.15);border-color:var(--green);color:var(--green)}
+.btn-excel:hover{background:rgba(16,185,129,0.25)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.empty-icon{width:40px;height:40px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;opacity:.5}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* SESIÓN */
-.session-layout{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
-.session-main{flex:1;min-width:240px;}
-.session-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:28px 20px;text-align:center;margin-bottom:12px;}
-.session-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-weight:600;}
-.session-code{font-family:'Space Mono',monospace;font-size:40px;font-weight:700;color:var(--blue);letter-spacing:.2em;line-height:1;}
-.session-code-sub{font-size:12px;color:var(--muted);margin-top:8px;}
-.timer-strip{display:flex;align-items:center;gap:10px;background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;}
-.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.tdot.ok{background:var(--green);}
-.tdot.warn{background:#f59e0b;}
-.tdot.err{background:var(--red);}
-.timer-label{font-size:13px;font-weight:500;color:var(--text);}
-.timer-count{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--blue);margin-left:auto;}
-.share-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
-.share-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-weight:600;}
-.share-row{display:flex;align-items:center;gap:8px;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;margin-bottom:8px;}
-.share-row:last-child{margin-bottom:0;}
-.share-row-text{font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.copy-btn{padding:5px 11px;font-size:12px;font-weight:600;border:0.5px solid var(--border);border-radius:6px;cursor:pointer;background:var(--card);color:var(--blue);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0;}
-.copy-btn:hover{background:var(--blue-light);}
-.copy-btn.copied{background:var(--green-dim);border-color:var(--green-border);color:var(--green);}
-.preview-box{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 15px;font-size:13px;color:var(--muted);line-height:1.8;}
-.session-info{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:18px;flex:1;min-width:220px;}
-.ir{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px;}
-.ir:last-child{border-bottom:none;}
-.il{color:var(--muted);} .iv{font-weight:500;color:var(--blue);font-family:'Space Mono',monospace;font-size:12px;}
-.log-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:12px;}
-.log-item:last-child{border-bottom:none;}
-.fb-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:18px;}
-.fb-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);}
-.fb-dot.connected{background:var(--green);}
+.session-layout{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.session-main{flex:1;min-width:240px}
+.session-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;margin-bottom:14px}
+.session-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;font-weight:600}
+.session-code{font-family:'Space Mono',monospace;font-size:44px;font-weight:700;color:var(--text);letter-spacing:.22em;line-height:1}
+.session-code-sub{font-size:12px;color:var(--muted);margin-top:10px}
+.timer-strip{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:14px}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tdot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
+.tdot.warn{background:#f59e0b;box-shadow:0 0 6px #f59e0b}
+.tdot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
+.timer-label{font-size:13px;font-weight:500;color:var(--text)}
+.timer-count{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text);margin-left:auto}
+.share-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.share-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:600}
+.share-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px}
+.share-row:last-child{margin-bottom:0}
+.share-row-text{font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.copy-btn{padding:5px 12px;font-size:12px;font-weight:600;border:1px solid var(--border2);border-radius:6px;cursor:pointer;background:var(--bg3);color:var(--text);transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.copy-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.copy-btn.copied{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.preview-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.8}
+.session-info{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;flex:1;min-width:220px}
+.ir{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.ir:last-child{border-bottom:none}
+.il{color:var(--muted)}.iv{font-weight:500;color:var(--text);font-family:'Space Mono',monospace;font-size:12px}
+.log-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.log-item:last-child{border-bottom:none}
+.fb-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:20px}
+.fb-dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+.fb-dot.connected{background:var(--green);box-shadow:0 0 4px var(--green)}
 
 /* RULETA */
-.roulette-wrap{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;}
-.roulette-title{font-size:15px;font-weight:600;color:var(--blue);margin-bottom:4px;}
-.roulette-sub{font-size:12px;color:var(--muted);margin-bottom:22px;}
-.wheel-container{position:relative;width:260px;height:260px;margin:0 auto 20px;}
-.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:22px solid var(--blue);filter:drop-shadow(0 2px 4px rgba(0,0,0,.15));}
-.wheel-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:var(--bg);border:2px solid var(--border2);}
-.roulette-result{min-height:52px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
-.result-name{font-size:22px;font-weight:700;color:var(--blue);font-family:'Space Mono',monospace;animation:fadeIn .4s ease;}
-.result-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;margin-left:10px;background:var(--blue-light);color:var(--blue);font-weight:600;vertical-align:middle;}
-.spin-btn{padding:11px 30px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--blue);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif;}
-.spin-btn:hover:not(:disabled){background:var(--blue-mid);}
-.spin-btn:disabled{opacity:.5;cursor:not-allowed;}
-.no-students{padding:13px;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--muted);text-align:center;margin-bottom:14px;}
+.roulette-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center}
+.roulette-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.roulette-sub{font-size:12px;color:var(--muted);margin-bottom:24px}
+.wheel-container{position:relative;width:260px;height:260px;margin:0 auto 24px}
+.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:22px solid var(--text);filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.wheel-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:var(--bg);border:3px solid var(--border2)}
+.roulette-result{min-height:52px;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.result-name{font-size:22px;font-weight:700;color:var(--text);font-family:'Space Mono',monospace;animation:fadeIn .4s ease}
+.result-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;margin-left:10px;background:var(--accent-dim);color:#a5b4fc;font-weight:600;vertical-align:middle}
+.roulette-count{font-size:12px;color:var(--muted);margin-top:8px}
+.spin-btn{padding:12px 32px;font-size:14px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;background:var(--accent);color:#fff;transition:all .2s;font-family:'DM Sans',sans-serif}
+.spin-btn:hover:not(:disabled){background:#4f46e5;transform:translateY(-1px)}
+.spin-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.no-students{padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px}
 
-/* AUTOEVALUACIÓN DOCENTE */
-.auto-docente-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
-.auto-docente-head{background:var(--blue);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;}
-.auto-docente-head h3{font-size:14px;font-weight:500;color:#E6F1FB;}
-.status-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
-.st-active{background:var(--green-dim);color:var(--green);border:0.5px solid var(--green-border);}
-.st-inactive{background:var(--red-dim);color:var(--red);border:0.5px solid var(--red-border);}
-.auto-docente-body{padding:18px;}
-.questions-list{margin-bottom:16px;}
-.q-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;}
-.q-item:last-child{margin-bottom:0;}
-.q-num{font-size:11px;font-weight:600;color:var(--muted);min-width:20px;}
-.q-text{flex:1;font-size:13px;color:var(--text);}
-.q-del{background:transparent;border:none;cursor:pointer;color:var(--muted2);font-size:16px;padding:0 2px;transition:color .15s;}
-.q-del:hover{color:var(--red);}
-.add-q-row{display:flex;gap:8px;}
-.add-q-row input{flex:1;padding:9px 12px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;}
-.add-q-row input:focus{border-color:var(--blue-mid);}
-.add-q-row button{padding:9px 16px;font-size:13px;font-weight:500;border:0.5px solid var(--blue-mid);border-radius:var(--radius-sm);cursor:pointer;background:var(--blue-light);color:var(--blue);transition:all .2s;font-family:'DM Sans',sans-serif;}
-.add-q-row button:hover{background:var(--blue-light);}
-.auto-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border);}
+/* Modal fin de sesión */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:32px;max-width:400px;width:100%;text-align:center}
+.modal-icon{width:52px;height:52px;border-radius:50%;background:var(--green-dim);border:1px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.modal-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px}
+.modal-stat{background:var(--bg2);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.modal-stat-n{font-size:24px;font-weight:600;font-family:'Space Mono',monospace;color:var(--green)}
+.modal-stat-l{font-size:11px;color:var(--muted);margin-top:2px}
+.modal-btns{display:flex;gap:8px;flex-direction:column}
 
-/* RESULTADOS AUTOEVALUACION */
-.results-section{margin-top:20px;}
-.results-title{font-size:13px;font-weight:600;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
-.result-table{width:100%;border-collapse:collapse;font-size:12.5px;}
-.result-table th{padding:8px 12px;text-align:left;background:var(--blue);color:#E6F1FB;font-weight:500;font-size:11px;border:0.5px solid var(--blue-mid);}
-.result-table th.center{text-align:center;}
-.result-table td{padding:8px 12px;border:0.5px solid var(--border);vertical-align:middle;color:var(--text);}
-.result-table tr:nth-child(even) td{background:var(--bg3);}
-.result-table td.center{text-align:center;}
-.pill-mb{background:var(--blue-light);color:var(--blue);font-weight:600;padding:2px 8px;border-radius:20px;font-size:11px;}
-.pill-b{background:var(--green-dim);color:var(--green);font-weight:600;padding:2px 8px;border-radius:20px;font-size:11px;}
-.pill-r{background:var(--amber-dim);color:var(--amber);font-weight:600;padding:2px 8px;border-radius:20px;font-size:11px;}
-.pill-nd{background:var(--bg3);color:var(--muted);font-weight:500;padding:2px 8px;border-radius:20px;font-size:11px;}
-
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(4,44,83,0.35);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;}
-.modal-overlay.show{display:flex;}
-.modal{background:var(--card);border:0.5px solid var(--border2);border-radius:var(--radius);padding:28px;max-width:400px;width:100%;text-align:center;}
-.modal-icon{width:50px;height:50px;border-radius:50%;background:var(--green-dim);border:0.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
-.modal-title{font-size:18px;font-weight:600;color:var(--blue);margin-bottom:7px;}
-.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
-.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;}
-.modal-stat{background:var(--bg3);border-radius:var(--radius-sm);padding:12px;text-align:center;}
-.modal-stat-n{font-size:24px;font-weight:600;font-family:'Space Mono',monospace;color:var(--green);}
-.modal-stat-l{font-size:11px;color:var(--muted);margin-top:2px;}
-.modal-btns{display:flex;gap:8px;flex-direction:column;}
-.modal-agregar-form input{width:100%;padding:11px 13px;font-size:14px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;margin-bottom:8px;}
-.modal-agregar-form input:focus{border-color:var(--blue-mid);}
-
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:600px){.stats{grid-template-columns:repeat(3,1fr)}.session-layout{flex-direction:column}.wheel-container{width:220px;height:220px}#wheel-canvas{width:220px!important;height:220px!important}}
+@media(max-width:600px){
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .session-layout{flex-direction:column}
+  .wheel-container{width:220px;height:220px}
+  #wheel-canvas{width:220px!important;height:220px!important}
+  .session-code{font-size:28px}
+}
 </style>
 </head>
 <body>
@@ -275,16 +205,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <div class="modal-overlay" id="modal-fin">
   <div class="modal">
     <div class="modal-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
     <div class="modal-title">Sesión finalizada</div>
-    <div class="modal-sub" id="modal-fin-sub">—</div>
+    <div class="modal-sub">Programación I · Ing. Arnol Carranza</div>
     <div class="modal-stats">
       <div class="modal-stat"><div class="modal-stat-n" id="m-total">0</div><div class="modal-stat-l">Presentes</div></div>
       <div class="modal-stat"><div class="modal-stat-n" id="m-fraud" style="color:var(--red)">0</div><div class="modal-stat-l">Bloqueados</div></div>
     </div>
     <div class="modal-btns">
-      <button class="btn btn-green" style="width:100%" onclick="exportExcel()">Descargar Excel</button>
+      <button class="btn btn-excel" style="width:100%;justify-content:center;display:flex;align-items:center;gap:8px" onclick="exportExcel()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Descargar Excel
+      </button>
       <button class="btn" style="width:100%" onclick="cerrarModal()">Nueva sesión</button>
     </div>
   </div>
@@ -293,23 +226,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <!-- MODAL AGREGAR ALUMNO -->
 <div class="modal-overlay" id="modal-agregar">
   <div class="modal">
-    <div class="modal-icon" style="background:var(--blue-light);border-color:var(--border2)">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0C447C" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+    <div class="modal-icon" style="background:var(--accent-dim);border-color:var(--accent)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
     </div>
-    <div class="modal-title">Agregar alumno</div>
-    <div class="modal-sub">El alumno quedará registrado como PRESENTE</div>
-    <div class="modal-agregar-form">
-      <input type="text" id="manual-nombre" placeholder="Nombre completo del alumno..." onkeydown="if(event.key==='Enter')agregarManual()"/>
-      <div style="font-size:12px;color:var(--red);margin-bottom:12px;display:none" id="manual-err">Escribe un nombre válido.</div>
-    </div>
+    <div class="modal-title">Agregar alumno manualmente</div>
+    <div class="modal-sub" style="margin-bottom:16px">El alumno quedará registrado como PRESENTE</div>
+    <input type="text" id="manual-nombre" placeholder="Nombre completo del alumno..."
+      style="width:100%;padding:12px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:8px"
+      onkeydown="if(event.key==='Enter')agregarManual()"/>
+    <div style="font-size:12px;color:#fca5a5;margin-bottom:16px;display:none" id="manual-err">Escribe un nombre válido.</div>
     <div class="modal-btns">
-      <button class="btn btn-primary" style="width:100%" onclick="agregarManual()">Agregar</button>
+      <button class="btn btn-primary" style="width:100%" onclick="agregarManual()">Agregar alumno</button>
       <button class="btn" style="width:100%" onclick="document.getElementById('modal-agregar').className='modal-overlay'">Cancelar</button>
     </div>
   </div>
 </div>
 
-<!-- SETUP -->
+<!-- MODO SETUP -->
 <div id="modo-setup">
   <div class="setup-shell">
     <div class="setup-brand">
@@ -318,8 +251,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </div>
     <div class="setup-card">
       <div class="setup-section">Información de la clase</div>
-      <div class="setup-field"><label>Nombre de la clase</label><input type="text" id="setup-clase" placeholder="Ej: Informática, Programación I..." autocomplete="off"/></div>
-      <div class="setup-field"><label>Nombre del docente</label><input type="text" id="setup-docente" placeholder="Ej: Ing. Arnol Carranza..." autocomplete="off"/></div>
+      <div class="setup-field">
+        <label>Nombre de la clase</label>
+        <input type="text" id="setup-clase" placeholder="Ej: Programación I, Cálculo II..." autocomplete="off"/>
+      </div>
+      <div class="setup-field">
+        <label>Nombre del docente</label>
+        <input type="text" id="setup-docente" placeholder="Ej: Ing. Arnol Carranza..." autocomplete="off"/>
+      </div>
     </div>
     <div class="setup-card">
       <div class="setup-section">Duración de la sesión</div>
@@ -331,82 +270,96 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <button class="dur-btn" onclick="selDur(180,this)">3 horas<span class="dur-label">Taller</span></button>
         <button class="dur-btn" onclick="selDur(0,this)">Otro<span class="dur-label">Personalizado</span></button>
       </div>
-      <input type="number" class="dur-custom" id="dur-custom" placeholder="Minutos personalizados" style="display:none" oninput="customDur(this.value)"/>
+      <input type="number" class="dur-custom" id="dur-custom" placeholder="Minutos personalizados (ej: 45)" style="display:none" oninput="customDur(this.value)"/>
       <div class="setup-err" id="setup-err">Por favor completa todos los campos.</div>
     </div>
-    <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión →</button>
+    <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión de clase →</button>
   </div>
 </div>
 
-<!-- ALUMNO -->
+<!-- MODO ALUMNO -->
 <div id="modo-alumno">
   <div class="student-shell">
     <div class="student-brand">
       <div class="brand-dot"></div>
-      <div class="brand-name" id="s-clase-lbl">CLASE</div>
+      <div class="brand-name" id="s-clase-lbl">PROGRAMACIÓN I</div>
       <div class="brand-title">Registro de asistencia</div>
-      <div class="brand-prof" id="s-docente-lbl">Docente</div>
+      <div class="brand-prof" id="s-docente-lbl">Ing. Arnol Carranza</div>
     </div>
     <div class="alert a-warn" id="s-dev-warn">Tu dispositivo ya tiene un registro en esta sesión.</div>
     <div class="alert a-err" id="s-err"></div>
     <div id="s-form">
       <div class="s-card">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;">Tu dispositivo</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">Tu dispositivo</div>
         <div class="dev-chip" id="s-dev-chip">Calculando...</div>
-        <div class="s-field"><label>Código de sesión</label><input type="text" id="s-code" placeholder="Ej: TECH-A3F2" style="text-transform:uppercase;letter-spacing:.08em;font-family:'Space Mono',monospace" oninput="this.value=this.value.toUpperCase()"/></div>
-        <div class="s-field"><label>Tu nombre completo</label><input type="text" id="s-nombre" placeholder="Escribe tu nombre y apellido" autocomplete="name"/></div>
+        <div class="s-field">
+          <label>Código de sesión</label>
+          <input type="text" id="s-code" placeholder="Ej: TECH-A3F2" style="text-transform:uppercase;letter-spacing:.1em;font-family:'Space Mono',monospace" oninput="this.value=this.value.toUpperCase()"/>
+        </div>
+        <div class="s-field">
+          <label>✏️ Tu nombre completo</label>
+          <input type="text" id="s-nombre" class="highlight" placeholder="👉 Escribe aquí tu nombre y apellido" autocomplete="name"/>
+        </div>
       </div>
       <div class="s-hint">Un solo registro por dispositivo por sesión</div>
       <button class="s-btn" id="s-submit-btn" onclick="registrarAlumno()">Confirmar asistencia</button>
     </div>
     <div class="s-success" id="s-success">
-      <div class="s-check"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div class="s-check">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
       <div class="s-suc-name" id="s-suc-name"></div>
       <div class="s-suc-sub" id="s-suc-sub"></div>
       <div class="s-suc-badge">PRESENTE ✓</div>
     </div>
+
     <!-- AUTOEVALUACION ALUMNO -->
-    <div id="auto-waiting" class="auto-waiting" style="display:none;margin-top:16px;">
-      <div class="aw-icon">📋</div>
-      <p><strong>El docente activará la autoevaluación en breve.</strong><br>Esta pantalla se actualizará automáticamente.</p>
+    <div id="auto-waiting" style="display:none;margin-top:16px;background:var(--accent-dim);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;text-align:center;">
+      <div style="font-size:28px;margin-bottom:8px;">📋</div>
+      <p style="font-size:13px;color:var(--accent);">El docente activará la autoevaluación en breve.<br>Esta pantalla se actualizará automáticamente.</p>
     </div>
     <div id="auto-form-alumno" style="display:none;margin-top:16px;">
-      <div class="auto-form">
-        <div class="auto-head"><h3 id="auto-form-title">Autoevaluación</h3><p id="auto-form-sub"></p></div>
-        <div class="auto-instruc">Marca con ✓ la opción que mejor describe tu desempeño. Puede haber una o más respuestas.</div>
-        <div class="scale-legend">
-          <div class="leg-item"><div class="leg-dot l-mb">MB</div> Muy bien</div>
-          <div class="leg-item"><div class="leg-dot l-b">B</div> Bien</div>
-          <div class="leg-item"><div class="leg-dot l-r">R</div> Regular</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;">
+        <div style="background:var(--accent);padding:12px 18px;"><span style="font-size:14px;font-weight:500;color:#E6F1FB;" id="auto-form-title">Autoevaluación</span></div>
+        <div style="padding:9px 16px;background:var(--accent-dim);border-bottom:1px solid var(--border2);font-size:12px;color:var(--accent);">Marca con ✓ la opción que mejor describe tu desempeño.</div>
+        <div style="display:flex;gap:14px;padding:9px 16px;border-bottom:1px solid var(--border);">
+          <span style="display:flex;align-items:center;gap:5px;font-size:12px;"><span style="background:var(--accent-dim);color:var(--accent);font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;">MB</span>Muy bien</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:12px;"><span style="background:var(--green-dim);color:var(--green);font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;">B</span>Bien</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:12px;"><span style="background:#FAEEDA;color:#633806;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;">R</span>Regular</span>
         </div>
         <div id="auto-items-alumno"></div>
-        <div class="auto-open">
-          <label>¿Qué aspecto quiero mejorar en la próxima clase?</label>
-          <textarea id="auto-mejora" rows="3" placeholder="Escribe aquí tu reflexión..."></textarea>
+        <div style="padding:14px 16px;background:var(--bg);">
+          <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px;">¿Qué aspecto quiero mejorar en la próxima clase?</label>
+          <textarea id="auto-mejora" rows="3" placeholder="Escribe aquí tu reflexión..." style="width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;resize:none;outline:none;color:var(--text);background:var(--card);line-height:1.5;"></textarea>
         </div>
-        <div class="result-counts" id="result-counts" style="display:none;">
-          <div class="rc-cell rc-mb"><div class="rc-num" id="cnt-mb">0</div><div class="rc-lbl">Muy bien</div></div>
-          <div class="rc-cell rc-b"><div class="rc-num" id="cnt-b">0</div><div class="rc-lbl">Bien</div></div>
-          <div class="rc-cell rc-r"><div class="rc-num" id="cnt-r">0</div><div class="rc-lbl">Regular</div></div>
+        <div id="auto-result-counts" style="display:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px;background:var(--bg3);">
+          <div style="text-align:center;padding:8px;border-radius:var(--radius-sm);background:var(--accent-dim);"><div style="font-size:20px;font-weight:600;color:var(--accent);" id="cnt-mb">0</div><div style="font-size:10px;color:var(--muted);">MUY BIEN</div></div>
+          <div style="text-align:center;padding:8px;border-radius:var(--radius-sm);background:var(--green-dim);"><div style="font-size:20px;font-weight:600;color:var(--green);" id="cnt-b">0</div><div style="font-size:10px;color:var(--muted);">BIEN</div></div>
+          <div style="text-align:center;padding:8px;border-radius:var(--radius-sm);background:#FAEEDA;"><div style="font-size:20px;font-weight:600;color:#633806;" id="cnt-r">0</div><div style="font-size:10px;color:var(--muted);">REGULAR</div></div>
         </div>
-        <div class="result-msg-box" id="result-msg-box"></div>
+        <div id="auto-msg-box" style="display:none;margin:0 16px 14px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--accent-dim);border-left:3px solid var(--accent);font-size:13px;color:var(--accent);line-height:1.6;"></div>
       </div>
       <button class="s-btn" id="auto-submit-btn" onclick="enviarAutoevaluacion()">Enviar autoevaluación</button>
-      <div class="s-success" id="auto-success" style="margin-top:12px;">
-        <div class="s-check"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
-        <div class="s-suc-name">¡Autoevaluación enviada!</div>
-        <div class="s-suc-sub" id="auto-msg-final"></div>
+      <div id="auto-success" style="display:none;margin-top:12px;background:var(--green-dim);border:1px solid #5DCAA5;border-radius:var(--radius);padding:28px 20px;text-align:center;">
+        <div style="font-size:18px;font-weight:600;color:var(--green);margin-bottom:6px;">¡Autoevaluación enviada!</div>
+        <div id="auto-msg-final" style="font-size:13px;color:var(--muted);line-height:1.6;"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- PROFESOR -->
+<!-- MODO PROFESOR -->
 <div id="modo-profesor">
   <div class="app">
     <div class="header">
-      <div class="logo"><div class="logo-dot"></div><span class="logo-text">ASISTENCIA.APP</span></div>
-      <div class="header-right"><div class="header-title" id="header-clase">Clase</div><div class="header-prof" id="header-docente">Docente</div></div>
+      <div class="logo">
+        <div class="logo-dot"></div>
+        <span class="logo-text">ASISTENCIA.APP</span>
+      </div>
+      <div class="header-right">
+        <div class="header-title" id="header-clase">Programación I</div>
+        <div class="header-prof" id="header-docente">Ing. Arnol Carranza</div>
+      </div>
     </div>
     <div class="tabs">
       <button class="tab active" onclick="switchTab('panel',this)">Panel</button>
@@ -417,10 +370,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
     <!-- PANEL -->
     <div id="view-panel" class="view active">
-      <div class="fb-status" style="justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:6px;"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Conectando...</span></div>
-        <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:3px 10px;border-radius:20px;border:0.5px solid var(--border2);" id="panel-code-badge">—</span>
-      </div>
+      <div class="fb-status"><div class="fb-dot" id="fb-dot"></div><span id="fb-label">Conectando...</span></div>
       <div class="stats">
         <div class="stat"><div class="sn ng" id="st-total">0</div><div class="sl">Registrados</div></div>
         <div class="stat"><div class="sn np" id="st-present">0</div><div class="sl">Presentes</div></div>
@@ -435,12 +385,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div id="fraud-log"></div>
       </div>
       <div id="reg-grid" class="reg-grid">
-        <div class="empty-state">Esperando registros de alumnos...</div>
+        <div class="empty-state">
+          <div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          Esperando registros de alumnos...
+        </div>
       </div>
       <div class="bottom-bar">
-        <button class="btn btn-primary" onclick="terminarSesion()">Terminar sesión</button>
+        <button class="btn" onclick="terminarSesion()">Terminar sesión</button>
         <button class="btn" onclick="abrirAgregar()">+ Agregar alumno</button>
-        <button class="btn btn-green" onclick="exportExcel()">Descargar Excel</button>
+        <button class="btn btn-excel" onclick="exportExcel()">Descargar Excel</button>
       </div>
     </div>
 
@@ -456,24 +409,30 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="timer-strip">
             <div class="tdot ok" id="tdot"></div>
             <span class="timer-label" id="tlabel">Sesión activa</span>
-            <span class="timer-count" id="tcountdown">60:00</span>
-            <button class="btn" style="padding:5px 12px;font-size:12px" onclick="renewCode()">Renovar</button>
+            <span class="timer-count" id="tcountdown">30:00</span>
+            <button class="btn" style="padding:5px 14px;font-size:12px" onclick="renewCode()">Renovar</button>
           </div>
           <div class="share-card">
             <div class="share-title">Compartir con alumnos</div>
-            <div class="share-row"><span class="share-row-text" id="share-link-text">—</span><button class="copy-btn" id="copy-link-btn" onclick="copyLink()">Copiar enlace</button></div>
-            <div class="share-row"><span class="share-row-text">Mensaje para WhatsApp</span><button class="copy-btn" id="copy-msg-btn" onclick="copyMsg()">Copiar mensaje</button></div>
+            <div class="share-row">
+              <span class="share-row-text" id="share-link-text">—</span>
+              <button class="copy-btn" id="copy-link-btn" onclick="copyLink()">Copiar enlace</button>
+            </div>
+            <div class="share-row">
+              <span class="share-row-text">Mensaje completo para WhatsApp</span>
+              <button class="copy-btn" id="copy-msg-btn" onclick="copyMsg()">Copiar mensaje</button>
+            </div>
           </div>
           <div class="preview-box" id="preview-msg"></div>
         </div>
         <div class="session-info">
-          <div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Estado</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.07em">Estado</div>
           <div class="ir"><span class="il">Código</span><span class="iv" id="inf-code">—</span></div>
           <div class="ir"><span class="il">Fecha</span><span class="iv" id="inf-date">—</span></div>
           <div class="ir"><span class="il">Registros</span><span class="iv" id="inf-regs">0</span></div>
           <div class="ir"><span class="il">Bloqueados</span><span class="iv" style="color:var(--red)" id="inf-fraud2">0</span></div>
-          <div style="margin-top:12px;">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.06em;">Últimos registros</div>
+          <div style="margin-top:14px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Últimos registros</div>
             <div id="recent-log"><div style="font-size:12px;color:var(--muted)">Sin registros aún</div></div>
           </div>
         </div>
@@ -491,46 +450,47 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="wheel-pointer"></div>
           <div class="wheel-center"></div>
         </div>
-        <div class="roulette-result"><div id="result-display" style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</div></div>
+        <div class="roulette-result">
+          <div id="result-display" style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</div>
+        </div>
         <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
-        <div style="font-size:12px;color:var(--muted);margin-top:8px;" id="roulette-count"></div>
+        <div class="roulette-count" id="roulette-count"></div>
       </div>
     </div>
 
     <!-- AUTOEVALUACIÓN DOCENTE -->
     <div id="view-autoevaluacion" class="view">
-      <div class="auto-docente-card">
-        <div class="auto-docente-head">
-          <h3>Configurar autoevaluación</h3>
-          <span class="status-badge st-inactive" id="auto-status-badge">Inactiva</span>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;">
+        <div style="background:var(--accent);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:14px;font-weight:500;color:#E6F1FB;">Configurar autoevaluación</span>
+          <span id="auto-status-badge" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--red-dim);color:var(--red);border:1px solid var(--red);">Inactiva</span>
         </div>
-        <div class="auto-docente-body">
-          <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Agrega las preguntas que verán los estudiantes. La escala siempre es: Muy bien / Bien / Regular.</div>
-          <div class="questions-list" id="questions-list">
-            <div style="font-size:13px;color:var(--muted2);padding:12px;text-align:center;background:var(--bg3);border-radius:var(--radius-sm);">No hay preguntas aún. Agrega la primera.</div>
+        <div style="padding:18px;">
+          <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Agrega las preguntas. La escala siempre es: Muy bien / Bien / Regular.</p>
+          <div id="questions-list" style="margin-bottom:14px;">
+            <div style="font-size:13px;color:var(--muted);padding:12px;text-align:center;background:var(--bg3);border-radius:var(--radius-sm);">No hay preguntas aún.</div>
           </div>
-          <div class="add-q-row" style="margin-bottom:0;">
-            <input type="text" id="new-question-input" placeholder="Escribe una pregunta..." onkeydown="if(event.key==='Enter')agregarPregunta()"/>
-            <button onclick="agregarPregunta()">+ Agregar</button>
+          <div style="display:flex;gap:8px;margin-bottom:14px;">
+            <input type="text" id="new-question-input" placeholder="Escribe una pregunta..." onkeydown="if(event.key==='Enter')agregarPregunta()" style="flex:1;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;"/>
+            <button onclick="agregarPregunta()" style="padding:9px 16px;font-size:13px;font-weight:500;border:1px solid var(--accent);border-radius:var(--radius-sm);cursor:pointer;background:var(--accent-dim);color:var(--accent);font-family:'DM Sans',sans-serif;">+ Agregar</button>
           </div>
-          <div class="auto-controls">
-            <button class="btn btn-green" id="btn-activar-auto" onclick="activarAutoevaluacion()">▶ Activar autoevaluación</button>
-            <button class="btn btn-red" id="btn-desactivar-auto" onclick="desactivarAutoevaluacion()" style="display:none;">⏹ Desactivar</button>
-            <button class="btn" onclick="descargarFormatoVacio()">Descargar formato vacío</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--border);">
+            <button id="btn-activar-auto" onclick="activarAutoevaluacion()" class="btn" style="background:var(--green-dim);border-color:var(--green);color:var(--green);">▶ Activar autoevaluación</button>
+            <button id="btn-desactivar-auto" onclick="desactivarAutoevaluacion()" class="btn" style="display:none;background:var(--red-dim);border-color:var(--red);color:var(--red);">⏹ Desactivar</button>
+            <button onclick="descargarFormatoVacio()" class="btn">Descargar formato vacío</button>
           </div>
         </div>
       </div>
-
-      <!-- RESULTADOS -->
-      <div class="auto-docente-card">
-        <div class="auto-docente-head"><h3>Resultados de autoevaluación</h3><span id="auto-resp-count" style="font-size:12px;color:#85B7EB;">0 respuestas</span></div>
-        <div class="auto-docente-body">
-          <div id="auto-results-empty" style="font-size:13px;color:var(--muted2);text-align:center;padding:20px;">Los resultados aparecerán aquí cuando los estudiantes envíen su autoevaluación.</div>
-          <div id="auto-results-table" style="display:none;">
-            <table class="result-table" id="auto-table"></table>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border);">
-            <button class="btn btn-green" onclick="exportAutoExcel()">Descargar Excel</button>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <div style="background:var(--accent);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:14px;font-weight:500;color:#E6F1FB;">Resultados</span>
+          <span id="auto-resp-count" style="font-size:12px;color:#85B7EB;">0 respuestas</span>
+        </div>
+        <div style="padding:18px;">
+          <div id="auto-results-empty" style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Los resultados aparecerán cuando los estudiantes envíen su autoevaluación.</div>
+          <div id="auto-results-table" style="display:none;overflow-x:auto;"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+            <button class="btn" onclick="exportAutoExcel()" style="background:var(--green-dim);border-color:var(--green);color:var(--green);">Descargar Excel</button>
             <button class="btn" onclick="exportAutoPDF()">Descargar PDF</button>
           </div>
         </div>
@@ -539,39 +499,44 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey:"AIzaSyCYoLzwxFu-e8xpKfRnYxdqkX2oJggROrc",
-  authDomain:"asistencia-clase-d6d29.firebaseapp.com",
-  databaseURL:"https://asistencia-clase-d6d29-default-rtdb.firebaseio.com",
-  projectId:"asistencia-clase-d6d29",
-  storageBucket:"asistencia-clase-d6d29.firebasestorage.app",
-  messagingSenderId:"273968342203",
-  appId:"1:273968342203:web:9ead8ca3ed3c2f1184359e"
+  apiKey: "AIzaSyCYoLzwxFu-e8xpKfRnYxdqkX2oJggROrc",
+  authDomain: "asistencia-clase-d6d29.firebaseapp.com",
+  databaseURL: "https://asistencia-clase-d6d29-default-rtdb.firebaseio.com",
+  projectId: "asistencia-clase-d6d29",
+  storageBucket: "asistencia-clase-d6d29.firebasestorage.app",
+  messagingSenderId: "273968342203",
+  appId: "1:273968342203:web:9ead8ca3ed3c2f1184359e"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const COLORS=['#185FA5','#0F6E56','#854F0B','#3C3489','#712B13','#085041','#533489','#633806','#0C447C','#27500A','#791F1F','#3B6D11','#534AB7','#085041','#633806'];
+const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#e11d48','#0ea5e9','#a855f7','#22c55e','#eab308'];
 
 let SESSION_CODE = genCode();
-let timerSec = 3600;
+let timerSec = 3600; // 1 hora predeterminado
 let selectedDurMin = 60;
 let registros = [];
+let registroKeys = {};
 let fraudLog = [];
 let isSpinning = false;
 let wheelAngle = 0;
-let CLASE = '', DOCENTE = '';
+let recentLogs = [];
+let CLASE = '';
+let DOCENTE = '';
 let autoPreguntas = [];
 let autoRespuestas = [];
 let autoActiva = false;
 let autoSelecciones = {};
-let registroKeys = {};
-let unsubRegistros=null, unsubFraudes=null, unsubAutoResp=null, unsubAutoActiva=null;
 
 function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
 
@@ -582,46 +547,53 @@ function getFingerprint(){
   const hex=Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
   return hex.slice(0,4)+'-'+hex.slice(4);
 }
+
 const MY_FP = getFingerprint();
 const urlParams = new URLSearchParams(window.location.search);
 const urlCode = urlParams.get('code');
 const IS_STUDENT = !!urlCode;
 
+// Aviso al cerrar/recargar si hay alumnos
 window.addEventListener('beforeunload', e=>{
   if(!IS_STUDENT && registros.length>0){e.preventDefault();e.returnValue='';}
 });
 
-/* ── SETUP ── */
-window.selDur = function(min,btn){
-  selectedDurMin=min;
+/* ── SETUP functions ── */
+window.selDur = function(min, btn){
+  selectedDurMin = min;
   document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  const c=document.getElementById('dur-custom');
-  if(min===0){c.style.display='block';c.focus();}else{c.style.display='none';c.value='';}
+  const custom = document.getElementById('dur-custom');
+  if(min===0){ custom.style.display='block'; custom.focus(); }
+  else { custom.style.display='none'; custom.value=''; }
 }
-window.customDur = function(v){if(v&&parseInt(v)>0)selectedDurMin=parseInt(v);}
-
+window.customDur = function(v){
+  if(v && parseInt(v)>0) selectedDurMin = parseInt(v);
+}
 window.iniciarSesion = function(){
-  const clase=document.getElementById('setup-clase').value.trim();
-  const docente=document.getElementById('setup-docente').value.trim();
-  const errEl=document.getElementById('setup-err');
-  const durMin=selectedDurMin||parseInt(document.getElementById('dur-custom').value||'0');
+  const clase = document.getElementById('setup-clase').value.trim();
+  const docente = document.getElementById('setup-docente').value.trim();
+  const errEl = document.getElementById('setup-err');
+  const durMin = selectedDurMin || parseInt(document.getElementById('dur-custom').value||'0');
   if(!clase||!docente||durMin<1){errEl.className='setup-err show';return;}
   errEl.className='setup-err';
-  CLASE=clase;DOCENTE=docente;
-  SESSION_CODE=genCode();timerSec=durMin*60;
-  guardarEstado();
+  CLASE=clase; DOCENTE=docente;
+  SESSION_CODE=genCode(); timerSec=durMin*60;
+  localStorage.setItem('asistencia_session',JSON.stringify({
+    code:SESSION_CODE,clase:CLASE,docente:DOCENTE,
+    expiresAt:Date.now()+(timerSec*1000)
+  }));
   document.getElementById('modo-setup').style.display='none';
   document.getElementById('modo-profesor').style.display='block';
-  aplicarNombres();initProfesor(true);
+  aplicarNombres();
+  initProfesor(true);
 }
 
 function aplicarNombres(){
   document.getElementById('header-clase').textContent=CLASE;
   document.getElementById('header-docente').textContent=DOCENTE;
-  const badge=document.getElementById('panel-code-badge');
-  if(badge)badge.textContent='Código: '+SESSION_CODE;
 }
+
 function guardarEstado(){
   localStorage.setItem('asistencia_session',JSON.stringify({
     code:SESSION_CODE,clase:CLASE,docente:DOCENTE,
@@ -629,26 +601,30 @@ function guardarEstado(){
   }));
 }
 
-/* ── INIT ── */
 if(IS_STUDENT){
   SESSION_CODE=urlCode.toUpperCase();
   get(ref(db,'sesiones/'+SESSION_CODE+'/meta')).then(snap=>{
-    if(snap.exists()){const m=snap.val();document.getElementById('s-clase-lbl').textContent=(m.clase||'').toUpperCase();document.getElementById('s-docente-lbl').textContent=m.docente||'';}
+    if(snap.exists()){
+      const m=snap.val();
+      document.getElementById('s-clase-lbl').textContent=(m.clase||'').toUpperCase();
+      document.getElementById('s-docente-lbl').textContent=m.docente||'';
+    }
   });
-  document.getElementById('modo-alumno').style.display='block';
+  document.getElementById('modo-alumno').style.display='flex';
   document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
   document.getElementById('s-code').value=SESSION_CODE;
   checkDuplicate();
   escucharAutoevaluacion();
-}else{
+} else {
   const saved=JSON.parse(localStorage.getItem('asistencia_session')||'null');
   const now=Date.now();
   if(saved&&saved.code&&saved.expiresAt&&now<saved.expiresAt){
-    SESSION_CODE=saved.code;CLASE=saved.clase;DOCENTE=saved.docente;
+    SESSION_CODE=saved.code; CLASE=saved.clase; DOCENTE=saved.docente;
     timerSec=Math.max(0,Math.floor((saved.expiresAt-now)/1000));
     document.getElementById('modo-profesor').style.display='block';
-    aplicarNombres();initProfesor(false);
-  }else{
+    aplicarNombres();
+    initProfesor(false);
+  } else {
     localStorage.removeItem('asistencia_session');
     document.getElementById('modo-setup').style.display='flex';
   }
@@ -656,167 +632,111 @@ if(IS_STUDENT){
 
 /* ── ALUMNO ── */
 async function checkDuplicate(){
-  const snap=await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+MY_FP));
+  const snap = await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+MY_FP));
   if(snap.exists()){
     document.getElementById('s-dev-warn').classList.add('show');
-    const f=document.getElementById('s-form');f.style.opacity='0.45';f.style.pointerEvents='none';
+    document.getElementById('s-form').style.opacity='0.45';
+    document.getElementById('s-form').style.pointerEvents='none';
   }
 }
 
 window.registrarAlumno = async function(){
-  const code=SESSION_CODE; // Siempre usar el código de la URL, no el input
-  const nombre=document.getElementById('s-nombre').value.trim();
-  const errEl=document.getElementById('s-err');
+  const code = document.getElementById('s-code').value.trim().toUpperCase();
+  const nombre = document.getElementById('s-nombre').value.trim();
+  const errEl = document.getElementById('s-err');
   errEl.className='alert a-err';
-  if(!nombre||nombre.length<3){errEl.textContent='Escribe tu nombre completo.';errEl.className='alert a-err show';return;}
-  const btn=document.getElementById('s-submit-btn');btn.disabled=true;btn.textContent='Registrando...';
-  const sesSnap=await get(ref(db,'sesiones/'+code+'/activa'));
-  if(!sesSnap.exists()||!sesSnap.val()){errEl.textContent='Código incorrecto o sesión expirada.';errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;}
-  const devSnap=await get(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP));
+
+  if(!nombre||nombre.length<3){
+    errEl.textContent='Escribe tu nombre completo (mínimo 3 caracteres).';
+    errEl.className='alert a-err show';return;
+  }
+
+  const btn=document.getElementById('s-submit-btn');
+  btn.disabled=true;btn.textContent='Registrando...';
+
+  const sesSnap = await get(ref(db,'sesiones/'+code+'/activa'));
+  if(!sesSnap.exists()||!sesSnap.val()){
+    errEl.textContent='Código incorrecto o sesión expirada.';
+    errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
+  }
+
+  const devSnap = await get(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP));
   if(devSnap.exists()){
     const prev=devSnap.val();
     await push(ref(db,'sesiones/'+code+'/fraudes'),{nombre,prevName:prev.nombre,device:'DEV-'+MY_FP,time:new Date().toISOString()});
-    errEl.textContent='Este dispositivo ya registró a "'+prev.nombre+'".';errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
+    errEl.textContent='Este dispositivo ya registró a "'+prev.nombre+'". Un solo registro por celular.';
+    errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
   }
-  const now=new Date(),timeStr=now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+
+  const now=new Date();
+  const timeStr=now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+
   await push(ref(db,'sesiones/'+code+'/registros'),{nombre,status:'present',device:'DEV-'+MY_FP,time:timeStr,timestamp:now.toISOString()});
   await set(ref(db,'sesiones/'+code+'/dispositivos/'+MY_FP),{nombre,time:timeStr});
+
   document.getElementById('s-form').style.display='none';
   document.getElementById('s-suc-name').textContent=nombre;
   document.getElementById('s-suc-sub').textContent=timeStr+' · '+now.toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('s-success').className='s-success show';
-  // Mostrar espera de autoevaluacion
   document.getElementById('auto-waiting').style.display='block';
-}
-
-function escucharAutoevaluacion(){
-  onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion'),snap=>{
-    if(!snap.exists())return;
-    const data=snap.val();
-    const waiting=document.getElementById('auto-waiting');
-    const formEl=document.getElementById('auto-form-alumno');
-    const successEl=document.getElementById('auto-success');
-    if(data.activa&&!data.completados?.[MY_FP]){
-      waiting.style.display='none';
-      formEl.style.display='block';
-      successEl.style.display='none';
-      document.getElementById('auto-form-title').textContent='Autoevaluación — '+CLASE;
-      document.getElementById('auto-form-sub').textContent=DOCENTE;
-      renderAutoItemsAlumno(data.preguntas||[]);
-    }else if(!data.activa){
-      formEl.style.display='none';
-    }
-  });
-}
-
-function renderAutoItemsAlumno(preguntas){
-  autoSelecciones={};
-  const cont=document.getElementById('auto-items-alumno');
-  if(!preguntas.length){cont.innerHTML='<div style="padding:12px 16px;font-size:13px;color:var(--muted)">Sin preguntas configuradas.</div>';return;}
-  cont.innerHTML=preguntas.map((q,i)=>`
-    <div class="auto-item" data-idx="${i}">
-      <div class="auto-item-text"><strong style="color:var(--muted);font-size:11px;margin-right:6px;">${i+1}.</strong>${q}</div>
-      <div class="auto-options">
-        <button class="opt-btn" onclick="selAuto(${i},'mb',this)">✓<br>MB</button>
-        <button class="opt-btn" onclick="selAuto(${i},'b',this)">✓<br>B</button>
-        <button class="opt-btn" onclick="selAuto(${i},'r',this)">✓<br>R</button>
-      </div>
-    </div>`).join('');
-}
-
-window.selAuto = function(idx,val,btn){
-  const row=document.querySelector(`.auto-item[data-idx="${idx}"]`);
-  row.querySelectorAll('.opt-btn').forEach(b=>b.className='opt-btn');
-  btn.classList.add('sel-'+val);
-  autoSelecciones[idx]=val;
-}
-
-window.enviarAutoevaluacion = async function(){
-  const pregs=(await get(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/preguntas'))).val()||[];
-  const total=pregs.length;
-  const respondidos=Object.keys(autoSelecciones).length;
-  if(respondidos<total){alert('Faltan '+(total-respondidos)+' pregunta(s) por responder.');return;}
-  const mejora=document.getElementById('auto-mejora').value.trim();
-  const nombre=document.getElementById('s-suc-name').textContent||'Estudiante';
-  const mb=Object.values(autoSelecciones).filter(v=>v==='mb').length;
-  const b=Object.values(autoSelecciones).filter(v=>v==='b').length;
-  const r=Object.values(autoSelecciones).filter(v=>v==='r').length;
-  let msg='';
-  if(mb>=Math.ceil(total*0.7))msg='¡Excelente desempeño! Demostraste dominio sólido en la mayoría de los aspectos evaluados. Sigue así.';
-  else if(mb+b>=Math.ceil(total*0.6))msg='Buen trabajo. Hay algunos aspectos que podés reforzar para alcanzar un desempeño óptimo en la próxima clase.';
-  else msg='Vas por buen camino. Identifica los aspectos marcados como Regular y enfócate en mejorarlos. ¡Cada clase es una oportunidad!';
-  const respuesta={nombre,device:'DEV-'+MY_FP,respuestas:autoSelecciones,mejora,mb,b,r,mensaje:msg,timestamp:new Date().toISOString()};
-  await push(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/respuestas'),respuesta);
-  await set(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/completados/'+MY_FP),true);
-  // Mostrar resultado al alumno
-  document.getElementById('result-counts').style.display='grid';
-  document.getElementById('cnt-mb').textContent=mb;
-  document.getElementById('cnt-b').textContent=b;
-  document.getElementById('cnt-r').textContent=r;
-  const msgBox=document.getElementById('result-msg-box');
-  msgBox.textContent=msg;msgBox.style.display='block';
-  document.getElementById('auto-submit-btn').style.display='none';
-  const suc=document.getElementById('auto-success');
-  suc.style.display='block';
-  document.getElementById('auto-msg-final').textContent=msg;
 }
 
 /* ── PROFESOR ── */
 function initProfesor(isNew){
-  updateSessionPanel();updateTimerUI();suscribir();
+  updateSessionPanel();
+  updateTimerUI();
+  suscribir();
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
-  if(isNew)set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE});
-  setInterval(()=>{if(timerSec>0){timerSec--;updateTimerUI();guardarEstado();}else{terminarSesion();}},1000);
+  if(isNew) set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE});
+  setInterval(()=>{
+    if(timerSec>0){timerSec--;updateTimerUI();guardarEstado();}
+    else{terminarSesion();}
+  },1000);
 }
 
 function suscribir(){
-  // Cancelar listeners anteriores si existen
-  if(unsubRegistros) unsubRegistros();
-  if(unsubFraudes) unsubFraudes();
-  if(unsubAutoResp) unsubAutoResp();
-  if(unsubAutoActiva) unsubAutoActiva();
-
-  unsubRegistros = onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'),snap=>{
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'), snap=>{
     registros=[];registroKeys={};
-    if(snap.exists())snap.forEach(child=>{
-      registros.push({...child.val(),_key:child.key});
-      registroKeys[child.val().nombre]=child.key;
+    if(snap.exists()) snap.forEach(child=>{
+      registros.push({...child.val(), _key: child.key});
+      registroKeys[child.val().nombre] = child.key;
     });
     updateGrid();updateStats();renderWheel();
     document.getElementById('fb-dot').className='fb-dot connected';
-    document.getElementById('fb-label').textContent='Conectado · '+registros.length+' estudiante'+(registros.length!==1?'s':'');
+    document.getElementById('fb-label').textContent='Conectado — tiempo real';
     updateRecentLog();
-  }, err=>{
-    document.getElementById('fb-dot').className='fb-dot';
-    document.getElementById('fb-label').textContent='Error de conexión — recarga la página';
-    console.error('Firebase error:',err);
   });
-
-  unsubFraudes = onValue(ref(db,'sesiones/'+SESSION_CODE+'/fraudes'),snap=>{
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/fraudes'), snap=>{
     fraudLog=[];
-    if(snap.exists())snap.forEach(child=>fraudLog.push(child.val()));
+    if(snap.exists()) snap.forEach(child=>fraudLog.push(child.val()));
     updateFraud();
   });
-
-  unsubAutoResp = onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/respuestas'),snap=>{
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/respuestas'),snap=>{
     autoRespuestas=[];
     if(snap.exists())snap.forEach(child=>autoRespuestas.push(child.val()));
     updateAutoResults();
   });
-
-  unsubAutoActiva = onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/activa'),snap=>{
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/activa'),snap=>{
     autoActiva=snap.exists()&&snap.val()===true;
-    updateAutoStatus();
+    const badge=document.getElementById('auto-status-badge');
+    const btnA=document.getElementById('btn-activar-auto');
+    const btnD=document.getElementById('btn-desactivar-auto');
+    if(badge){badge.textContent=autoActiva?'Activa':'Inactiva';badge.style.background=autoActiva?'var(--green-dim)':'var(--red-dim)';badge.style.color=autoActiva?'var(--green)':'var(--red)';badge.style.borderColor=autoActiva?'var(--green)':'var(--red)';}
+    if(btnA)btnA.style.display=autoActiva?'none':'inline-block';
+    if(btnD)btnD.style.display=autoActiva?'inline-block':'none';
   });
 }
+
+function initials(n){return n.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'??';}
 
 window.switchTab = function(t,btn){
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('view-'+t).classList.add('active');
-  if(t==='sesion')updateSessionPanel();
-  if(t==='ruleta')renderWheel();
+  if(t==='sesion') updateSessionPanel();
+  if(t==='ruleta') renderWheel();
+  if(t==='autoevaluacion') updateAutoResults();
 }
 
 function getPageURL(){return window.location.origin+window.location.pathname;}
@@ -828,35 +748,54 @@ function updateSessionPanel(){
   document.getElementById('inf-date').textContent=new Date().toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
   const slt=document.getElementById('share-link-text');if(slt)slt.textContent=link;
   const pm=document.getElementById('preview-msg');
-  if(pm)pm.innerHTML='📚 <strong style="color:var(--text)">Registro de asistencia</strong><br>'+CLASE+' · '+DOCENTE+'<br><br>🔗 <span style="color:var(--blue-mid)">'+link+'</span><br>📝 Código: <strong style="letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
+  if(pm)pm.innerHTML='📚 <strong style="color:var(--text)">Registro de asistencia</strong><br>'+CLASE+' · '+DOCENTE+'<br><br>🔗 <span style="color:#818cf8">'+link+'</span><br>📝 Código: <strong style="color:var(--text);letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
 }
 
-window.copyLink=function(){navigator.clipboard.writeText(getPageURL()+'?code='+SESSION_CODE).then(()=>flashCopy('copy-link-btn','¡Copiado!'));}
+window.copyLink=function(){
+  navigator.clipboard.writeText(getPageURL()+'?code='+SESSION_CODE).then(()=>flashCopy('copy-link-btn','¡Copiado!'));
+}
 window.copyMsg=function(){
   const link=getPageURL()+'?code='+SESSION_CODE;
   const msg='📚 *Registro de asistencia*\n'+CLASE+' · '+DOCENTE+'\n\n🔗 '+link+'\n📝 Código: *'+SESSION_CODE+'*\n\nAbre el enlace y escribe tu nombre.';
   navigator.clipboard.writeText(msg).then(()=>flashCopy('copy-msg-btn','¡Copiado!'));
 }
-function flashCopy(id,txt){const btn=document.getElementById(id);const orig=btn.textContent;btn.textContent=txt;btn.classList.add('copied');setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);}
+function flashCopy(id,txt){
+  const btn=document.getElementById(id);const orig=btn.textContent;
+  btn.textContent=txt;btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
+}
 
-function initials(n){return n.trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'??';}
-
-window.expulsarAlumno = async function(nombre){
-  if(!confirm('¿Expulsar a '+nombre+'?'))return;
-  const snap=await get(ref(db,'sesiones/'+SESSION_CODE+'/registros'));
-  if(snap.exists())snap.forEach(child=>{if(child.val().nombre===nombre)remove(ref(db,'sesiones/'+SESSION_CODE+'/registros/'+child.key));});
-  const devSnap=await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos'));
-  if(devSnap.exists())devSnap.forEach(child=>{if(child.val().nombre===nombre)remove(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+child.key));});
+window.expulsarAlumno = async function(nombre, fp){
+  if(!confirm('¿Expulsar a '+nombre+'? Podrá volver a registrarse.')) return;
+  // Buscar y eliminar registro
+  const snap = await get(ref(db,'sesiones/'+SESSION_CODE+'/registros'));
+  if(snap.exists()) snap.forEach(child=>{
+    if(child.val().nombre===nombre) remove(ref(db,'sesiones/'+SESSION_CODE+'/registros/'+child.key));
+  });
+  // Eliminar huella del dispositivo
+  const devSnap = await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos'));
+  if(devSnap.exists()) devSnap.forEach(child=>{
+    if(child.val().nombre===nombre) remove(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+child.key));
+  });
 }
 
 function updateGrid(){
   const g=document.getElementById('reg-grid');
-  if(!registros.length){g.innerHTML='<div class="empty-state">Esperando registros de alumnos...</div>';return;}
+  if(!registros.length){
+    g.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>Esperando registros de alumnos...</div>';
+    return;
+  }
   g.innerHTML=registros.map(r=>`
     <div class="rc present">
-      <div class="rc-top"><div class="av">${initials(r.nombre)}</div><div><div class="rc-name">${r.nombre}</div><div class="rc-time">${r.time}</div></div></div>
+      <div class="rc-top">
+        <div class="av">${initials(r.nombre)}</div>
+        <div><div class="rc-name">${r.nombre}</div><div class="rc-time">${r.time}</div></div>
+      </div>
       <div class="rc-dev">${r.device}</div>
-      <div class="rc-footer"><span class="badge-p">PRESENTE</span><button class="expel-btn" onclick="expulsarAlumno('${r.nombre.replace(/'/g,"\\'")}')">Expulsar</button></div>
+      <div class="rc-footer">
+        <span class="badge">PRESENTE</span>
+        <button class="expel-btn" onclick="expulsarAlumno('${r.nombre.replace(/'/g,"\\'")}','${r.device}')">Expulsar</button>
+      </div>
     </div>`).join('');
 }
 
@@ -880,7 +819,7 @@ function updateRecentLog(){
 function updateFraud(){
   if(!fraudLog.length){document.getElementById('fraud-section').style.display='none';return;}
   document.getElementById('fraud-section').style.display='block';
-  document.getElementById('fraud-log').innerHTML=fraudLog.map(f=>`<div class="fi"><div class="fdot"></div><span>Intento: <strong>${f.nombre}</strong> — ya registrado como <strong>${f.prevName}</strong></span></div>`).join('');
+  document.getElementById('fraud-log').innerHTML=fraudLog.map(f=>`<div class="fi"><div class="fdot"></div><span>Intento: <strong>${f.nombre}</strong> — dispositivo ya registrado como <strong>${f.prevName}</strong></span></div>`).join('');
 }
 
 window.abrirAgregar = function(){
@@ -889,13 +828,17 @@ window.abrirAgregar = function(){
   document.getElementById('modal-agregar').className='modal-overlay show';
   setTimeout(()=>document.getElementById('manual-nombre').focus(),100);
 }
+
 window.agregarManual = async function(){
-  const nombre=document.getElementById('manual-nombre').value.trim();
-  const errEl=document.getElementById('manual-err');
+  const nombre = document.getElementById('manual-nombre').value.trim();
+  const errEl = document.getElementById('manual-err');
   if(!nombre||nombre.length<2){errEl.style.display='block';return;}
   errEl.style.display='none';
-  const now=new Date(),timeStr=now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
-  await push(ref(db,'sesiones/'+SESSION_CODE+'/registros'),{nombre,status:'present',device:'MANUAL',time:timeStr,timestamp:now.toISOString()});
+  const now=new Date();
+  const timeStr=now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+  await push(ref(db,'sesiones/'+SESSION_CODE+'/registros'),{
+    nombre, status:'present', device:'MANUAL', time:timeStr, timestamp:now.toISOString()
+  });
   document.getElementById('modal-agregar').className='modal-overlay';
 }
 
@@ -904,184 +847,70 @@ window.terminarSesion = function(){
   localStorage.removeItem('asistencia_session');
   document.getElementById('m-total').textContent=registros.length;
   document.getElementById('m-fraud').textContent=fraudLog.length;
-  document.getElementById('modal-fin-sub').textContent=CLASE+' · '+DOCENTE;
   document.getElementById('modal-fin').className='modal-overlay show';
 }
+
 window.cerrarModal = function(){
   document.getElementById('modal-fin').className='modal-overlay';
-  registros=[];fraudLog=[];autoRespuestas=[];autoPreguntas=[];
+  registros=[];fraudLog=[];
   document.getElementById('modo-profesor').style.display='none';
+  // Pre-rellenar setup con datos anteriores
   document.getElementById('setup-clase').value=CLASE;
   document.getElementById('setup-docente').value=DOCENTE;
   document.getElementById('modo-setup').style.display='flex';
 }
+
 window.renewCode = function(){
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
   SESSION_CODE=genCode();timerSec=1800;
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
-  suscribir();updateSessionPanel();updateTimerUI();
-}
-
-/* AUTOEVALUACION DOCENTE */
-window.agregarPregunta = function(){
-  const input=document.getElementById('new-question-input');
-  const texto=input.value.trim();
-  if(!texto)return;
-  autoPreguntas.push(texto);
-  input.value='';
-  renderPreguntasDocente();
-}
-
-function renderPreguntasDocente(){
-  const cont=document.getElementById('questions-list');
-  if(!autoPreguntas.length){
-    cont.innerHTML='<div style="font-size:13px;color:var(--muted2);padding:12px;text-align:center;background:var(--bg3);border-radius:var(--radius-sm);">No hay preguntas aún.</div>';return;
-  }
-  cont.innerHTML=autoPreguntas.map((q,i)=>`
-    <div class="q-item">
-      <span class="q-num">${i+1}.</span>
-      <span class="q-text">${q}</span>
-      <button class="q-del" onclick="eliminarPregunta(${i})" title="Eliminar">✕</button>
-    </div>`).join('');
-}
-
-window.eliminarPregunta = function(i){
-  autoPreguntas.splice(i,1);
-  renderPreguntasDocente();
-}
-
-window.activarAutoevaluacion = async function(){
-  if(!autoPreguntas.length){alert('Agrega al menos una pregunta antes de activar.');return;}
-  await set(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion'),{
-    activa:true,
-    preguntas:autoPreguntas,
-    clase:CLASE,
-    docente:DOCENTE
-  });
-  document.getElementById('btn-activar-auto').style.display='none';
-  document.getElementById('btn-desactivar-auto').style.display='inline-flex';
-}
-
-window.desactivarAutoevaluacion = async function(){
-  await set(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/activa'),false);
-  document.getElementById('btn-activar-auto').style.display='inline-flex';
-  document.getElementById('btn-desactivar-auto').style.display='none';
-}
-
-function updateAutoStatus(){
-  const badge=document.getElementById('auto-status-badge');
-  if(autoActiva){badge.className='status-badge st-active';badge.textContent='Activa';}
-  else{badge.className='status-badge st-inactive';badge.textContent='Inactiva';}
-}
-
-function updateAutoResults(){
-  const count=autoRespuestas.length;
-  document.getElementById('auto-resp-count').textContent=count+' respuesta'+(count!==1?'s':'');
-  const emptyEl=document.getElementById('auto-results-empty');
-  const tableEl=document.getElementById('auto-results-table');
-  if(!count){emptyEl.style.display='block';tableEl.style.display='none';return;}
-  emptyEl.style.display='none';tableEl.style.display='block';
-  const LABELS={mb:'Muy bien',b:'Bien',r:'Regular'};
-  const PILL={mb:'pill-mb',b:'pill-b',r:'pill-r'};
-  const pregs=autoPreguntas.length?autoPreguntas:(autoRespuestas[0]?Object.keys(autoRespuestas[0].respuestas||{}).map((_,i)=>'Pregunta '+(i+1)):[]);
-  let html=`<thead><tr><th>Estudiante</th>${pregs.map(q=>`<th class="center" style="max-width:100px;white-space:normal;">${q}</th>`).join('')}<th class="center">Mejora</th></tr></thead><tbody>`;
-  autoRespuestas.forEach(r=>{
-    html+=`<tr><td><strong>${r.nombre}</strong></td>`;
-    pregs.forEach((_,i)=>{
-      const val=r.respuestas?.[i];
-      html+=`<td class="center">${val?`<span class="${PILL[val]||'pill-nd'}">${LABELS[val]||val}</span>`:'<span class="pill-nd">—</span>'}</td>`;
-    });
-    html+=`<td style="font-size:11.5px;color:var(--muted);max-width:140px;">${r.mejora||'—'}</td></tr>`;
-  });
-  html+='</tbody>';
-  document.getElementById('auto-table').innerHTML=html;
-}
-
-window.descargarFormatoVacio = function(){
-  if(!autoPreguntas.length){alert('Agrega preguntas primero.');return;}
-  const wb=XLSX.utils.book_new();
-  const header=['Nombre del estudiante','Fecha',...autoPreguntas.map((q,i)=>(i+1)+'. '+q),'¿Qué quiero mejorar?'];
-  const note=['Escala: Muy bien / Bien / Regular','',''];
-  const ws=XLSX.utils.aoa_to_sheet([
-    ['AUTOEVALUACIÓN — '+CLASE],
-    ['Docente: '+DOCENTE],
-    [],
-    header,
-    note
-  ]);
-  ws['!cols']=[{wch:30},{wch:12},...autoPreguntas.map(()=>({wch:25})),{wch:30}];
-  XLSX.utils.book_append_sheet(wb,ws,'Formato');
-  XLSX.writeFile(wb,'formato-autoevaluacion-'+SESSION_CODE+'.xlsx');
-}
-
-window.exportAutoExcel = function(){
-  if(!autoRespuestas.length){alert('No hay respuestas aún.');return;}
-  const wb=XLSX.utils.book_new();
-  const pregs=autoPreguntas.length?autoPreguntas:[];
-  const LABELS={mb:'Muy bien',b:'Bien',r:'Regular'};
-  const header=['Nombre','Fecha/Hora',...pregs.map((q,i)=>(i+1)+'. '+q),'MB','B','R','¿Qué mejorar?','Mensaje generado'];
-  const rows=autoRespuestas.map(r=>[
-    r.nombre,
-    r.timestamp?new Date(r.timestamp).toLocaleString('es'):'',
-    ...pregs.map((_,i)=>LABELS[r.respuestas?.[i]]||''),
-    r.mb||0,r.b||0,r.r||0,
-    r.mejora||'',
-    r.mensaje||''
-  ]);
-  const wsData=[['RESULTADOS AUTOEVALUACIÓN — '+CLASE],['Docente: '+DOCENTE],['Sesión: '+SESSION_CODE],[],header,...rows];
-  const ws=XLSX.utils.aoa_to_sheet(wsData);
-  ws['!cols']=[{wch:28},{wch:18},...pregs.map(()=>({wch:22})),{wch:8},{wch:8},{wch:8},{wch:30},{wch:50}];
-  XLSX.utils.book_append_sheet(wb,ws,'Autoevaluación');
-  XLSX.writeFile(wb,'resultados-autoevaluacion-'+SESSION_CODE+'.xlsx');
-}
-
-window.exportAutoPDF = function(){
-  if(!autoRespuestas.length){alert('No hay respuestas aún.');return;}
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  const LABELS={mb:'Muy bien',b:'Bien',r:'Regular'};
-  const pregs=autoPreguntas.length?autoPreguntas:[];
-  doc.setFillColor(12,68,124);doc.rect(0,0,297,20,'F');
-  doc.setTextColor(230,241,251);doc.setFontSize(13);doc.setFont('helvetica','bold');
-  doc.text('Resultados de Autoevaluación — '+CLASE,14,13);
-  doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text('Docente: '+DOCENTE+' | Sesión: '+SESSION_CODE+' | '+new Date().toLocaleDateString('es'),14,19);
-  let y=28;
-  doc.setTextColor(4,44,83);doc.setFontSize(9);doc.setFont('helvetica','bold');
-  const cols=['Nombre',...pregs.map((_,i)=>''+(i+1)),'MB','B','R','¿Qué mejorar?'];
-  const colW=[50,...pregs.map(()=>Math.max(8,Math.floor(140/pregs.length))),10,10,10,60];
-  let x=14;
-  doc.setFillColor(230,241,251);
-  cols.forEach((c,i)=>{doc.rect(x,y-4,colW[i],7,'F');doc.text(c.slice(0,12),x+1,y);x+=colW[i];});
-  y+=7;
-  doc.setFont('helvetica','normal');
-  autoRespuestas.forEach(r=>{
-    if(y>185){doc.addPage();y=20;}
-    x=14;
-    doc.setFillColor(244,247,251);doc.rect(14,y-4,283,7,'F');
-    const row=[r.nombre,...pregs.map((_,i)=>LABELS[r.respuestas?.[i]]||'—'),String(r.mb||0),String(r.b||0),String(r.r||0),(r.mejora||'').slice(0,40)];
-    row.forEach((c,i)=>{doc.text(c.slice(0,colW[i]/2+2),x+1,y);x+=colW[i];});
-    y+=7;
-  });
-  doc.save('autoevaluacion-'+SESSION_CODE+'.pdf');
+  suscribir();
+  updateSessionPanel();updateTimerUI();
 }
 
 window.exportExcel = function(){
   const date=new Date();
-  const wb=XLSX.utils.book_new();
+  const dateStr=date.toLocaleDateString('es',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const timeStr=date.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+
+  const wb = XLSX.utils.book_new();
+
+  // Hoja de asistencia
   const wsData=[
     ['ACTA DE ASISTENCIA'],
-    ['Clase:',CLASE||'—'],['Profesor:',DOCENTE||'—'],
-    ['Fecha:',date.toLocaleDateString('es',{weekday:'long',year:'numeric',month:'long',day:'numeric'})],
-    ['Código de sesión:',SESSION_CODE],[],
-    ['#','Nombre','Hora','Dispositivo','Estado'],
-    ...registros.map((r,i)=>[i+1,r.nombre,r.time,r.device,'PRESENTE']),
-    [],['Total presentes:',registros.length],['Bloqueados:',fraudLog.length],
+    ['Clase:', CLASE||'—'],
+    ['Profesor:', DOCENTE||'—'],
+    ['Fecha:', dateStr],
+    ['Hora de cierre:', timeStr],
+    ['Código de sesión:', SESSION_CODE],
+    [],
+    ['#','Nombre','Hora de registro','Dispositivo','Estado'],
+    ...registros.map((r,i)=>[i+1, r.nombre, r.time, r.device, 'PRESENTE']),
+    [],
+    ['Total presentes:', registros.length],
+    ['Intentos bloqueados:', fraudLog.length],
   ];
-  const ws=XLSX.utils.aoa_to_sheet(wsData);
-  ws['!cols']=[{wch:5},{wch:35},{wch:12},{wch:18},{wch:12}];
-  XLSX.utils.book_append_sheet(wb,ws,'Asistencia');
-  XLSX.writeFile(wb,'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
+
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Ancho de columnas
+  ws['!cols']=[{wch:5},{wch:35},{wch:18},{wch:18},{wch:12}];
+
+  // Hoja de fraudes si hay
+  if(fraudLog.length){
+    const wfData=[
+      ['INTENTOS BLOQUEADOS'],
+      [],
+      ['Nombre intentado','Nombre registrado previo','Dispositivo'],
+      ...fraudLog.map(f=>[f.nombre, f.prevName, f.device||'—']),
+    ];
+    const wf=XLSX.utils.aoa_to_sheet(wfData);
+    wf['!cols']=[{wch:30},{wch:30},{wch:18}];
+    XLSX.utils.book_append_sheet(wb, wf, 'Bloqueados');
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Asistencia');
+  XLSX.writeFile(wb, 'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
 }
 
 function updateTimerUI(){
@@ -1107,9 +936,9 @@ function renderWheel(){
   if(spinBtn)spinBtn.disabled=names.length===0;
   if(countEl)countEl.textContent=names.length>0?names.length+' alumno'+(names.length!==1?'s':'')+' en ruleta':'';
   if(!names.length){
-    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#EBF1FA';ctx.fill();
-    ctx.strokeStyle='#B5D4F4';ctx.lineWidth=2;ctx.stroke();
-    ctx.fillStyle='#5A7A9E';ctx.font='13px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#1a2234';ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='13px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText('Sin alumnos',cx,cy);return;
   }
   const slice=(Math.PI*2)/names.length;
@@ -1117,7 +946,7 @@ function renderWheel(){
     const start=wheelAngle+i*slice-Math.PI/2,end=start+slice;
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
     ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=2;ctx.stroke();
+    ctx.strokeStyle='rgba(10,14,26,0.5)';ctx.lineWidth=2;ctx.stroke();
     ctx.save();ctx.translate(cx,cy);ctx.rotate(start+slice/2);
     ctx.textAlign='right';ctx.fillStyle='rgba(255,255,255,0.95)';
     const fs=Math.min(13,Math.max(9,180/names.length));
@@ -1125,21 +954,28 @@ function renderWheel(){
     ctx.fillText(name.split(' ')[0].slice(0,10),r-10,4);
     ctx.restore();
   });
-  ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fillStyle='#F4F7FB';ctx.fill();
-  ctx.strokeStyle='#B5D4F4';ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fillStyle='#0a0e1a';ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=2;ctx.stroke();
 }
 
-window.spinWheel = function(){
+window.spinWheel=function(){
   if(isSpinning||!registros.length)return;
   isSpinning=true;
   document.getElementById('spin-btn').disabled=true;
   document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Girando...</span>';
+
   const names=registros.map(r=>r.nombre);
   const slice=(Math.PI*2)/names.length;
-  const spinsExtra=(Math.PI*2)*(5+Math.floor(Math.random()*4));
+
+  // Elegir ganador y calcular cuánto debe girar para que quede apuntado arriba
   const winner=Math.floor(Math.random()*names.length);
-  const targetAngle=spinsExtra-(winner*slice+slice/2);
-  const totalRotation=targetAngle-(wheelAngle%(Math.PI*2));
+  // El ganador debe quedar en el tope (ángulo 0 = arriba = -PI/2 en canvas)
+  // Sector del ganador empieza en: wheelAngle + winner*slice - PI/2
+  // Para que quede centrado arriba: ángulo final = -(winner*slice + slice/2)
+  const spinsExtra=(Math.PI*2)*(5+Math.floor(Math.random()*4)); // 5-8 vueltas extra
+  const targetAngle=spinsExtra - (winner*slice + slice/2);
+  const totalRotation=targetAngle - (wheelAngle%(Math.PI*2));
+
   const duration=4000+Math.random()*1500;
   const t0=performance.now(),a0=wheelAngle;
   function ease(t){return 1-Math.pow(1-t,3);}
@@ -1149,6 +985,7 @@ window.spinWheel = function(){
     renderWheel();
     if(t<1){requestAnimationFrame(frame);return;}
     isSpinning=false;document.getElementById('spin-btn').disabled=false;
+    // Ganador = el que quedó apuntado por el puntero (arriba = ángulo -PI/2)
     const normalized=(((-wheelAngle)%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
     const winnerIdx=Math.floor(normalized/slice)%names.length;
     const w=registros[winnerIdx];
@@ -1156,6 +993,187 @@ window.spinWheel = function(){
   }
   requestAnimationFrame(frame);
 }
+
+/* ── AUTOEVALUACION ── */
+function escucharAutoevaluacion(){
+  onValue(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion'),snap=>{
+    if(!snap.exists())return;
+    const data=snap.val();
+    const waiting=document.getElementById('auto-waiting');
+    const formEl=document.getElementById('auto-form-alumno');
+    const successEl=document.getElementById('auto-success');
+    if(!successEl||successEl.style.display==='block')return;
+    if(data.activa&&!(data.completados&&data.completados[MY_FP])){
+      if(waiting)waiting.style.display='none';
+      if(formEl)formEl.style.display='block';
+      renderAutoItemsAlumno(data.preguntas||[]);
+    }else if(!data.activa){
+      if(formEl)formEl.style.display='none';
+    }
+  });
+}
+
+function renderAutoItemsAlumno(preguntas){
+  autoSelecciones={};
+  const cont=document.getElementById('auto-items-alumno');
+  if(!cont)return;
+  if(!preguntas.length){cont.innerHTML='<div style="padding:12px 16px;font-size:13px;color:var(--muted)">Sin preguntas configuradas.</div>';return;}
+  cont.innerHTML=preguntas.map((q,i)=>`
+    <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);" data-idx="${i}">
+      <div style="flex:1;padding:10px 14px;font-size:12.5px;color:var(--text);line-height:1.5;"><strong style="color:var(--muted);font-size:11px;margin-right:6px;">${i+1}.</strong>${q}</div>
+      <div style="display:flex;flex-shrink:0;">
+        <button onclick="selAuto(${i},'mb',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">✓ MB</button>
+        <button onclick="selAuto(${i},'b',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">✓ B</button>
+        <button onclick="selAuto(${i},'r',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">✓ R</button>
+      </div>
+    </div>`).join('');
+}
+
+window.selAuto = function(idx,val,btn){
+  const row=document.querySelector('[data-idx="'+idx+'"]');
+  if(row)row.querySelectorAll('button').forEach(b=>{b.style.background='transparent';b.style.color='var(--muted)';});
+  const colors={mb:'var(--accent-dim)',b:'var(--green-dim)',r:'#FAEEDA'};
+  const textColors={mb:'var(--accent)',b:'var(--green)',r:'#633806'};
+  btn.style.background=colors[val];btn.style.color=textColors[val];
+  autoSelecciones[idx]=val;
+}
+
+window.enviarAutoevaluacion = async function(){
+  const pregSnap=await get(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/preguntas'));
+  const pregs=pregSnap.val()||[];
+  const total=pregs.length;
+  const respondidos=Object.keys(autoSelecciones).length;
+  if(respondidos<total){alert('Faltan '+(total-respondidos)+' pregunta(s) por responder.');return;}
+  const mejora=document.getElementById('auto-mejora').value.trim();
+  const nombre=document.getElementById('s-suc-name').textContent||'Estudiante';
+  const mb=Object.values(autoSelecciones).filter(v=>v==='mb').length;
+  const b=Object.values(autoSelecciones).filter(v=>v==='b').length;
+  const r=Object.values(autoSelecciones).filter(v=>v==='r').length;
+  let msg='';
+  if(mb>=Math.ceil(total*0.7))msg='¡Excelente desempeño! Demostraste dominio sólido en la mayoría de los aspectos evaluados. ¡Sigue así!';
+  else if(mb+b>=Math.ceil(total*0.6))msg='Buen trabajo. Hay algunos aspectos que podés reforzar para alcanzar un desempeño óptimo en la próxima clase.';
+  else msg='Vas por buen camino. Identifica los aspectos marcados como Regular y enfócate en mejorarlos. ¡Cada clase es una oportunidad!';
+  await push(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/respuestas'),{nombre,device:'DEV-'+MY_FP,respuestas:autoSelecciones,mejora,mb,b,r,mensaje:msg,timestamp:new Date().toISOString()});
+  await set(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/completados/'+MY_FP),true);
+  const counts=document.getElementById('auto-result-counts');
+  document.getElementById('cnt-mb').textContent=mb;
+  document.getElementById('cnt-b').textContent=b;
+  document.getElementById('cnt-r').textContent=r;
+  if(counts)counts.style.display='grid';
+  const msgBox=document.getElementById('auto-msg-box');
+  if(msgBox){msgBox.textContent=msg;msgBox.style.display='block';}
+  document.getElementById('auto-submit-btn').style.display='none';
+  const suc=document.getElementById('auto-success');
+  if(suc){suc.style.display='block';document.getElementById('auto-msg-final').textContent=msg;}
+}
+
+window.agregarPregunta = function(){
+  const input=document.getElementById('new-question-input');
+  const texto=input.value.trim();if(!texto)return;
+  autoPreguntas.push(texto);input.value='';
+  renderPreguntasDocente();
+}
+
+function renderPreguntasDocente(){
+  const cont=document.getElementById('questions-list');if(!cont)return;
+  if(!autoPreguntas.length){cont.innerHTML='<div style="font-size:13px;color:var(--muted);padding:12px;text-align:center;background:var(--bg3);border-radius:var(--radius-sm);">No hay preguntas aún.</div>';return;}
+  cont.innerHTML=autoPreguntas.map((q,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;">
+      <span style="font-size:11px;font-weight:600;color:var(--muted);min-width:20px;">${i+1}.</span>
+      <span style="flex:1;font-size:13px;color:var(--text);">${q}</span>
+      <button onclick="eliminarPregunta(${i})" style="background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:16px;" title="Eliminar">✕</button>
+    </div>`).join('');
+}
+
+window.eliminarPregunta = function(i){autoPreguntas.splice(i,1);renderPreguntasDocente();}
+
+window.activarAutoevaluacion = async function(){
+  if(!autoPreguntas.length){alert('Agrega al menos una pregunta antes de activar.');return;}
+  await set(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion'),{activa:true,preguntas:autoPreguntas,clase:CLASE,docente:DOCENTE});
+}
+
+window.desactivarAutoevaluacion = async function(){
+  await set(ref(db,'sesiones/'+SESSION_CODE+'/autoevaluacion/activa'),false);
+}
+
+function updateAutoResults(){
+  const count=autoRespuestas.length;
+  const countEl=document.getElementById('auto-resp-count');
+  if(countEl)countEl.textContent=count+' respuesta'+(count!==1?'s':'');
+  const emptyEl=document.getElementById('auto-results-empty');
+  const tableEl=document.getElementById('auto-results-table');
+  if(!emptyEl||!tableEl)return;
+  if(!count){emptyEl.style.display='block';tableEl.style.display='none';return;}
+  emptyEl.style.display='none';tableEl.style.display='block';
+  const LABELS={mb:'Muy bien',b:'Bien',r:'Regular'};
+  const COLORS={mb:'background:#E6F1FB;color:#0C447C',b:'background:#E1F5EE;color:#0F6E56',r:'background:#FAEEDA;color:#633806'};
+  const pregs=autoPreguntas.length?autoPreguntas:(autoRespuestas[0]?Object.keys(autoRespuestas[0].respuestas||{}).map((_,i)=>'P'+(i+1)):[]);
+  let html='<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>';
+  html+='<th style="padding:7px 10px;text-align:left;background:var(--accent);color:#E6F1FB;font-size:11px;border:1px solid var(--border2);">Estudiante</th>';
+  pregs.forEach((q,i)=>html+=`<th style="padding:7px 10px;text-align:center;background:var(--accent);color:#E6F1FB;font-size:11px;border:1px solid var(--border2);max-width:80px;">${i+1}. ${q.slice(0,25)}</th>`);
+  html+='<th style="padding:7px 10px;text-align:left;background:var(--accent);color:#E6F1FB;font-size:11px;border:1px solid var(--border2);">¿Qué mejorar?</th></tr></thead><tbody>';
+  autoRespuestas.forEach((r,ri)=>{
+    html+=`<tr style="${ri%2?'background:var(--bg3)':''}">`;
+    html+=`<td style="padding:7px 10px;border:1px solid var(--border);font-weight:500;">${r.nombre}</td>`;
+    pregs.forEach((_,i)=>{const v=r.respuestas?.[i];html+=`<td style="padding:7px 10px;border:1px solid var(--border);text-align:center;">${v?`<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;${COLORS[v]||''}">${LABELS[v]||v}</span>`:'—'}</td>`;});
+    html+=`<td style="padding:7px 10px;border:1px solid var(--border);font-size:11px;color:var(--muted);">${(r.mejora||'').slice(0,50)||'—'}</td></tr>`;
+  });
+  html+='</tbody></table>';
+  tableEl.innerHTML=html;
+}
+
+window.descargarFormatoVacio = function(){
+  if(!autoPreguntas.length){alert('Agrega preguntas primero.');return;}
+  const wb=XLSX.utils.book_new();
+  const header=['Nombre del estudiante','Fecha',...autoPreguntas.map((q,i)=>(i+1)+'. '+q),'¿Qué quiero mejorar?'];
+  const ws=XLSX.utils.aoa_to_sheet([['AUTOEVALUACIÓN — '+CLASE],['Docente: '+DOCENTE],[],header,['Escala: Muy bien / Bien / Regular']]);
+  ws['!cols']=[{wch:30},{wch:12},...autoPreguntas.map(()=>({wch:25})),{wch:30}];
+  XLSX.utils.book_append_sheet(wb,ws,'Formato');
+  XLSX.writeFile(wb,'formato-autoevaluacion.xlsx');
+}
+
+window.exportAutoExcel = function(){
+  if(!autoRespuestas.length){alert('No hay respuestas aún.');return;}
+  const LABELS={mb:'Muy bien',b:'Bien',r:'Regular'};
+  const pregs=autoPreguntas.length?autoPreguntas:[];
+  const header=['Nombre','Fecha/Hora',...pregs.map((q,i)=>(i+1)+'. '+q),'MB','B','R','¿Qué mejorar?','Mensaje'];
+  const rows=autoRespuestas.map(r=>[r.nombre,r.timestamp?new Date(r.timestamp).toLocaleString('es'):'',...pregs.map((_,i)=>LABELS[r.respuestas?.[i]]||''),r.mb||0,r.b||0,r.r||0,r.mejora||'',r.mensaje||'']);
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([['RESULTADOS AUTOEVALUACIÓN — '+CLASE],['Docente: '+DOCENTE],[],header,...rows]);
+  ws['!cols']=[{wch:28},{wch:18},...pregs.map(()=>({wch:22})),{wch:8},{wch:8},{wch:8},{wch:30},{wch:50}];
+  XLSX.utils.book_append_sheet(wb,ws,'Autoevaluación');
+  XLSX.writeFile(wb,'resultados-autoevaluacion.xlsx');
+}
+
+window.exportAutoPDF = function(){
+  if(!autoRespuestas.length){alert('No hay respuestas aún.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const LABELS={mb:'Muy bien',b:'Bien',r:'Regular'};
+  const pregs=autoPreguntas.length?autoPreguntas:[];
+  doc.setFillColor(12,68,124);doc.rect(0,0,297,18,'F');
+  doc.setTextColor(230,241,251);doc.setFontSize(12);doc.setFont('helvetica','bold');
+  doc.text('Resultados Autoevaluación — '+CLASE,14,12);
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('Docente: '+DOCENTE+' | '+new Date().toLocaleDateString('es'),14,17);
+  let y=26;
+  doc.setTextColor(4,44,83);doc.setFontSize(8);doc.setFont('helvetica','bold');
+  const cols=['Nombre',...pregs.map((_,i)=>''+(i+1)),'MB','B','R','Mejora'];
+  const colW=[50,...pregs.map(()=>Math.max(7,Math.floor(130/Math.max(pregs.length,1)))),8,8,8,50];
+  let x=14;
+  doc.setFillColor(230,241,251);
+  cols.forEach((c,i)=>{doc.rect(x,y-4,colW[i],6,'F');doc.text(c.slice(0,10),x+1,y);x+=colW[i];});
+  y+=6;doc.setFont('helvetica','normal');
+  autoRespuestas.forEach(r=>{
+    if(y>185){doc.addPage();y=20;}
+    x=14;doc.setFillColor(244,247,251);doc.rect(14,y-4,270,6,'F');
+    const row=[r.nombre,...pregs.map((_,i)=>LABELS[r.respuestas?.[i]]||'—'),String(r.mb||0),String(r.b||0),String(r.r||0),(r.mejora||'').slice(0,35)];
+    row.forEach((c,i)=>{doc.text(String(c).slice(0,colW[i]/2+3),x+1,y);x+=colW[i];});
+    y+=6;
+  });
+  doc.save('autoevaluacion.pdf');
+}
+
 </script>
 </body>
 </html>
