@@ -570,6 +570,7 @@ let autoPreguntas = [];
 let autoRespuestas = [];
 let autoActiva = false;
 let autoSelecciones = {};
+let registroKeys = {};
 let unsubRegistros=null, unsubFraudes=null, unsubAutoResp=null, unsubAutoActiva=null;
 
 function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
@@ -776,8 +777,11 @@ function suscribir(){
   if(unsubAutoActiva) unsubAutoActiva();
 
   unsubRegistros = onValue(ref(db,'sesiones/'+SESSION_CODE+'/registros'),snap=>{
-    registros=[];
-    if(snap.exists())snap.forEach(child=>registros.push({...child.val(),_key:child.key}));
+    registros=[];registroKeys={};
+    if(snap.exists())snap.forEach(child=>{
+      registros.push({...child.val(),_key:child.key});
+      registroKeys[child.val().nombre]=child.key;
+    });
     updateGrid();updateStats();renderWheel();
     document.getElementById('fb-dot').className='fb-dot connected';
     document.getElementById('fb-label').textContent='Conectado · '+registros.length+' estudiante'+(registros.length!==1?'s':'');
