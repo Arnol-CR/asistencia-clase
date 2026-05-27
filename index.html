@@ -570,6 +570,7 @@ let autoPreguntas = [];
 let autoRespuestas = [];
 let autoActiva = false;
 let autoSelecciones = {};
+let unsubRegistros=null, unsubFraudes=null, unsubAutoResp=null, unsubAutoActiva=null;
 
 function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
 
@@ -766,8 +767,6 @@ function initProfesor(isNew){
   if(isNew)set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE});
   setInterval(()=>{if(timerSec>0){timerSec--;updateTimerUI();guardarEstado();}else{terminarSesion();}},1000);
 }
-
-let unsubRegistros=null, unsubFraudes=null, unsubAutoResp=null, unsubAutoActiva=null;
 
 function suscribir(){
   // Cancelar listeners anteriores si existen
