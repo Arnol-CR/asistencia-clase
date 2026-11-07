@@ -207,9 +207,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   #wheel-canvas{width:220px!important;height:220px!important}
   .session-code{font-size:28px}
 }
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#042C53;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;display:none;max-width:90vw;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#toast.err{background:#b91c1c}
+.ver{font-size:11px;color:var(--muted);text-align:center;margin:18px 0 6px;opacity:.8}
 </style>
 </head>
 <body>
+<div id="toast"></div>
 
 <!-- MODAL FIN DE SESIÓN -->
 <div class="modal-overlay" id="modal-fin">
@@ -298,6 +302,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="setup-err" id="setup-err">Por favor completa todos los campos.</div>
     </div>
     <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión de clase</button>
+    <div class="ver appver"></div>
   </div>
 </div>
 
@@ -380,7 +385,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="logo">
         <div>
           <div class="logo-text" id="header-univ">Registro de asistencia</div>
-          <div class="logo-sub">Control de asistencia y participación</div>
+          <div class="logo-sub">Control de asistencia y participación · <span class="appver"></span></div>
         </div>
       </div>
       <div class="header-right">
@@ -428,7 +433,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="bottom-bar">
         <button class="btn" onclick="terminarSesion()">Terminar sesión</button>
-        <button class="btn" style="border-color:#dc2626;color:#dc2626" onclick="cerrarTodasSesiones(true)">Cerrar todas las sesiones</button>
+        <button class="btn" style="border-color:#dc2626;color:#dc2626" onclick="pedirCierreTodas(this,true)">Cerrar todas las sesiones</button>
         <button class="btn" onclick="abrirAgregar()">+ Agregar alumno</button>
         <button class="btn btn-excel" onclick="exportExcel()">Descargar Excel</button>
       </div>
@@ -621,6 +626,8 @@ const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5c
 
 let SESSION_CODE = genCode();
 let UNIV = '';
+const APP_VERSION='v4.3 · 06-nov-2026 22:55';
+function toast(msg,err){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className=err?'err':'';t.style.display='block';clearTimeout(window.__tt);window.__tt=setTimeout(()=>{t.style.display='none';},err?9000:4500);}
 let timerSec = 3600; // 1 hora predeterminado
 let selectedDurMin = 300;
 let registros = [];
@@ -763,6 +770,7 @@ if(IS_STUDENT){
 }
 
 /* ── ALUMNO ── */
+document.querySelectorAll('.appver').forEach(e=>e.textContent=APP_VERSION);
 {const su=document.getElementById('setup-univ');if(su){let u='';try{u=localStorage.getItem('asis_univ')||'';}catch(e){} su.value=u||'Universidad Pedagógica Nacional Francisco Morazán';}}
 async function cargarListaAlumno(){
   try{
@@ -1061,21 +1069,27 @@ window.reanudarSesion = async function(code, mins){
    const ce=document.getElementById('cron-min');if(ce&&d.cronMin){ce.value=d.cronMin;cronSet();}}
   initProfesor(false);
 };
+window.pedirCierreTodas = function(btn,desdeProf){
+  if(btn.dataset.sure==='1'){btn.dataset.sure='0';cerrarTodasSesiones(desdeProf);return;}
+  const txt=btn.textContent; btn.dataset.sure='1'; btn.textContent='Pulsa de nuevo para confirmar';
+  setTimeout(()=>{btn.dataset.sure='0';btn.textContent=txt;},5000);
+};
 window.cerrarTodasSesiones = async function(desdeProf){
-  if(!confirm('¿Cerrar TODAS las sesiones activas? Los estudiantes ya no podrán registrarse con ningún enlace anterior.'))return;
-  let n=0,fallo=false;
+  toast('Cerrando sesiones…');
+  let n=0,errores=[];
   try{
     const snap=await get(ref(db,'sesiones')); const tareas=[];
-    if(snap.exists()) snap.forEach(c=>{const v=c.val()||{};if(v.activa===true){tareas.push(set(ref(db,'sesiones/'+c.key+'/activa'),false));n++;}});
+    if(snap.exists()) snap.forEach(c=>{const v=c.val()||{};if(v.activa===true){n++;const k=c.key;tareas.push(set(ref(db,'sesiones/'+k+'/activa'),false).catch(e=>errores.push(k+': '+(e&&(e.code||e.message)||e))));}});
     await Promise.all(tareas);
-  }catch(e){fallo=true;}
-  if(fallo){alert('No se pudieron cerrar las sesiones. Revisa la conexión o las reglas de Firebase.');return;}
+  }catch(e){toast('No se pudo leer Firebase: '+(e&&(e.code||e.message)||e),true);return;}
+  if(errores.length){toast('Firebase rechazó el cierre ('+errores[0]+'). Revisa las reglas de la base de datos.',true);return;}
   try{localStorage.removeItem('asistencia_session');}catch(e){}
-  if(desdeProf){profActivo=false;terminarSesion();}
-  else{cargarSesionesActivas();const m=document.getElementById('resume-msg');if(m){m.style.color='#16a34a';m.textContent='Se cerraron '+n+' sesiones.';}}
+  if(desdeProf){profActivo=false;toast('Se cerraron '+n+' sesiones.');terminarSesion();}
+  else{await cargarSesionesActivas();toast(n?('Se cerraron '+n+' sesiones.'):'No había sesiones activas.');}
 };
 window.cerrarSesionRemota = async function(code){
-  try{await set(ref(db,'sesiones/'+code+'/activa'),false);}catch(e){}
+  try{await set(ref(db,'sesiones/'+code+'/activa'),false);toast('Sesión '+code+' cerrada.');}
+  catch(e){toast('No se pudo cerrar: '+(e&&(e.code||e.message)||e),true);}
   cargarSesionesActivas();
 };
 async function cargarSesionesActivas(){
@@ -1087,8 +1101,8 @@ async function cargarSesionesActivas(){
     if(!arr.length){el.textContent='No hay sesiones activas. Crea una nueva abajo, o escribe un código para reanudar.';return;}
     el.innerHTML=arr.slice(0,8).map(x=>`<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span><b style="font-family:'Space Mono',monospace;color:var(--text)">${esc(x.code)}</b> · ${esc(x.clase)} · ${x.nr} registrados</span><span style="display:flex;gap:6px"><button class="btn" style="padding:4px 12px;font-size:12px" data-act="res" data-code="${esc(x.code)}">Reanudar</button><button class="btn" style="padding:4px 12px;font-size:12px" data-act="cer" data-code="${esc(x.code)}">Cerrar</button></span></div>`).join('');
     el.insertAdjacentHTML('beforeend','<div style="margin-top:10px"><button class="btn" style="padding:6px 14px;font-size:12px;border-color:#dc2626;color:#dc2626" data-act="all">Cerrar todas las sesiones ('+arr.length+')</button></div>');
-    el.onclick=ev=>{const b=ev.target.closest('button[data-act]');if(!b)return;const c=b.dataset.code;if(b.dataset.act==='res')reanudarSesion(c);else if(b.dataset.act==='all')cerrarTodasSesiones(false);else cerrarSesionRemota(c);};
-  }catch(e){el.textContent='No se pudieron leer las sesiones (revisa la conexión).';}
+    el.onclick=ev=>{const b=ev.target.closest('button[data-act]');if(!b)return;const c=b.dataset.code;if(b.dataset.act==='res')reanudarSesion(c);else if(b.dataset.act==='all')pedirCierreTodas(b,false);else cerrarSesionRemota(c);};
+  }catch(e){el.textContent='No se pudieron leer las sesiones: '+(e&&(e.code||e.message)||e);}
 }
 window.extenderSesion = function(min){
   timerSec += min*60; updateTimerUI(); guardarEstado();
