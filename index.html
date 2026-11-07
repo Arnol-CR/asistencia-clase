@@ -124,6 +124,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn:hover{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
 .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn-primary:hover{background:#4f46e5}
+.grp-ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:16px}
+.grp-field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:6px}
+.grp-field select{width:100%;padding:9px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}
+.grp-layout{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:18px;align-items:start}
+.grp-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.grp-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);overflow:hidden}
+.grp-head{background:var(--accent);color:#fff;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px}
+.grp-head span{font-size:12px;font-weight:500;opacity:.85}
+.grp-tema{width:100%;border:none;border-bottom:1px solid var(--border);padding:8px 14px;font-size:12px;background:var(--bg3);color:var(--text);font-family:'DM Sans',sans-serif}
+.grp-mem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.grp-mem:last-child{border-bottom:none}
+.grp-mem button{border:none;background:none;color:var(--muted);cursor:pointer;font-size:11px;text-decoration:underline}
+.grp-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px}
+.grp-row select{padding:4px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;max-width:110px}
+@media(max-width:900px){.grp-layout{grid-template-columns:1fr}}
 .rul-grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:28px;align-items:start;text-align:left}
 .rul-left{text-align:center}
 .rul-right{display:flex;flex-direction:column;gap:14px}
@@ -398,6 +413,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="tab" onclick="switchTab('sesion',this)">Sesión activa</button>
       <button class="tab" onclick="switchTab('lista',this)">Lista</button>
       <button class="tab" onclick="switchTab('ruleta',this)">Ruleta</button>
+      <button class="tab" onclick="switchTab('grupos',this)">Grupos</button>
       <button class="tab" onclick="switchTab('autoevaluacion',this)">Autoevaluación</button>
     </div>
     <div id="receso-bar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0;padding:8px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);font-size:13px;color:var(--muted)">
@@ -566,6 +582,39 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
 
+    <!-- GRUPOS -->
+    <div id="view-grupos" class="view">
+      <div class="roulette-wrap" style="text-align:left">
+        <div class="roulette-title" style="text-align:center">Formación de grupos</div>
+        <div class="roulette-sub" style="text-align:center">Define cuántos grupos, cómo se nombran y cómo se reparten los estudiantes.</div>
+        <div class="grp-ctrl">
+          <div class="grp-field"><label>Cantidad de grupos</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button class="btn" style="padding:6px 12px" onclick="grpN(-1)">−</button>
+              <input type="number" id="grp-n" min="1" max="26" value="4" onchange="grpN(0)" style="width:64px;padding:8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);text-align:center;font-size:16px;font-weight:700">
+              <button class="btn" style="padding:6px 12px" onclick="grpN(1)">+</button>
+            </div></div>
+          <div class="grp-field"><label>Nombre de los grupos</label>
+            <select id="grp-tipo" onchange="grpCfg()"><option value="num">Números (1, 2, 3…)</option><option value="let">Letras (A, B, C…)</option></select></div>
+          <div class="grp-field"><label>Participantes</label>
+            <select id="grp-solo" onchange="grpCfg()"><option value="todos">Toda la lista</option><option value="presentes">Solo presentes</option></select></div>
+          <div class="grp-field"><label>Distribución</label>
+            <select id="grp-modo" onchange="grpCfg()"><option value="azar">Aleatoria</option><option value="manual">Manual</option></select></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px">
+          <button class="btn" id="grp-btn-azar" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600" onclick="grpAzar()">Distribuir al azar</button>
+          <button class="btn" onclick="grpLimpiar()">Quitar asignaciones</button>
+          <button class="btn" onclick="grpCopiar()">Copiar para WhatsApp</button>
+          <button class="btn btn-excel" onclick="grpExcel()">Descargar Excel</button>
+        </div>
+        <div id="grp-info" style="font-size:12px;color:var(--muted);margin-bottom:14px"></div>
+        <div class="grp-layout">
+          <div class="rul-panel"><div class="rul-label">Estudiantes</div><div id="grp-roster" style="max-height:560px;overflow:auto"></div></div>
+          <div id="grp-cards" class="grp-cards"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- AUTOEVALUACIÓN DOCENTE -->
     <div id="view-autoevaluacion" class="view">
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;">
@@ -632,7 +681,7 @@ const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5c
 
 let SESSION_CODE = genCode();
 let UNIV = '';
-const APP_VERSION='v4.4 · 06-nov-2026 23:10';
+const APP_VERSION='v4.5 · 06-nov-2026 23:30';
 function toastAction(msg,label,fn){const t=document.getElementById('toast');if(!t)return;t.className='';t.innerHTML='';
   const sp=document.createElement('span');sp.textContent=msg+' ';t.appendChild(sp);
   const b=document.createElement('button');b.textContent=label;b.style.cssText='margin-left:8px;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600';
@@ -660,7 +709,7 @@ function norm(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/
 function rnd(n){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n;}
 function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 let profActivo=false;
-const FB_MIRROR={asis_lista_txt:'listaTxt',asis_hist:'hist',asis_usados:'usados',asis_receso:'receso',asis_cron_min:'cronMin'};
+const FB_MIRROR={asis_lista_txt:'listaTxt',asis_hist:'hist',asis_usados:'usados',asis_receso:'receso',asis_cron_min:'cronMin',asis_grupos:'grupos'};
 function lsSet(k,v){
   try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}
   try{ if(profActivo&&FB_MIRROR[k]&&SESSION_CODE) set(ref(db,'sesiones/'+SESSION_CODE+'/'+FB_MIRROR[k]),v); }catch(e){}
@@ -673,6 +722,7 @@ let hist=[];         // historial de participaciones
 let ruletaModo='lista';
 let ultimoSorteo=null;
 let skipNorm='';
+let gr={n:4,tipo:'num',solo:'todos',modo:'azar',items:[],temas:[]};
 let USAR_LISTA=false;
 function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
 
@@ -724,7 +774,8 @@ window.iniciarSesion = function(){
   errEl.className='setup-err';
   CLASE=clase; DOCENTE=docente;
   SESSION_CODE=genCode(); timerSec=durMin*60;
-  try{localStorage.removeItem('asis_hist');localStorage.removeItem('asis_usados');}catch(e){}
+  try{localStorage.removeItem('asis_hist');localStorage.removeItem('asis_usados');localStorage.removeItem('asis_grupos');}catch(e){}
+  gr={n:4,tipo:'num',solo:'todos',modo:'azar',items:[],temas:[]};
   hist=[];usados=[];
   localStorage.setItem('asistencia_session',JSON.stringify({
     code:SESSION_CODE,clase:CLASE,docente:DOCENTE,univ:UNIV,
@@ -838,7 +889,8 @@ function initProfesor(isNew){
   else set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE,univ:UNIV,expiresAt:Date.now()+timerSec*1000});
   {const tx=lsGet('asis_lista_txt','');if(tx)set(ref(db,'sesiones/'+SESSION_CODE+'/listaTxt'),tx);
    set(ref(db,'sesiones/'+SESSION_CODE+'/hist'),hist);set(ref(db,'sesiones/'+SESSION_CODE+'/usados'),usados);
-   const rc=lsGet('asis_receso',null);if(rc)set(ref(db,'sesiones/'+SESSION_CODE+'/receso'),rc);}
+   const rc=lsGet('asis_receso',null);if(rc)set(ref(db,'sesiones/'+SESSION_CODE+'/receso'),rc);
+   if(gr.items.length)set(ref(db,'sesiones/'+SESSION_CODE+'/grupos'),gr);}
   setInterval(()=>{
     if(timerSec>0){timerSec--;updateTimerUI();guardarEstado();if(timerSec%60===0)set(ref(db,'sesiones/'+SESSION_CODE+'/meta/expiresAt'),Date.now()+timerSec*1000);}
     else{terminarSesion();}
@@ -896,6 +948,7 @@ window.switchTab = function(t,btn){
   document.getElementById('view-'+t).classList.add('active');
   if(t==='sesion') updateSessionPanel();
   if(t==='ruleta') renderWheel();
+  if(t==='grupos') renderGrupos();
   if(t==='autoevaluacion') updateAutoResults();
 }
 
@@ -1037,6 +1090,7 @@ window.reanudarSesion = async function(code, mins){
     if(d.listaTxt)localStorage.setItem('asis_lista_txt',JSON.stringify(d.listaTxt));
     localStorage.setItem('asis_hist',JSON.stringify(toArr(d.hist)));
     localStorage.setItem('asis_usados',JSON.stringify(toArr(d.usados)));
+    if(d.grupos)localStorage.setItem('asis_grupos',JSON.stringify(d.grupos));
     if(d.receso)localStorage.setItem('asis_receso',JSON.stringify(d.receso));
     if(d.cronMin)localStorage.setItem('asis_cron_min',JSON.stringify(d.cronMin));
   }catch(e){}
@@ -1170,6 +1224,7 @@ window.exportExcel = function(){
     XLSX.utils.book_append_sheet(wb, wl, 'Lista completa');
   }
   addParticipacionSheets(wb);
+  addGruposSheet(wb);
   XLSX.writeFile(wb, 'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
   toastAction('Excel descargado.','Reiniciar ruleta y participaciones',()=>pedirReinicioTotal());
 }
@@ -1191,6 +1246,7 @@ function parseLista(txt){
     .sort((a,b)=>a.nombre.localeCompare(b.nombre,'es',{sensitivity:'base'}));
 }
 function cargarListaLocal(){
+  gr=Object.assign({n:4,tipo:'num',solo:'todos',modo:'azar',items:[],temas:[]},lsGet('asis_grupos',{}));gr.items=toArr(gr.items);gr.temas=toArr(gr.temas);
   const txt=lsGet('asis_lista_txt','');
   if(txt&&!lista.length){lista=parseLista(txt);const t=document.getElementById('lista-text');if(t)t.value=txt;}
   usados=lsGet('asis_usados',[]);ejUsados=lsGet('asis_ej_usados',[]);hist=lsGet('asis_hist',[]);
@@ -1209,7 +1265,7 @@ window.guardarLista=function(){
   lsSet('asis_lista_txt',txt);
   usados=[];ejUsados=[];lsSet('asis_usados',usados);lsSet('asis_ej_usados',ejUsados);
   if(lista.length)publicarLista(); else set(ref(db,'sesiones/'+SESSION_CODE+'/lista'),null);
-  actualizarListaUI();updateStats();renderWheel();
+  actualizarListaUI();updateStats();renderWheel();renderGrupos();
   const m=document.getElementById('lista-msg');m.textContent=lista.length?('Lista guardada: '+lista.length+' estudiantes. Ya aparece en el registro de los alumnos.'):'Lista vacía: los alumnos escribirán su nombre.';
 };
 
@@ -1245,6 +1301,74 @@ window.reiniciarTodo=function(){
   const hn=document.getElementById('res-hint');if(hn){hn.style.display='block';hn.textContent='Gira la ruleta para elegir al siguiente estudiante.';}
   const sk=document.getElementById('skip-btn');if(sk)sk.style.display='none';
   cronReset();renderHist();renderWheel();updUndo();toast('Ruleta y participaciones reiniciadas.');
+};
+
+/* ── GRUPOS ── */
+const LET='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+function grpLabel(i){return gr.tipo==='let'?LET[i]:String(i+1);}
+function grpSave(){lsSet('asis_grupos',gr);}
+function grpNombres(){
+  let base=lista.length?lista.map(x=>x.nombre):registros.map(r=>r.nombre);
+  if(gr.solo==='presentes'){const p=new Set(registros.map(r=>norm(r.nombre)));base=base.filter(n=>p.has(norm(n)));}
+  return [...new Set(base)].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
+}
+function grpSync(){
+  const nombres=grpNombres(),prev=new Map(gr.items.map(x=>[norm(x.nombre),x.g]));
+  gr.items=nombres.map(n=>{const g=prev.has(norm(n))?prev.get(norm(n)):-1;return {nombre:n,g:(g>=0&&g<gr.n)?g:-1};});
+  while(gr.temas.length<gr.n)gr.temas.push('');
+}
+window.grpN=function(d){const el=document.getElementById('grp-n');let n=(parseInt(el.value)||1)+d;n=Math.max(1,Math.min(26,n));el.value=n;gr.n=n;grpSave();renderGrupos();};
+window.grpCfg=function(){gr.tipo=document.getElementById('grp-tipo').value;gr.solo=document.getElementById('grp-solo').value;gr.modo=document.getElementById('grp-modo').value;grpSave();renderGrupos();};
+window.grpAzar=function(){
+  grpSync();
+  const idx=gr.items.map((_,i)=>i);
+  for(let i=idx.length-1;i>0;i--){const j=rnd(i+1);[idx[i],idx[j]]=[idx[j],idx[i]];}
+  const orden=[...Array(gr.n).keys()];
+  for(let i=orden.length-1;i>0;i--){const j=rnd(i+1);[orden[i],orden[j]]=[orden[j],orden[i]];}
+  idx.forEach((k,pos)=>{gr.items[k].g=orden[pos%gr.n];});
+  grpSave();renderGrupos();toast('Estudiantes distribuidos al azar en '+gr.n+' grupos.');
+};
+window.grpLimpiar=function(){gr.items.forEach(x=>x.g=-1);grpSave();renderGrupos();};
+window.grpSet=function(i,v){if(gr.items[i]){gr.items[i].g=parseInt(v);grpSave();renderGrupos();}};
+window.grpTema=function(g,v){gr.temas[g]=v;grpSave();};
+function grpMiembros(g){return gr.items.filter(x=>x.g===g);}
+function renderGrupos(){
+  const root=document.getElementById('grp-cards');if(!root)return;
+  const sn=document.getElementById('grp-n');if(sn)sn.value=gr.n;
+  ['tipo','solo','modo'].forEach(k=>{const e=document.getElementById('grp-'+k);if(e)e.value=gr[k];});
+  grpSync();
+  const ba=document.getElementById('grp-btn-azar');if(ba)ba.style.display=gr.modo==='azar'?'inline-block':'none';
+  const sin=gr.items.filter(x=>x.g<0).length;
+  document.getElementById('grp-info').textContent=gr.items.length?(gr.items.length+' estudiantes · '+gr.n+' grupos · '+(sin?sin+' sin asignar':'todos asignados')+(gr.modo==='manual'?' · modo manual: elige el grupo de cada estudiante en el menú':'')):'No hay estudiantes. Carga la lista en la pestaña Lista, o registra alumnos.';
+  const opts='<option value="-1">Sin grupo</option>'+[...Array(gr.n).keys()].map(g=>`<option value="${g}">Grupo ${grpLabel(g)}</option>`).join('');
+  document.getElementById('grp-roster').innerHTML=gr.items.map((x,i)=>`<div class="grp-row"><span>${esc(x.nombre)}</span><select onchange="grpSet(${i},this.value)">${opts.replace(`value="${x.g}"`,`value="${x.g}" selected`)}</select></div>`).join('')||'<div style="font-size:13px;color:var(--muted)">Sin estudiantes.</div>';
+  root.innerHTML=[...Array(gr.n).keys()].map(g=>{
+    const m=grpMiembros(g);
+    return `<div class="grp-card"><div class="grp-head">Grupo ${grpLabel(g)}<span>${m.length} integrante${m.length===1?'':'s'}</span></div><input class="grp-tema" placeholder="Tema del proyecto (opcional)" value="${esc(gr.temas[g]||'')}" oninput="grpTema(${g},this.value)">`+
+      (m.length?m.map(x=>`<div class="grp-mem"><span>${esc(x.nombre)}</span><button onclick="grpSet(${gr.items.indexOf(x)},-1)">Quitar</button></div>`).join(''):'<div class="grp-mem" style="color:var(--muted)">Sin integrantes</div>')+'</div>';
+  }).join('');
+}
+function grpTexto(){
+  return [...Array(gr.n).keys()].map(g=>{const m=grpMiembros(g);return '*Grupo '+grpLabel(g)+'*'+(gr.temas[g]?' - '+gr.temas[g]:'')+'\n'+(m.length?m.map((x,i)=>(i+1)+'. '+x.nombre).join('\n'):'(sin integrantes)');}).join('\n\n');
+}
+window.grpCopiar=function(){
+  if(!gr.items.some(x=>x.g>=0)){toast('Aún no hay grupos formados.',true);return;}
+  const t=(UNIV?UNIV+'\n':'')+'*Grupos del proyecto - '+CLASE+'*\n\n'+grpTexto();
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('Grupos copiados. Pégalos en WhatsApp o en Moodle.')).catch(()=>toast('No se pudo copiar automáticamente.',true));
+};
+function addGruposSheet(wb){
+  if(!gr.items.some(x=>x.g>=0))return;
+  const filas=[];
+  for(let g=0;g<gr.n;g++){const m=grpMiembros(g);if(!m.length)continue;m.forEach((x,i)=>filas.push(['Grupo '+grpLabel(g),i===0?(gr.temas[g]||''):'',i+1,x.nombre]));}
+  const sin=gr.items.filter(x=>x.g<0);sin.forEach((x,i)=>filas.push(['Sin grupo','',i+1,x.nombre]));
+  const w=XLSX.utils.aoa_to_sheet([['GRUPOS DEL PROYECTO - '+CLASE],[UNIV||''],[],['Grupo','Tema','#','Integrante'],...filas]);
+  w['!cols']=[{wch:12},{wch:34},{wch:5},{wch:40}];
+  XLSX.utils.book_append_sheet(wb,w,'Grupos');
+}
+window.grpExcel=function(){
+  if(!gr.items.some(x=>x.g>=0)){toast('Aún no hay grupos formados.',true);return;}
+  const wb=XLSX.utils.book_new();addGruposSheet(wb);
+  XLSX.writeFile(wb,'grupos-'+SESSION_CODE+'-'+new Date().toISOString().slice(0,10)+'.xlsx');
 };
 window.cambiarModo=function(v){ruletaModo=v;renderWheel();};
 window.reiniciarRuleta=function(){
