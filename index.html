@@ -127,17 +127,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .grp-ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:16px}
 .grp-field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:6px}
 .grp-field select{width:100%;padding:9px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}
-.grp-layout{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:18px;align-items:start}
-.grp-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-.grp-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);overflow:hidden}
-.grp-head{background:var(--accent);color:#fff;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px}
-.grp-head span{font-size:12px;font-weight:500;opacity:.85}
+.grp-layout{display:grid;grid-template-columns:minmax(250px,320px) 1fr;gap:18px;align-items:start}
+.grp-pool{border:2px dashed var(--border2);border-radius:var(--radius);padding:14px;background:var(--bg2);min-height:120px;max-height:620px;overflow:auto;transition:all .15s}
+.grp-pool.over{border-color:var(--accent);background:var(--accent-dim)}
+.grp-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.grp-card{border:2px solid var(--border);border-radius:var(--radius);background:var(--bg2);overflow:hidden;transition:all .15s;cursor:pointer}
+.grp-card.over{border-color:var(--gc,var(--accent));box-shadow:0 0 0 3px color-mix(in srgb,var(--gc,var(--accent)) 25%,transparent);transform:translateY(-2px)}
+.grp-head{background:var(--gc,var(--accent));color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:15px;letter-spacing:.02em}
+.grp-head span{font-size:12px;font-weight:500;opacity:.9}
 .grp-tema{width:100%;border:none;border-bottom:1px solid var(--border);padding:8px 14px;font-size:12px;background:var(--bg3);color:var(--text);font-family:'DM Sans',sans-serif}
-.grp-mem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid var(--border);font-size:13px}
-.grp-mem:last-child{border-bottom:none}
-.grp-mem button{border:none;background:none;color:var(--muted);cursor:pointer;font-size:11px;text-decoration:underline}
-.grp-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px}
-.grp-row select{padding:4px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;max-width:110px}
+.grp-body{padding:8px;min-height:64px;display:flex;flex-direction:column;gap:6px}
+.chip{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--border2);border-radius:999px;background:var(--bg2);font-size:13px;cursor:grab;user-select:none;transition:all .12s}
+.chip:hover{border-color:var(--accent);background:var(--accent-dim)}
+.chip:active{cursor:grabbing}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.dragging{opacity:.4}
+.chip.pop{animation:chipPop .55s ease}
+.chip i{font-style:normal;flex:none;width:24px;height:24px;border-radius:50%;background:var(--gc,var(--accent));color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.grp-pool .chip{margin-bottom:6px}
+.grp-empty{color:var(--muted);font-size:12px;padding:10px 6px;text-align:center}
+.grp-sel{margin-bottom:12px;padding:9px 14px;border-radius:var(--radius-sm);background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);font-size:13px}
+@keyframes chipPop{0%{transform:scale(.4);opacity:0;background:#fde68a}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
 @media(max-width:900px){.grp-layout{grid-template-columns:1fr}}
 .rul-grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:28px;align-items:start;text-align:left}
 .rul-left{text-align:center}
@@ -586,7 +596,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div id="view-grupos" class="view">
       <div class="roulette-wrap" style="text-align:left">
         <div class="roulette-title" style="text-align:center">Formación de grupos</div>
-        <div class="roulette-sub" style="text-align:center">Define cuántos grupos, cómo se nombran y cómo se reparten los estudiantes.</div>
+        <div class="roulette-sub" style="text-align:center">Forma los grupos con el método que prefieras: sorteo, orden de lista, o arrastrando los nombres.</div>
         <div class="grp-ctrl">
           <div class="grp-field"><label>Cantidad de grupos</label>
             <div style="display:flex;gap:6px;align-items:center">
@@ -598,18 +608,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <select id="grp-tipo" onchange="grpCfg()"><option value="num">Números (1, 2, 3…)</option><option value="let">Letras (A, B, C…)</option></select></div>
           <div class="grp-field"><label>Participantes</label>
             <select id="grp-solo" onchange="grpCfg()"><option value="todos">Toda la lista</option><option value="presentes">Solo presentes</option></select></div>
-          <div class="grp-field"><label>Distribución</label>
-            <select id="grp-modo" onchange="grpCfg()"><option value="azar">Aleatoria</option><option value="manual">Manual</option></select></div>
+          <div class="grp-field"><label>Método</label>
+            <select id="grp-modo" onchange="grpCfg()">
+              <option value="azar">Sorteo al azar (instantáneo)</option>
+              <option value="animado">Sorteo animado</option>
+              <option value="orden">En orden de lista (1, 2, 3, 1, 2…)</option>
+              <option value="manual">Manual (arrastrar o clic)</option>
+            </select></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px">
-          <button class="btn" id="grp-btn-azar" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600" onclick="grpAzar()">Distribuir al azar</button>
+          <button class="btn" id="grp-btn-azar" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600" onclick="grpFormar()">Formar grupos</button>
           <button class="btn" onclick="grpLimpiar()">Quitar asignaciones</button>
           <button class="btn" onclick="grpCopiar()">Copiar para WhatsApp</button>
           <button class="btn btn-excel" onclick="grpExcel()">Descargar Excel</button>
         </div>
         <div id="grp-info" style="font-size:12px;color:var(--muted);margin-bottom:14px"></div>
+        <div id="grp-sel" class="grp-sel" style="display:none"></div>
         <div class="grp-layout">
-          <div class="rul-panel"><div class="rul-label">Estudiantes</div><div id="grp-roster" style="max-height:560px;overflow:auto"></div></div>
+          <div class="grp-pool" id="grp-pool" ondragover="grpOver(event)" ondragleave="grpLeave(event)" ondrop="grpDrop(event,-1)" onclick="grpClickZona(-1,event)">
+            <div class="rul-label">Sin asignar <span id="grp-pool-n"></span></div>
+            <div id="grp-roster"></div>
+          </div>
           <div id="grp-cards" class="grp-cards"></div>
         </div>
       </div>
@@ -681,7 +700,7 @@ const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5c
 
 let SESSION_CODE = genCode();
 let UNIV = '';
-const APP_VERSION='v4.5 · 06-nov-2026 23:30';
+const APP_VERSION='v4.6 · 06-nov-2026 23:55';
 function toastAction(msg,label,fn){const t=document.getElementById('toast');if(!t)return;t.className='';t.innerHTML='';
   const sp=document.createElement('span');sp.textContent=msg+' ';t.appendChild(sp);
   const b=document.createElement('button');b.textContent=label;b.style.cssText='margin-left:8px;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600';
@@ -1305,8 +1324,12 @@ window.reiniciarTodo=function(){
 
 /* ── GRUPOS ── */
 const LET='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const GCOL=['#0C447C','#0F766E','#B45309','#6D28D9','#BE123C','#0E7490','#4D7C0F','#A21CAF'];
+let grpSelIdx=-1,grpBusy=false,grpPop=-1;
 function grpLabel(i){return gr.tipo==='let'?LET[i]:String(i+1);}
+function grpColor(g){return GCOL[g%GCOL.length];}
 function grpSave(){lsSet('asis_grupos',gr);}
+function iniciales(n){const p=String(n).trim().split(/\s+/);return ((p[0]||'')[0]||'')+((p[p.length>1?(p.length>2?2:1):0]||'')[0]||'');}
 function grpNombres(){
   let base=lista.length?lista.map(x=>x.nombre):registros.map(r=>r.nombre);
   if(gr.solo==='presentes'){const p=new Set(registros.map(r=>norm(r.nombre)));base=base.filter(n=>p.has(norm(n)));}
@@ -1317,35 +1340,75 @@ function grpSync(){
   gr.items=nombres.map(n=>{const g=prev.has(norm(n))?prev.get(norm(n)):-1;return {nombre:n,g:(g>=0&&g<gr.n)?g:-1};});
   while(gr.temas.length<gr.n)gr.temas.push('');
 }
-window.grpN=function(d){const el=document.getElementById('grp-n');let n=(parseInt(el.value)||1)+d;n=Math.max(1,Math.min(26,n));el.value=n;gr.n=n;grpSave();renderGrupos();};
-window.grpCfg=function(){gr.tipo=document.getElementById('grp-tipo').value;gr.solo=document.getElementById('grp-solo').value;gr.modo=document.getElementById('grp-modo').value;grpSave();renderGrupos();};
-window.grpAzar=function(){
+window.grpN=function(d){if(grpBusy)return;const el=document.getElementById('grp-n');let n=(parseInt(el.value)||1)+d;n=Math.max(1,Math.min(26,n));el.value=n;gr.n=n;grpSave();renderGrupos();};
+window.grpCfg=function(){if(grpBusy)return;gr.tipo=document.getElementById('grp-tipo').value;gr.solo=document.getElementById('grp-solo').value;gr.modo=document.getElementById('grp-modo').value;grpSave();renderGrupos();};
+function grpPlan(){ // plan aleatorio equilibrado: [{k:indice, g:grupo}]
   grpSync();
   const idx=gr.items.map((_,i)=>i);
   for(let i=idx.length-1;i>0;i--){const j=rnd(i+1);[idx[i],idx[j]]=[idx[j],idx[i]];}
   const orden=[...Array(gr.n).keys()];
   for(let i=orden.length-1;i>0;i--){const j=rnd(i+1);[orden[i],orden[j]]=[orden[j],orden[i]];}
-  idx.forEach((k,pos)=>{gr.items[k].g=orden[pos%gr.n];});
+  return idx.map((k,pos)=>({k,g:orden[pos%gr.n]}));
+}
+window.grpFormar=function(){
+  if(grpBusy)return;
+  if(gr.modo==='azar')grpAzar(); else if(gr.modo==='animado')grpAnimado(); else if(gr.modo==='orden')grpOrden();
+  else toast('En modo manual arrastra cada nombre a su grupo, o haz clic en un nombre y luego en el grupo.');
+};
+window.grpAzar=function(){
+  const plan=grpPlan();plan.forEach(p=>{gr.items[p.k].g=p.g;});
   grpSave();renderGrupos();toast('Estudiantes distribuidos al azar en '+gr.n+' grupos.');
 };
-window.grpLimpiar=function(){gr.items.forEach(x=>x.g=-1);grpSave();renderGrupos();};
-window.grpSet=function(i,v){if(gr.items[i]){gr.items[i].g=parseInt(v);grpSave();renderGrupos();}};
+window.grpOrden=function(){
+  grpSync();gr.items.forEach((x,i)=>{x.g=i%gr.n;});
+  grpSave();renderGrupos();toast('Estudiantes repartidos en el orden de la lista.');
+};
+window.grpAnimado=function(){
+  const plan=grpPlan();gr.items.forEach(x=>x.g=-1);grpSave();grpBusy=true;grpSelIdx=-1;renderGrupos();
+  let i=0;const pasoMs=Math.max(90,Math.min(260,4200/Math.max(1,plan.length)));
+  const t=setInterval(()=>{
+    if(i>=plan.length){clearInterval(t);grpBusy=false;grpPop=-1;grpSave();renderGrupos();toast('Sorteo terminado: '+gr.n+' grupos formados.');return;}
+    const p=plan[i++];gr.items[p.k].g=p.g;grpPop=p.k;renderGrupos();
+  },pasoMs);
+};
+window.grpLimpiar=function(){if(grpBusy)return;gr.items.forEach(x=>x.g=-1);grpSelIdx=-1;grpSave();renderGrupos();};
+window.grpSet=function(i,g){if(gr.items[i]){gr.items[i].g=g;grpSelIdx=-1;grpSave();renderGrupos();}};
 window.grpTema=function(g,v){gr.temas[g]=v;grpSave();};
+// arrastrar y soltar
+window.grpDrag=function(ev,i){if(grpBusy){ev.preventDefault();return;}ev.dataTransfer.setData('text/plain',String(i));ev.dataTransfer.effectAllowed='move';ev.target.classList.add('dragging');};
+window.grpDragEnd=function(ev){ev.target.classList.remove('dragging');document.querySelectorAll('.over').forEach(e=>e.classList.remove('over'));};
+window.grpOver=function(ev){ev.preventDefault();ev.dataTransfer.dropEffect='move';const z=ev.currentTarget;z.classList.add('over');};
+window.grpLeave=function(ev){ev.currentTarget.classList.remove('over');};
+window.grpDrop=function(ev,g){ev.preventDefault();ev.currentTarget.classList.remove('over');const i=parseInt(ev.dataTransfer.getData('text/plain'));if(!isNaN(i))grpSet(i,g);};
+// clic: elegir nombre y luego grupo
+window.grpClickChip=function(ev,i){ev.stopPropagation();if(grpBusy)return;grpSelIdx=(grpSelIdx===i?-1:i);renderGrupos();};
+window.grpClickZona=function(g,ev){
+  if(ev&&(ev.target.tagName==='INPUT'||ev.target.tagName==='BUTTON'))return;
+  if(grpSelIdx>=0&&!grpBusy)grpSet(grpSelIdx,g);
+};
+function chipHTML(x,i,g){
+  const col=g>=0?grpColor(g):'#64748b';
+  return `<div class="chip${grpSelIdx===i?' sel':''}${grpPop===i?' pop':''}" style="--gc:${col}" draggable="true" ondragstart="grpDrag(event,${i})" ondragend="grpDragEnd(event)" onclick="grpClickChip(event,${i})"><i>${esc(iniciales(x.nombre).toUpperCase())}</i><span>${esc(x.nombre)}</span></div>`;
+}
 function grpMiembros(g){return gr.items.filter(x=>x.g===g);}
 function renderGrupos(){
   const root=document.getElementById('grp-cards');if(!root)return;
   const sn=document.getElementById('grp-n');if(sn)sn.value=gr.n;
   ['tipo','solo','modo'].forEach(k=>{const e=document.getElementById('grp-'+k);if(e)e.value=gr[k];});
   grpSync();
-  const ba=document.getElementById('grp-btn-azar');if(ba)ba.style.display=gr.modo==='azar'?'inline-block':'none';
+  const ba=document.getElementById('grp-btn-azar');
+  if(ba){ba.style.display=gr.modo==='manual'?'none':'inline-block';ba.disabled=grpBusy;ba.textContent={azar:'Distribuir al azar',animado:'Iniciar sorteo animado',orden:'Repartir en orden de lista'}[gr.modo]||'Formar grupos';}
   const sin=gr.items.filter(x=>x.g<0).length;
-  document.getElementById('grp-info').textContent=gr.items.length?(gr.items.length+' estudiantes · '+gr.n+' grupos · '+(sin?sin+' sin asignar':'todos asignados')+(gr.modo==='manual'?' · modo manual: elige el grupo de cada estudiante en el menú':'')):'No hay estudiantes. Carga la lista en la pestaña Lista, o registra alumnos.';
-  const opts='<option value="-1">Sin grupo</option>'+[...Array(gr.n).keys()].map(g=>`<option value="${g}">Grupo ${grpLabel(g)}</option>`).join('');
-  document.getElementById('grp-roster').innerHTML=gr.items.map((x,i)=>`<div class="grp-row"><span>${esc(x.nombre)}</span><select onchange="grpSet(${i},this.value)">${opts.replace(`value="${x.g}"`,`value="${x.g}" selected`)}</select></div>`).join('')||'<div style="font-size:13px;color:var(--muted)">Sin estudiantes.</div>';
+  document.getElementById('grp-info').textContent=gr.items.length?(gr.items.length+' estudiantes · '+gr.n+' grupos · '+(sin?sin+' sin asignar':'todos asignados')+' · Arrastra un nombre a un grupo, o haz clic en el nombre y luego en el grupo.'):'No hay estudiantes. Carga la lista en la pestaña Lista, o registra alumnos.';
+  const sel=document.getElementById('grp-sel');
+  if(grpSelIdx>=0&&gr.items[grpSelIdx]){sel.style.display='block';sel.innerHTML='Seleccionado: <b>'+esc(gr.items[grpSelIdx].nombre)+'</b>. Haz clic en el grupo donde va, o en "Sin asignar" para quitarlo.';}
+  else sel.style.display='none';
+  document.getElementById('grp-pool-n').textContent=sin?'('+sin+')':'';
+  document.getElementById('grp-roster').innerHTML=gr.items.map((x,i)=>x.g<0?chipHTML(x,i,-1):'').join('')||'<div class="grp-empty">'+(gr.items.length?'Todos tienen grupo.':'Sin estudiantes.')+'</div>';
   root.innerHTML=[...Array(gr.n).keys()].map(g=>{
-    const m=grpMiembros(g);
-    return `<div class="grp-card"><div class="grp-head">Grupo ${grpLabel(g)}<span>${m.length} integrante${m.length===1?'':'s'}</span></div><input class="grp-tema" placeholder="Tema del proyecto (opcional)" value="${esc(gr.temas[g]||'')}" oninput="grpTema(${g},this.value)">`+
-      (m.length?m.map(x=>`<div class="grp-mem"><span>${esc(x.nombre)}</span><button onclick="grpSet(${gr.items.indexOf(x)},-1)">Quitar</button></div>`).join(''):'<div class="grp-mem" style="color:var(--muted)">Sin integrantes</div>')+'</div>';
+    const m=gr.items.map((x,i)=>({x,i})).filter(o=>o.x.g===g);
+    return `<div class="grp-card" style="--gc:${grpColor(g)}" ondragover="grpOver(event)" ondragleave="grpLeave(event)" ondrop="grpDrop(event,${g})" onclick="grpClickZona(${g},event)"><div class="grp-head">Grupo ${grpLabel(g)}<span>${m.length} integrante${m.length===1?'':'s'}</span></div><input class="grp-tema" placeholder="Tema del proyecto (opcional)" value="${esc(gr.temas[g]||'')}" oninput="grpTema(${g},this.value)"><div class="grp-body">`+
+      (m.length?m.map(o=>chipHTML(o.x,o.i,g)).join(''):'<div class="grp-empty">Suelta aquí un nombre</div>')+'</div></div>';
   }).join('');
 }
 function grpTexto(){
