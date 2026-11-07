@@ -122,6 +122,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn:hover{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
 .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn-primary:hover{background:#4f46e5}
+.rul-grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:28px;align-items:start;text-align:left}
+.rul-left{text-align:center}
+.rul-right{display:flex;flex-direction:column;gap:14px}
+.rul-panel{border:1px solid var(--border);border-radius:var(--radius);padding:16px;background:var(--bg2)}
+.rul-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:8px}
+@media(max-width:900px){.rul-grid{grid-template-columns:1fr}}
 .rbtn{padding:11px 16px;font-size:14px;font-weight:700;border:none;border-radius:var(--radius-sm);cursor:pointer;color:#fff;font-family:'DM Sans',sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .rbtn:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .btn-excel{background:rgba(16,185,129,0.15);border-color:var(--green);color:var(--green)}
@@ -455,7 +461,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div id="view-lista" class="view">
       <div class="roulette-wrap" style="text-align:left">
         <div class="roulette-title">Lista de estudiantes</div>
-        <div class="roulette-sub" style="margin-bottom:14px">Pega los nombres, uno por línea (puedes copiarlos desde Excel). Al final de un nombre escribe <b>*</b> si participa desde celular, por ejemplo: <i>Martha Azucena *</i>. Los estudiantes elegirán su nombre de esta lista al registrarse.</div>
         <textarea id="lista-text" rows="14" placeholder="Nombre Apellido&#10;Nombre Apellido&#10;Nombre Apellido *" style="width:100%;padding:12px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;line-height:1.6;resize:vertical"></textarea>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px">
           <button class="btn btn-primary" onclick="guardarLista()">Guardar lista</button>
@@ -479,49 +484,53 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <button class="btn" style="padding:6px 12px;font-size:12px" onclick="reiniciarRuleta()">Reiniciar</button>
         </div>
         <div id="no-students-msg" class="no-students" style="display:none">No hay estudiantes para sortear.</div>
-        <div class="wheel-container">
-          <canvas id="wheel-canvas" width="1040" height="1040" style="width:260px;height:260px"></canvas>
-          <div class="wheel-pointer"></div>
-          <div class="wheel-center"></div>
-        </div>
-        <div class="roulette-result">
-          <div id="result-display" style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</div>
-        </div>
-        <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
-        <div class="roulette-count" id="roulette-count"></div>
-        <div id="res-btns" style="display:none;margin-top:14px">
-          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-            <button class="rbtn" style="background:#16a34a" onclick="marcarResultado('si')">✔ Lo hizo</button>
-            <button class="rbtn" style="background:#d97706" onclick="marcarResultado('medias')">½ A medias</button>
-            <button class="rbtn" style="background:#dc2626" onclick="marcarResultado('no')">✘ No lo hizo</button>
-            <button class="rbtn" style="background:#475569" onclick="marcarResultado('sinpc')">💻 Sin computadora</button>
+        <div class="rul-grid">
+          <div class="rul-left">
+            <div class="wheel-container">
+              <canvas id="wheel-canvas" width="1040" height="1040" style="width:260px;height:260px"></canvas>
+              <div class="wheel-pointer"></div>
+              <div class="wheel-center"></div>
+            </div>
+            <div class="roulette-result">
+              <div id="result-display" style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</div>
+            </div>
+            <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
+            <div class="roulette-count" id="roulette-count"></div>
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+              <button class="btn" id="undo-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="deshacer()">↶ Deshacer último</button>
+              <button class="btn" id="skip-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="saltar()">⏭ Saltar y girar de nuevo</button>
+            </div>
           </div>
-          <input type="text" id="obs-input" maxlength="140" placeholder="¿Qué pasó? (opcional: ej. no le salió la fórmula, se desconectó…)" style="width:100%;margin-top:10px;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif">
-        </div>
-        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
-          <button class="btn" id="undo-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="deshacer()">↶ Deshacer último</button>
-          <button class="btn" id="skip-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="saltar()">⏭ Saltar y girar de nuevo</button>
-        </div>
-        <div style="border-top:1px solid var(--border);margin-top:22px;padding-top:18px">
-          <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)">
-            <span>Ejercicio actual</span>
-            <button class="btn" onclick="cambiarEj(-1)" style="padding:6px 12px">−</button>
-            <input type="number" id="ej-actual" value="1" min="1" max="99" style="width:64px;padding:7px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);text-align:center;font-size:16px;font-weight:700" onchange="cambiarEj(0)">
-            <button class="btn" onclick="cambiarEj(1)" style="padding:6px 12px">+</button>
+          <div class="rul-right">
+            <div class="rul-panel">
+              <div class="rul-label">Participante actual</div>
+              <div id="cur-name" style="font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text)">—</div>
+              <div id="res-btns" style="display:none">
+                <input type="text" id="ej-input" maxlength="60" placeholder="¿Qué ejercicio hizo? (ej. 3, o 5 y 7)" style="width:100%;margin-bottom:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px">
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button class="rbtn" style="background:#16a34a" onclick="marcarResultado('si')">✔ Lo hizo</button>
+                  <button class="rbtn" style="background:#d97706" onclick="marcarResultado('medias')">½ A medias</button>
+                  <button class="rbtn" style="background:#dc2626" onclick="marcarResultado('no')">✘ No lo hizo</button>
+                  <button class="rbtn" style="background:#475569" onclick="marcarResultado('sinpc')">Sin computadora</button>
+                </div>
+                <input type="text" id="obs-input" maxlength="140" placeholder="¿Qué pasó? (opcional: no le salió la fórmula, se desconectó…)" style="width:100%;margin-top:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px">
+              </div>
+              <div id="res-hint" style="font-size:13px;color:var(--muted)">Gira la ruleta para elegir al siguiente estudiante.</div>
+            </div>
+            <div class="rul-panel" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)">
+              <span>⏱</span>
+              <b id="cron-disp" style="font-family:'Space Mono',monospace;font-size:28px;color:var(--text);min-width:96px">05:00</b>
+              <input type="number" id="cron-min" value="5" min="1" max="60" onchange="cronSet()" style="width:56px;padding:6px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);text-align:center"><span>min</span>
+              <button class="btn" onclick="cronStart()" style="padding:6px 12px">▶</button>
+              <button class="btn" onclick="cronPause()" style="padding:6px 12px">⏸</button>
+              <button class="btn" onclick="cronReset()" style="padding:6px 12px">↺</button>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="cron-auto" checked> iniciar al girar</label>
+            </div>
+            <div class="rul-panel">
+              <div class="rul-label">Participaciones</div>
+              <div id="hist-list" style="font-size:13px;color:var(--text);max-height:430px;overflow:auto"></div>
+            </div>
           </div>
-          <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--muted)">
-            <span>⏱</span>
-            <b id="cron-disp" style="font-family:'Space Mono',monospace;font-size:26px;color:var(--text);min-width:90px;text-align:center">05:00</b>
-            <input type="number" id="cron-min" value="5" min="1" max="60" onchange="cronSet()" style="width:56px;padding:6px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);text-align:center"><span>min</span>
-            <button class="btn" onclick="cronStart()" style="padding:6px 12px">▶</button>
-            <button class="btn" onclick="cronPause()" style="padding:6px 12px">⏸</button>
-            <button class="btn" onclick="cronReset()" style="padding:6px 12px">↺</button>
-            <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="cron-auto" checked> iniciar al girar</label>
-          </div>
-        </div>
-        <div style="text-align:left;margin-top:22px">
-          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:8px">Participaciones</div>
-          <div id="hist-list" style="font-size:13px;color:var(--text)"></div>
         </div>
       </div>
     </div>
@@ -1050,7 +1059,7 @@ window.exportExcel = function(){
     const nombres=[...new Set([...base,...extra])].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
     const filas=nombres.map((n,i)=>{
       const hs=hist.filter(h=>norm(h.nombre)===norm(n)), c=k=>hs.filter(h=>h.resultado===k).length;
-      return [i+1,n,pres2.has(norm(n))?'PRESENTE':'AUSENTE',hs.length?'SÍ':'NO',hs.length,c('si'),c('medias'),c('no'),c('sinpc'),hs.map(h=>'Ej.'+(h.ejercicio||'?')+': '+L(h.resultado)+(h.obs?' ('+h.obs+')':'')).join(' | '),''];
+      return [i+1,n,pres2.has(norm(n))?'PRESENTE':'AUSENTE',hs.length?'SÍ':'NO',hs.length,c('si'),c('medias'),c('no'),c('sinpc'),hs.map(h=>(h.ejercicio?'Ej. '+h.ejercicio+': ':'')+L(h.resultado)+(h.obs?' ('+h.obs+')':'')).join(' | '),''];
     });
     const wr=XLSX.utils.aoa_to_sheet([['RESUMEN POR ESTUDIANTE'],[],['#','Nombre','Asistencia','Participó','Veces','Lo hizo','A medias','No lo hizo','Sin computadora','Detalle (qué pasó)','Puntos obtenidos'],...filas]);
     wr['!cols']=[{wch:5},{wch:35},{wch:12},{wch:10},{wch:7},{wch:9},{wch:9},{wch:11},{wch:16},{wch:60},{wch:16}];
@@ -1084,7 +1093,7 @@ function parseLista(txt){
 function cargarListaLocal(){
   const txt=lsGet('asis_lista_txt','');
   if(txt&&!lista.length){lista=parseLista(txt);const t=document.getElementById('lista-text');if(t)t.value=txt;}
-  usados=lsGet('asis_usados',[]);ejUsados=lsGet('asis_ej_usados',[]);hist=lsGet('asis_hist',[]);{const e=document.getElementById('ej-actual');if(e)e.value=lsGet('asis_ej_actual',1);}
+  usados=lsGet('asis_usados',[]);ejUsados=lsGet('asis_ej_usados',[]);hist=lsGet('asis_hist',[]);
   actualizarListaUI();renderHist();
 }
 function actualizarListaUI(){
@@ -1186,10 +1195,11 @@ window.spinWheel=function(){
     const badge=!w.presente?'<span class="result-badge" style="background:var(--red-dim);color:#dc2626">AUSENTE</span>':'<span class="result-badge">PRESENTE</span>';
     const cb=w.celular?'<span class="result-badge" style="background:rgba(245,158,11,.15);color:#b45309">CELULAR</span>':'';
     document.getElementById('result-display').innerHTML=`<div><span class="result-name">${esc(w.nombre)}</span>${badge}${cb}</div>`;
-    ultimoSorteo={nombre:w.nombre,ejercicio:(document.getElementById('ej-actual')||{}).value||'',resultado:'',hora:new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),presente:w.presente,celular:w.celular};
+    ultimoSorteo={nombre:w.nombre,ejercicio:'',resultado:'',hora:new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),presente:w.presente,celular:w.celular};
     hist.push(ultimoSorteo);lsSet('asis_hist',hist);renderHist();
     const rb=document.getElementById('res-btns');if(rb)rb.style.display='block';
-    const oi=document.getElementById('obs-input');if(oi)oi.value='';
+    const oi=document.getElementById('obs-input');if(oi)oi.value='';const ei=document.getElementById('ej-input');if(ei){ei.value='';ei.focus();}
+    const cn=document.getElementById('cur-name');if(cn)cn.textContent=w.nombre;const hn=document.getElementById('res-hint');if(hn)hn.style.display='none';
     const sk=document.getElementById('skip-btn');if(sk)sk.style.display='inline-block';
     skipNorm='';updUndo();
     const ca=document.getElementById('cron-auto');if(ca&&ca.checked){cronReset();cronStart();}
@@ -1214,10 +1224,6 @@ function renderWheelFrozen(pool){
   ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fillStyle='#0a0e1a';ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=2;ctx.stroke();
 }
 window.renderWheel=renderWheel;
-window.cambiarEj=function(d){
-  const el=document.getElementById('ej-actual');
-  let n=(parseInt(el.value)||1)+d; if(n<1)n=1; el.value=n; lsSet('asis_ej_actual',n);
-};
 const RES_LBL={si:'LO HIZO',medias:'A MEDIAS',no:'NO LO HIZO',sinpc:'SIN COMPUTADORA'};
 const RES_COL={si:'#16a34a',medias:'#d97706',no:'#dc2626',sinpc:'#64748b'};
 const RES_ICO={si:'✔',medias:'½',no:'✘',sinpc:'💻'};
@@ -1225,12 +1231,14 @@ function updUndo(){const u=document.getElementById('undo-btn');if(u)u.style.disp
 window.marcarResultado=function(r){
   if(!ultimoSorteo)return;
   const oi=document.getElementById('obs-input');
-  ultimoSorteo.resultado=r; ultimoSorteo.obs=(oi?oi.value.trim():'');
+  const ei=document.getElementById('ej-input');
+  ultimoSorteo.resultado=r; ultimoSorteo.obs=(oi?oi.value.trim():''); ultimoSorteo.ejercicio=(ei?ei.value.trim():'');
   lsSet('asis_hist',hist); renderHist(); cronPause();
   const rb=document.getElementById('res-btns'); if(rb)rb.style.display='none';
   const sk=document.getElementById('skip-btn'); if(sk)sk.style.display='none';
   const rd=document.getElementById('result-display');
-  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+RES_COL[r]+'">'+RES_ICO[r]+' '+RES_LBL[r]+' · Ejercicio '+esc(ultimoSorteo.ejercicio)+(ultimoSorteo.obs?' · '+esc(ultimoSorteo.obs):'')+'</div>');
+  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+RES_COL[r]+'">'+RES_ICO[r]+' '+RES_LBL[r]+(ultimoSorteo.ejercicio?' · Ej. '+esc(ultimoSorteo.ejercicio):'')+(ultimoSorteo.obs?' · '+esc(ultimoSorteo.obs):'')+'</div>');
+  const hn=document.getElementById('res-hint');if(hn){hn.style.display='block';hn.textContent='Listo. Gira la ruleta para el siguiente estudiante.';}
 };
 window.marcarHist=function(i,r){
   if(!hist[i])return; hist[i].resultado=(hist[i].resultado===r?'':r); lsSet('asis_hist',hist); renderHist();
@@ -1238,6 +1246,10 @@ window.marcarHist=function(i,r){
 window.editarObs=function(i){
   if(!hist[i])return; const v=window.prompt('¿Qué pasó? (observación)',hist[i].obs||''); if(v===null)return;
   hist[i].obs=v.trim(); lsSet('asis_hist',hist); renderHist();
+};
+window.editarEj=function(i){
+  if(!hist[i])return; const v=window.prompt('¿Qué ejercicio hizo?',hist[i].ejercicio||''); if(v===null)return;
+  hist[i].ejercicio=v.trim(); lsSet('asis_hist',hist); renderHist();
 };
 window.deshacer=function(){
   if(!hist.length||isSpinning)return;
@@ -1247,6 +1259,7 @@ window.deshacer=function(){
   const rb=document.getElementById('res-btns'); if(rb)rb.style.display='none';
   const sk=document.getElementById('skip-btn'); if(sk)sk.style.display='none';
   document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Se deshizo el giro de '+esc(h.nombre)+'</span>';
+  {const cn=document.getElementById('cur-name');if(cn)cn.textContent='—';const hn=document.getElementById('res-hint');if(hn){hn.style.display='block';hn.textContent='Gira la ruleta para elegir al siguiente estudiante.';}}
   cronReset(); renderHist(); renderWheel(); updUndo();
 };
 window.saltar=function(){
@@ -1261,7 +1274,7 @@ function renderHist(){
   const resumen='<div style="margin-bottom:8px;font-size:12px;color:var(--muted)">✔ <b style="color:#16a34a">'+c('si')+'</b> · ½ <b style="color:#b45309">'+c('medias')+'</b> · ✘ <b style="color:#dc2626">'+c('no')+'</b> · 💻 <b>'+c('sinpc')+'</b> · Sin marcar: <b>'+sm+'</b></div>';
   const rows=hist.map((h,i)=>({h,i})).reverse().slice(0,25).map(({h,i})=>{
     const b=r=>`<button class="btn" style="padding:2px 8px;font-size:12px;${h.resultado===r?'background:'+RES_COL[r]+';color:#fff;border-color:transparent':''}" title="${RES_LBL[r]}" onclick="marcarHist(${i},'${r}')">${RES_ICO[r]}</button>`;
-    return `<div class="log-item" style="align-items:flex-start;gap:8px"><span style="flex:1">${i+1}. ${esc(h.nombre)}${h.celular?' 📱':''}${h.presente===false?' <span style="color:#dc2626">(ausente)</span>':''}<span style="color:var(--muted);font-size:11px"> · Ej. ${esc(h.ejercicio||'—')} · ${esc(h.hora)}</span>${h.obs?`<br><span style="color:var(--muted);font-size:12px">📝 ${esc(h.obs)}</span>`:''}</span><span style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${b('si')}${b('medias')}${b('no')}${b('sinpc')}<button class="btn" style="padding:2px 8px;font-size:12px" title="Observación" onclick="editarObs(${i})">📝</button></span></div>`;
+    return `<div class="log-item" style="align-items:flex-start;gap:8px"><span style="flex:1">${i+1}. ${esc(h.nombre)}${h.celular?' 📱':''}${h.presente===false?' <span style="color:#dc2626">(ausente)</span>':''}<span style="color:var(--muted);font-size:11px"> ${h.ejercicio?' · Ej. '+esc(h.ejercicio):''} · ${esc(h.hora)}</span>${h.obs?`<br><span style="color:var(--muted);font-size:12px">📝 ${esc(h.obs)}</span>`:''}</span><span style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${b('si')}${b('medias')}${b('no')}${b('sinpc')}<button class="btn" style="padding:2px 8px;font-size:12px" title="Ejercicio que hizo" onclick="editarEj(${i})">Ej.</button><button class="btn" style="padding:2px 8px;font-size:12px" title="Qué pasó" onclick="editarObs(${i})">📝</button></span></div>`;
   }).join('');
   el.innerHTML=resumen+rows;
 }
@@ -1285,7 +1298,7 @@ function recesoTick(){
   const fin=new Date(ini.getTime()+dur*1000),hh=fin.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
   const bar=document.getElementById('receso-bar');
   if(d<0){t.textContent='Faltan '+f(-d);t.style.color='var(--text)';bar.style.borderColor='var(--border2)';}
-  else if(d<dur){t.textContent='☕ RECESO · regresamos '+hh+' · quedan '+f(dur-d);t.style.color='#b45309';bar.style.borderColor='#f59e0b';}
+  else if(d<dur){t.textContent='RECESO · regresamos '+hh+' · quedan '+f(dur-d);t.style.color='#b45309';bar.style.borderColor='#f59e0b';}
   else{t.textContent='Receso terminado';t.style.color='var(--muted)';bar.style.borderColor='var(--border2)';}
 }
 {const r=lsGet('asis_receso',null);if(r){const h=document.getElementById('receso-hora'),m=document.getElementById('receso-min');if(h&&r.h)h.value=r.h;if(m&&r.m)m.value=r.m;}
