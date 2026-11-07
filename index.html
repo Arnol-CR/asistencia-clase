@@ -470,7 +470,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
         <div id="no-students-msg" class="no-students" style="display:none">No hay estudiantes para sortear.</div>
         <div class="wheel-container">
-          <canvas id="wheel-canvas" width="260" height="260"></canvas>
+          <canvas id="wheel-canvas" width="1040" height="1040" style="width:260px;height:260px"></canvas>
           <div class="wheel-pointer"></div>
           <div class="wheel-center"></div>
         </div>
@@ -479,12 +479,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
         <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
         <div class="roulette-count" id="roulette-count"></div>
+        <div id="res-btns" style="display:none;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap">
+          <button class="btn" style="background:rgba(34,197,94,.15);color:#86efac;border-color:rgba(34,197,94,.4);font-weight:600;padding:10px 20px" onclick="marcarResultado('si')">✔ Lo hizo</button>
+          <button class="btn" style="background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.4);font-weight:600;padding:10px 20px" onclick="marcarResultado('no')">✘ No lo hizo</button>
+        </div>
         <div style="border-top:1px solid var(--border);margin-top:22px;padding-top:18px">
           <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)">
-            <span>Ejercicios del 1 al</span>
-            <input type="number" id="ej-max" value="14" min="2" max="60" style="width:64px;padding:7px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);text-align:center" onchange="resetEj()">
-            <button class="btn" onclick="sortearEjercicio()">Sortear ejercicio</button>
-            <span id="ej-result" style="font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--text)"></span>
+            <span>Ejercicio actual</span>
+            <button class="btn" onclick="cambiarEj(-1)" style="padding:6px 12px">−</button>
+            <input type="number" id="ej-actual" value="1" min="1" max="99" style="width:64px;padding:7px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);text-align:center;font-size:16px;font-weight:700" onchange="cambiarEj(0)">
+            <button class="btn" onclick="cambiarEj(1)" style="padding:6px 12px">+</button>
           </div>
         </div>
         <div style="text-align:left;margin-top:22px">
@@ -692,7 +696,7 @@ async function cargarListaAlumno(){
   try{
     const ls=await get(ref(db,'sesiones/'+SESSION_CODE+'/lista'));
     if(!ls.exists())return;
-    const arr=Object.values(ls.val()).filter(Boolean);
+    const arr=Object.values(ls.val()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
     if(!arr.length)return;
     let tomados=[];
     try{const rs=await get(ref(db,'sesiones/'+SESSION_CODE+'/registros'));rs.forEach(c=>tomados.push(norm(c.val().nombre)));}catch(e){}
@@ -1010,8 +1014,8 @@ window.exportExcel = function(){
     XLSX.utils.book_append_sheet(wb, wl, 'Lista completa');
   }
   if(hist.length){
-    const wh=XLSX.utils.aoa_to_sheet([['PARTICIPACIONES'],[],['#','Nombre','Ejercicio','Hora','Puntos obtenidos'],...hist.map((h,i)=>[i+1,h.nombre,h.ejercicio||'',h.hora,''])]);
-    wh['!cols']=[{wch:5},{wch:35},{wch:11},{wch:10},{wch:16}];
+    const wh=XLSX.utils.aoa_to_sheet([['PARTICIPACIONES'],[],['#','Nombre','Ejercicio','Resultado','Hora','Puntos obtenidos'],...hist.map((h,i)=>[i+1,h.nombre,h.ejercicio||'',h.resultado==='si'?'LO HIZO':(h.resultado==='no'?'NO LO HIZO':'SIN MARCAR'),h.hora,''])]);
+    wh['!cols']=[{wch:5},{wch:35},{wch:11},{wch:14},{wch:10},{wch:16}];
     XLSX.utils.book_append_sheet(wb, wh, 'Participaciones');
   }
   XLSX.writeFile(wb, 'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
@@ -1030,12 +1034,13 @@ function updateTimerUI(){
 function parseLista(txt){
   const vistos=new Set();
   return String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(x=>({nombre:x.replace(/\*\s*$/,'').trim(),celular:/\*\s*$/.test(x)}))
-    .filter(x=>{const k=norm(x.nombre);if(x.nombre.length<2||vistos.has(k))return false;vistos.add(k);return true;});
+    .filter(x=>{const k=norm(x.nombre);if(x.nombre.length<2||vistos.has(k))return false;vistos.add(k);return true;})
+    .sort((a,b)=>a.nombre.localeCompare(b.nombre,'es',{sensitivity:'base'}));
 }
 function cargarListaLocal(){
   const txt=lsGet('asis_lista_txt','');
   if(txt&&!lista.length){lista=parseLista(txt);const t=document.getElementById('lista-text');if(t)t.value=txt;}
-  usados=lsGet('asis_usados',[]);ejUsados=lsGet('asis_ej_usados',[]);hist=lsGet('asis_hist',[]);
+  usados=lsGet('asis_usados',[]);ejUsados=lsGet('asis_ej_usados',[]);hist=lsGet('asis_hist',[]);{const e=document.getElementById('ej-actual');if(e)e.value=lsGet('asis_ej_actual',1);}
   actualizarListaUI();renderHist();
 }
 function actualizarListaUI(){
@@ -1070,14 +1075,14 @@ window.cambiarModo=function(v){ruletaModo=v;renderWheel();};
 window.reiniciarRuleta=function(){
   usados=[];ejUsados=[];lsSet('asis_usados',usados);lsSet('asis_ej_usados',ejUsados);
   document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</span>';
-  document.getElementById('ej-result').textContent='';
+  {const rb=document.getElementById('res-btns');if(rb)rb.style.display='none';}
   renderWheel();
 };
 function renderWheel(){
   const canvas=document.getElementById('wheel-canvas');if(!canvas)return;
   const ctx=canvas.getContext('2d');
   const pool=getPool(),names=pool.map(p=>p.nombre);
-  const size=canvas.width,cx=size/2,cy=size/2,r=size/2-4;
+  const size=260;ctx.setTransform(canvas.width/260,0,0,canvas.width/260,0,0);ctx.imageSmoothingQuality='high';const cx=size/2,cy=size/2,r=size/2-4;
   ctx.clearRect(0,0,size,size);
   const noMsg=document.getElementById('no-students-msg');
   const spinBtn=document.getElementById('spin-btn');
@@ -1116,13 +1121,14 @@ window.spinWheel=function(){
   isSpinning=true;
   document.getElementById('spin-btn').disabled=true;
   document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Girando...</span>';
+  {const rb=document.getElementById('res-btns');if(rb)rb.style.display='none';}
   const names=pool.map(p=>p.nombre);
   const slice=(Math.PI*2)/names.length;
   const winner=rnd(names.length);                       // sorteo con aleatoriedad criptográfica
-  const spinsExtra=(Math.PI*2)*(5+rnd(4));
+  const spinsExtra=(Math.PI*2)*(3+rnd(3));
   const targetAngle=spinsExtra-(winner*slice+slice/2);
   const totalRotation=targetAngle-(wheelAngle%(Math.PI*2));
-  const duration=4000+rnd(1500);
+  const duration=1800+rnd(700);
   const t0=performance.now(),a0=wheelAngle;
   function ease(t){return 1-Math.pow(1-t,3);}
   function frame(now){
@@ -1135,18 +1141,19 @@ window.spinWheel=function(){
     const badge=!w.presente?'<span class="result-badge" style="background:var(--red-dim);color:#fca5a5">AUSENTE</span>':'<span class="result-badge">PRESENTE</span>';
     const cb=w.celular?'<span class="result-badge" style="background:rgba(245,158,11,.15);color:#fcd34d">CELULAR</span>':'';
     document.getElementById('result-display').innerHTML=`<div><span class="result-name">${esc(w.nombre)}</span>${badge}${cb}</div>`;
-    ultimoSorteo={nombre:w.nombre,ejercicio:'',hora:new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),presente:w.presente,celular:w.celular};
+    ultimoSorteo={nombre:w.nombre,ejercicio:(document.getElementById('ej-actual')||{}).value||'',resultado:'',hora:new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),presente:w.presente,celular:w.celular};
     hist.push(ultimoSorteo);lsSet('asis_hist',hist);renderHist();
+    const rb=document.getElementById('res-btns');if(rb)rb.style.display='flex';
     const nrp=document.getElementById('rul-norep');
     if(nrp&&nrp.checked&&!usados.includes(norm(w.nombre))){usados.push(norm(w.nombre));lsSet('asis_usados',usados);}
-    setTimeout(()=>{renderWheel();},1600);
+    setTimeout(()=>{renderWheel();},600);
   }
   requestAnimationFrame(frame);
 }
 function renderWheelFrozen(pool){
   // dibuja con el pool fijo durante el giro
-  const canvas=document.getElementById('wheel-canvas');const ctx=canvas.getContext('2d');
-  const names=pool.map(p=>p.nombre),size=canvas.width,cx=size/2,cy=size/2,r=size/2-4,slice=(Math.PI*2)/names.length;
+  const canvas=document.getElementById('wheel-canvas');const ctx=canvas.getContext('2d');ctx.setTransform(canvas.width/260,0,0,canvas.width/260,0,0);
+  const names=pool.map(p=>p.nombre),size=260,cx=size/2,cy=size/2,r=size/2-4,slice=(Math.PI*2)/names.length;
   ctx.clearRect(0,0,size,size);
   names.forEach((name,i)=>{
     const start=wheelAngle+i*slice-Math.PI/2,end=start+slice;
@@ -1158,20 +1165,30 @@ function renderWheelFrozen(pool){
   ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fillStyle='#0a0e1a';ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=2;ctx.stroke();
 }
 window.renderWheel=renderWheel;
-window.resetEj=function(){ejUsados=[];lsSet('asis_ej_usados',ejUsados);};
-window.sortearEjercicio=function(){
-  const max=Math.max(2,parseInt(document.getElementById('ej-max').value)||14);
-  let libres=[];for(let i=1;i<=max;i++)if(!ejUsados.includes(i))libres.push(i);
-  if(!libres.length){ejUsados=[];for(let i=1;i<=max;i++)libres.push(i);}
-  const n=libres[rnd(libres.length)];
-  ejUsados.push(n);lsSet('asis_ej_usados',ejUsados);
-  document.getElementById('ej-result').textContent='Ejercicio '+n;
-  if(ultimoSorteo&&!ultimoSorteo.ejercicio){ultimoSorteo.ejercicio=n;lsSet('asis_hist',hist);renderHist();}
+window.cambiarEj=function(d){
+  const el=document.getElementById('ej-actual');
+  let n=(parseInt(el.value)||1)+d; if(n<1)n=1; el.value=n; lsSet('asis_ej_actual',n);
+};
+window.marcarResultado=function(r){
+  if(!ultimoSorteo)return;
+  ultimoSorteo.resultado=r; lsSet('asis_hist',hist); renderHist();
+  const rb=document.getElementById('res-btns'); if(rb)rb.style.display='none';
+  const rd=document.getElementById('result-display');
+  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+(r==='si'?'#86efac':'#fca5a5')+'">'+(r==='si'?'✔ Lo hizo':'✘ No lo hizo')+' · Ejercicio '+esc(ultimoSorteo.ejercicio)+'</div>');
+};
+window.marcarHist=function(i,r){
+  if(!hist[i])return; hist[i].resultado=(hist[i].resultado===r?'':r); lsSet('asis_hist',hist); renderHist();
 };
 function renderHist(){
   const el=document.getElementById('hist-list');if(!el)return;
   if(!hist.length){el.innerHTML='<div style="color:var(--muted)">Aún no hay participaciones.</div>';return;}
-  el.innerHTML=hist.slice().reverse().slice(0,15).map((h,i)=>`<div class="log-item"><span>${hist.length-i}. ${esc(h.nombre)}${h.celular?' 📱':''}${h.presente===false?' <span style="color:#fca5a5">(ausente)</span>':''}</span><span style="color:var(--muted);font-family:'Space Mono',monospace;font-size:11px">${h.ejercicio?'Ej. '+esc(h.ejercicio)+' · ':''}${esc(h.hora)}</span></div>`).join('');
+  const si=hist.filter(h=>h.resultado==='si').length, no=hist.filter(h=>h.resultado==='no').length;
+  const resumen='<div style="margin-bottom:8px;font-size:12px;color:var(--muted)">Lo hicieron: <b style="color:#86efac">'+si+'</b> · No lo hicieron: <b style="color:#fca5a5">'+no+'</b> · Sin marcar: <b>'+(hist.length-si-no)+'</b></div>';
+  const rows=hist.map((h,i)=>({h,i})).reverse().slice(0,25).map(({h,i})=>{
+    const b=(r,t,c)=>`<button class="btn" style="padding:2px 9px;font-size:12px;${h.resultado===r?'background:'+c+';color:#fff;border-color:transparent':''}" onclick="marcarHist(${i},'${r}')">${t}</button>`;
+    return `<div class="log-item"><span>${i+1}. ${esc(h.nombre)}${h.celular?' 📱':''}${h.presente===false?' <span style="color:#fca5a5">(ausente)</span>':''}<span style="color:var(--muted);font-size:11px"> · Ej. ${esc(h.ejercicio||'—')} · ${esc(h.hora)}</span></span><span style="display:flex;gap:6px">${b('si','✔','#16a34a')}${b('no','✘','#dc2626')}</span></div>`;
+  }).join('');
+  el.innerHTML=resumen+rows;
 }
 
 /* ── AUTOEVALUACION ── */
