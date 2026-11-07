@@ -369,6 +369,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="tab" onclick="switchTab('ruleta',this)">Ruleta</button>
       <button class="tab" onclick="switchTab('autoevaluacion',this)">Autoevaluación</button>
     </div>
+    <div id="receso-bar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0;padding:8px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);font-size:13px;color:var(--muted)">
+      <span>☕ Receso a las</span>
+      <input type="time" id="receso-hora" value="08:40" onchange="recesoGuardar()" style="padding:5px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text)">
+      <span>por</span>
+      <input type="number" id="receso-min" value="20" min="1" max="120" onchange="recesoGuardar()" style="width:56px;padding:5px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);text-align:center">
+      <span>min</span>
+      <b id="receso-txt" style="margin-left:auto;font-family:'Space Mono',monospace;color:var(--text)"></b>
+    </div>
 
     <!-- PANEL -->
     <div id="view-panel" class="view active">
@@ -479,9 +487,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
         <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
         <div class="roulette-count" id="roulette-count"></div>
-        <div id="res-btns" style="display:none;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap">
-          <button class="btn" style="background:rgba(34,197,94,.15);color:#86efac;border-color:rgba(34,197,94,.4);font-weight:600;padding:10px 20px" onclick="marcarResultado('si')">✔ Lo hizo</button>
-          <button class="btn" style="background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.4);font-weight:600;padding:10px 20px" onclick="marcarResultado('no')">✘ No lo hizo</button>
+        <div id="res-btns" style="display:none;margin-top:14px">
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <button class="btn" style="background:rgba(34,197,94,.15);color:#86efac;border-color:rgba(34,197,94,.4);font-weight:600;padding:10px 16px" onclick="marcarResultado('si')">✔ Lo hizo</button>
+            <button class="btn" style="background:rgba(245,158,11,.15);color:#fcd34d;border-color:rgba(245,158,11,.4);font-weight:600;padding:10px 16px" onclick="marcarResultado('medias')">◐ A medias</button>
+            <button class="btn" style="background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.4);font-weight:600;padding:10px 16px" onclick="marcarResultado('no')">✘ No lo hizo</button>
+            <button class="btn" style="background:rgba(148,163,184,.15);color:#cbd5e1;border-color:rgba(148,163,184,.4);font-weight:600;padding:10px 16px" onclick="marcarResultado('sinpc')">💻 Sin computadora</button>
+          </div>
+          <input type="text" id="obs-input" maxlength="140" placeholder="¿Qué pasó? (opcional: ej. no le salió la fórmula, se desconectó…)" style="width:100%;margin-top:10px;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif">
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
+          <button class="btn" id="undo-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="deshacer()">↶ Deshacer último</button>
+          <button class="btn" id="skip-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="saltar()">⏭ Saltar y girar de nuevo</button>
         </div>
         <div style="border-top:1px solid var(--border);margin-top:22px;padding-top:18px">
           <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)">
@@ -489,6 +506,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <button class="btn" onclick="cambiarEj(-1)" style="padding:6px 12px">−</button>
             <input type="number" id="ej-actual" value="1" min="1" max="99" style="width:64px;padding:7px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);text-align:center;font-size:16px;font-weight:700" onchange="cambiarEj(0)">
             <button class="btn" onclick="cambiarEj(1)" style="padding:6px 12px">+</button>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--muted)">
+            <span>⏱</span>
+            <b id="cron-disp" style="font-family:'Space Mono',monospace;font-size:26px;color:var(--text);min-width:90px;text-align:center">05:00</b>
+            <input type="number" id="cron-min" value="5" min="1" max="60" onchange="cronSet()" style="width:56px;padding:6px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);text-align:center"><span>min</span>
+            <button class="btn" onclick="cronStart()" style="padding:6px 12px">▶</button>
+            <button class="btn" onclick="cronPause()" style="padding:6px 12px">⏸</button>
+            <button class="btn" onclick="cronReset()" style="padding:6px 12px">↺</button>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="cron-auto" checked> iniciar al girar</label>
           </div>
         </div>
         <div style="text-align:left;margin-top:22px">
@@ -589,6 +615,7 @@ let ejUsados=[];     // ejercicios ya sorteados
 let hist=[];         // historial de participaciones
 let ruletaModo='lista';
 let ultimoSorteo=null;
+let skipNorm='';
 let USAR_LISTA=false;
 function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
 
@@ -981,8 +1008,8 @@ window.exportExcel = function(){
     ['Hora de cierre:', timeStr],
     ['Código de sesión:', SESSION_CODE],
     [],
-    ['#','Nombre','Hora de registro','Dispositivo','Estado'],
-    ...registros.map((r,i)=>[i+1, r.nombre, r.time, r.device, 'PRESENTE']),
+    ['#','Nombre','Hora de registro','Dispositivo','Estado','Participó en ruleta'],
+    ...registros.map((r,i)=>[i+1, r.nombre, r.time, r.device, 'PRESENTE', hist.some(h=>norm(h.nombre)===norm(r.nombre))?'SÍ':'NO']),
     [],
     ['Total presentes:', registros.length],
     ['Intentos bloqueados:', fraudLog.length],
@@ -991,7 +1018,7 @@ window.exportExcel = function(){
   const ws = XLSX.utils.aoa_to_sheet(wsData);
 
   // Ancho de columnas
-  ws['!cols']=[{wch:5},{wch:35},{wch:18},{wch:18},{wch:12}];
+  ws['!cols']=[{wch:5},{wch:35},{wch:18},{wch:18},{wch:12},{wch:18}];
 
   // Hoja de fraudes si hay
   if(fraudLog.length){
@@ -1009,13 +1036,28 @@ window.exportExcel = function(){
   XLSX.utils.book_append_sheet(wb, ws, 'Asistencia');
   if(lista.length){
     const pres=new Map(registros.map(r=>[norm(r.nombre),r.time]));
-    const wl=XLSX.utils.aoa_to_sheet([['LISTA COMPLETA'],[],['#','Nombre','Estado','Hora','Celular'],...lista.map((x,i)=>[i+1,x.nombre,pres.has(norm(x.nombre))?'PRESENTE':'AUSENTE',pres.get(norm(x.nombre))||'',x.celular?'Sí':''])]);
-    wl['!cols']=[{wch:5},{wch:35},{wch:12},{wch:10},{wch:9}];
+    const wl=XLSX.utils.aoa_to_sheet([['LISTA COMPLETA'],[],['#','Nombre','Estado','Hora','Celular','Participó en ruleta'],...lista.map((x,i)=>[i+1,x.nombre,pres.has(norm(x.nombre))?'PRESENTE':'AUSENTE',pres.get(norm(x.nombre))||'',x.celular?'Sí':'',hist.some(h=>norm(h.nombre)===norm(x.nombre))?'SÍ':'NO'])]);
+    wl['!cols']=[{wch:5},{wch:35},{wch:12},{wch:10},{wch:9},{wch:18}];
     XLSX.utils.book_append_sheet(wb, wl, 'Lista completa');
   }
+  {
+    const L=k=>({si:'LO HIZO',medias:'A MEDIAS',no:'NO LO HIZO',sinpc:'SIN COMPUTADORA'}[k]||'SIN MARCAR');
+    const pres2=new Set(registros.map(r=>norm(r.nombre)));
+    const base=lista.length?lista.map(x=>x.nombre):registros.map(r=>r.nombre);
+    const extra=hist.map(h=>h.nombre).filter(n=>!base.some(b=>norm(b)===norm(n)));
+    const nombres=[...new Set([...base,...extra])].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
+    const filas=nombres.map((n,i)=>{
+      const hs=hist.filter(h=>norm(h.nombre)===norm(n)), c=k=>hs.filter(h=>h.resultado===k).length;
+      return [i+1,n,pres2.has(norm(n))?'PRESENTE':'AUSENTE',hs.length?'SÍ':'NO',hs.length,c('si'),c('medias'),c('no'),c('sinpc'),hs.map(h=>'Ej.'+(h.ejercicio||'?')+': '+L(h.resultado)+(h.obs?' ('+h.obs+')':'')).join(' | '),''];
+    });
+    const wr=XLSX.utils.aoa_to_sheet([['RESUMEN POR ESTUDIANTE'],[],['#','Nombre','Asistencia','Participó','Veces','Lo hizo','A medias','No lo hizo','Sin computadora','Detalle (qué pasó)','Puntos obtenidos'],...filas]);
+    wr['!cols']=[{wch:5},{wch:35},{wch:12},{wch:10},{wch:7},{wch:9},{wch:9},{wch:11},{wch:16},{wch:60},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, wr, 'Resumen');
+  }
   if(hist.length){
-    const wh=XLSX.utils.aoa_to_sheet([['PARTICIPACIONES'],[],['#','Nombre','Ejercicio','Resultado','Hora','Puntos obtenidos'],...hist.map((h,i)=>[i+1,h.nombre,h.ejercicio||'',h.resultado==='si'?'LO HIZO':(h.resultado==='no'?'NO LO HIZO':'SIN MARCAR'),h.hora,''])]);
-    wh['!cols']=[{wch:5},{wch:35},{wch:11},{wch:14},{wch:10},{wch:16}];
+    const L=k=>({si:'LO HIZO',medias:'A MEDIAS',no:'NO LO HIZO',sinpc:'SIN COMPUTADORA'}[k]||'SIN MARCAR');
+    const wh=XLSX.utils.aoa_to_sheet([['PARTICIPACIONES'],[],['#','Nombre','Ejercicio','Resultado','Qué pasó','Hora','Puntos obtenidos'],...hist.map((h,i)=>[i+1,h.nombre,h.ejercicio||'',L(h.resultado),h.obs||'',h.hora,''])]);
+    wh['!cols']=[{wch:5},{wch:35},{wch:11},{wch:19},{wch:45},{wch:10},{wch:16}];
     XLSX.utils.book_append_sheet(wb, wh, 'Participaciones');
   }
   XLSX.writeFile(wb, 'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
@@ -1069,6 +1111,7 @@ function getPool(){
   else base=registros.map(r=>({nombre:r.nombre,celular:cel(r.nombre),presente:true}));
   const norep=document.getElementById('rul-norep');
   if(norep&&norep.checked) base=base.filter(p=>!usados.includes(norm(p.nombre)));
+  if(skipNorm&&base.length>1) base=base.filter(p=>norm(p.nombre)!==skipNorm);
   return base;
 }
 window.cambiarModo=function(v){ruletaModo=v;renderWheel();};
@@ -1121,7 +1164,7 @@ window.spinWheel=function(){
   isSpinning=true;
   document.getElementById('spin-btn').disabled=true;
   document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Girando...</span>';
-  {const rb=document.getElementById('res-btns');if(rb)rb.style.display='none';}
+  {const rb=document.getElementById('res-btns');if(rb)rb.style.display='none';const sk=document.getElementById('skip-btn');if(sk)sk.style.display='none';}
   const names=pool.map(p=>p.nombre);
   const slice=(Math.PI*2)/names.length;
   const winner=rnd(names.length);                       // sorteo con aleatoriedad criptográfica
@@ -1143,7 +1186,11 @@ window.spinWheel=function(){
     document.getElementById('result-display').innerHTML=`<div><span class="result-name">${esc(w.nombre)}</span>${badge}${cb}</div>`;
     ultimoSorteo={nombre:w.nombre,ejercicio:(document.getElementById('ej-actual')||{}).value||'',resultado:'',hora:new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),presente:w.presente,celular:w.celular};
     hist.push(ultimoSorteo);lsSet('asis_hist',hist);renderHist();
-    const rb=document.getElementById('res-btns');if(rb)rb.style.display='flex';
+    const rb=document.getElementById('res-btns');if(rb)rb.style.display='block';
+    const oi=document.getElementById('obs-input');if(oi)oi.value='';
+    const sk=document.getElementById('skip-btn');if(sk)sk.style.display='inline-block';
+    skipNorm='';updUndo();
+    const ca=document.getElementById('cron-auto');if(ca&&ca.checked){cronReset();cronStart();}
     const nrp=document.getElementById('rul-norep');
     if(nrp&&nrp.checked&&!usados.includes(norm(w.nombre))){usados.push(norm(w.nombre));lsSet('asis_usados',usados);}
     setTimeout(()=>{renderWheel();},600);
@@ -1169,27 +1216,79 @@ window.cambiarEj=function(d){
   const el=document.getElementById('ej-actual');
   let n=(parseInt(el.value)||1)+d; if(n<1)n=1; el.value=n; lsSet('asis_ej_actual',n);
 };
+const RES_LBL={si:'LO HIZO',medias:'A MEDIAS',no:'NO LO HIZO',sinpc:'SIN COMPUTADORA'};
+const RES_COL={si:'#16a34a',medias:'#d97706',no:'#dc2626',sinpc:'#64748b'};
+const RES_ICO={si:'✔',medias:'◐',no:'✘',sinpc:'💻'};
+function updUndo(){const u=document.getElementById('undo-btn');if(u)u.style.display=hist.length?'inline-block':'none';}
 window.marcarResultado=function(r){
   if(!ultimoSorteo)return;
-  ultimoSorteo.resultado=r; lsSet('asis_hist',hist); renderHist();
+  const oi=document.getElementById('obs-input');
+  ultimoSorteo.resultado=r; ultimoSorteo.obs=(oi?oi.value.trim():'');
+  lsSet('asis_hist',hist); renderHist(); cronPause();
   const rb=document.getElementById('res-btns'); if(rb)rb.style.display='none';
+  const sk=document.getElementById('skip-btn'); if(sk)sk.style.display='none';
   const rd=document.getElementById('result-display');
-  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+(r==='si'?'#86efac':'#fca5a5')+'">'+(r==='si'?'✔ Lo hizo':'✘ No lo hizo')+' · Ejercicio '+esc(ultimoSorteo.ejercicio)+'</div>');
+  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+RES_COL[r]+'">'+RES_ICO[r]+' '+RES_LBL[r]+' · Ejercicio '+esc(ultimoSorteo.ejercicio)+(ultimoSorteo.obs?' · '+esc(ultimoSorteo.obs):'')+'</div>');
 };
 window.marcarHist=function(i,r){
   if(!hist[i])return; hist[i].resultado=(hist[i].resultado===r?'':r); lsSet('asis_hist',hist); renderHist();
 };
+window.editarObs=function(i){
+  if(!hist[i])return; const v=window.prompt('¿Qué pasó? (observación)',hist[i].obs||''); if(v===null)return;
+  hist[i].obs=v.trim(); lsSet('asis_hist',hist); renderHist();
+};
+window.deshacer=function(){
+  if(!hist.length||isSpinning)return;
+  const h=hist.pop(); usados=usados.filter(u=>u!==norm(h.nombre));
+  lsSet('asis_hist',hist); lsSet('asis_usados',usados);
+  ultimoSorteo=hist.length?hist[hist.length-1]:null;
+  const rb=document.getElementById('res-btns'); if(rb)rb.style.display='none';
+  const sk=document.getElementById('skip-btn'); if(sk)sk.style.display='none';
+  document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Se deshizo el giro de '+esc(h.nombre)+'</span>';
+  cronReset(); renderHist(); renderWheel(); updUndo();
+};
+window.saltar=function(){
+  if(!ultimoSorteo||isSpinning)return; const n=norm(ultimoSorteo.nombre);
+  deshacer(); skipNorm=n; spinWheel();
+};
 function renderHist(){
+  updUndo();
   const el=document.getElementById('hist-list');if(!el)return;
   if(!hist.length){el.innerHTML='<div style="color:var(--muted)">Aún no hay participaciones.</div>';return;}
-  const si=hist.filter(h=>h.resultado==='si').length, no=hist.filter(h=>h.resultado==='no').length;
-  const resumen='<div style="margin-bottom:8px;font-size:12px;color:var(--muted)">Lo hicieron: <b style="color:#86efac">'+si+'</b> · No lo hicieron: <b style="color:#fca5a5">'+no+'</b> · Sin marcar: <b>'+(hist.length-si-no)+'</b></div>';
+  const c=k=>hist.filter(h=>h.resultado===k).length, sm=hist.filter(h=>!h.resultado).length;
+  const resumen='<div style="margin-bottom:8px;font-size:12px;color:var(--muted)">✔ <b style="color:#86efac">'+c('si')+'</b> · ◐ <b style="color:#fcd34d">'+c('medias')+'</b> · ✘ <b style="color:#fca5a5">'+c('no')+'</b> · 💻 <b>'+c('sinpc')+'</b> · Sin marcar: <b>'+sm+'</b></div>';
   const rows=hist.map((h,i)=>({h,i})).reverse().slice(0,25).map(({h,i})=>{
-    const b=(r,t,c)=>`<button class="btn" style="padding:2px 9px;font-size:12px;${h.resultado===r?'background:'+c+';color:#fff;border-color:transparent':''}" onclick="marcarHist(${i},'${r}')">${t}</button>`;
-    return `<div class="log-item"><span>${i+1}. ${esc(h.nombre)}${h.celular?' 📱':''}${h.presente===false?' <span style="color:#fca5a5">(ausente)</span>':''}<span style="color:var(--muted);font-size:11px"> · Ej. ${esc(h.ejercicio||'—')} · ${esc(h.hora)}</span></span><span style="display:flex;gap:6px">${b('si','✔','#16a34a')}${b('no','✘','#dc2626')}</span></div>`;
+    const b=r=>`<button class="btn" style="padding:2px 8px;font-size:12px;${h.resultado===r?'background:'+RES_COL[r]+';color:#fff;border-color:transparent':''}" title="${RES_LBL[r]}" onclick="marcarHist(${i},'${r}')">${RES_ICO[r]}</button>`;
+    return `<div class="log-item" style="align-items:flex-start;gap:8px"><span style="flex:1">${i+1}. ${esc(h.nombre)}${h.celular?' 📱':''}${h.presente===false?' <span style="color:#fca5a5">(ausente)</span>':''}<span style="color:var(--muted);font-size:11px"> · Ej. ${esc(h.ejercicio||'—')} · ${esc(h.hora)}</span>${h.obs?`<br><span style="color:var(--muted);font-size:12px">📝 ${esc(h.obs)}</span>`:''}</span><span style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${b('si')}${b('medias')}${b('no')}${b('sinpc')}<button class="btn" style="padding:2px 8px;font-size:12px" title="Observación" onclick="editarObs(${i})">📝</button></span></div>`;
   }).join('');
   el.innerHTML=resumen+rows;
 }
+/* ── CRONÓMETRO ── */
+let cronTotal=300,cronLeft=300,cronInt=null;
+const fmtMS=t=>String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+function cronDraw(){const d=document.getElementById('cron-disp');if(!d)return;d.textContent=fmtMS(Math.max(0,cronLeft));d.style.color=cronLeft<=0?'#ef4444':(cronLeft<=30?'#f59e0b':'var(--text)');}
+function beep(){try{const A=new (window.AudioContext||window.webkitAudioContext)();[0,0.35,0.7].forEach(t=>{const o=A.createOscillator(),g=A.createGain();o.frequency.value=880;o.connect(g);g.connect(A.destination);g.gain.value=.25;o.start(A.currentTime+t);o.stop(A.currentTime+t+.2);});}catch(e){}}
+window.cronSet=function(){const m=Math.max(1,parseInt(document.getElementById('cron-min').value)||5);cronTotal=m*60;lsSet('asis_cron_min',m);cronReset();};
+window.cronStart=function(){if(cronInt)return;if(cronLeft<=0)cronLeft=cronTotal;cronInt=setInterval(()=>{cronLeft--;cronDraw();if(cronLeft<=0){cronPause();cronLeft=0;cronDraw();beep();}},1000);};
+window.cronPause=function(){if(cronInt){clearInterval(cronInt);cronInt=null;}};
+window.cronReset=function(){cronPause();cronLeft=cronTotal;cronDraw();};
+/* ── RECESO ── */
+window.recesoGuardar=function(){lsSet('asis_receso',{h:document.getElementById('receso-hora').value,m:parseInt(document.getElementById('receso-min').value)||20});};
+function recesoTick(){
+  const t=document.getElementById('receso-txt'),hi=document.getElementById('receso-hora'),mi=document.getElementById('receso-min');
+  if(!t||!hi||!hi.value)return;
+  const [H,M]=hi.value.split(':').map(Number),dur=Math.max(1,parseInt(mi.value)||20)*60;
+  const now=new Date(),ini=new Date();ini.setHours(H,M,0,0);
+  const d=Math.round((now-ini)/1000),f=x=>{const h=Math.floor(x/3600),m=Math.floor(x%3600/60),s=x%60;return (h?h+':':'')+String(m).padStart(h?2:1,'0')+':'+String(s).padStart(2,'0');};
+  const fin=new Date(ini.getTime()+dur*1000),hh=fin.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+  const bar=document.getElementById('receso-bar');
+  if(d<0){t.textContent='Faltan '+f(-d);t.style.color='var(--text)';bar.style.borderColor='var(--border2)';}
+  else if(d<dur){t.textContent='☕ RECESO · regresamos '+hh+' · quedan '+f(dur-d);t.style.color='#fcd34d';bar.style.borderColor='#f59e0b';}
+  else{t.textContent='Receso terminado';t.style.color='var(--muted)';bar.style.borderColor='var(--border2)';}
+}
+{const r=lsGet('asis_receso',null);if(r){const h=document.getElementById('receso-hora'),m=document.getElementById('receso-min');if(h&&r.h)h.value=r.h;if(m&&r.m)m.value=r.m;}
+ const cm=lsGet('asis_cron_min',5);const ce=document.getElementById('cron-min');if(ce)ce.value=cm;cronTotal=cm*60;cronLeft=cronTotal;cronDraw();
+ recesoTick();setInterval(recesoTick,1000);}
 
 /* ── AUTOEVALUACION ── */
 function escucharAutoevaluacion(){
