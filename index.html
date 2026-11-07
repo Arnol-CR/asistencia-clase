@@ -151,6 +151,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .chip{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--border2);border-radius:999px;background:var(--bg2);font-size:13px;cursor:grab;user-select:none;transition:all .12s}
 .chip:hover{border-color:var(--accent);background:var(--accent-dim)}
 .chip:active{cursor:grabbing}
+.chip .cap{margin-left:auto;flex:none;font-style:normal;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--gc);color:#fff;border-radius:8px;padding:2px 7px}
 .chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
 .chip.dragging{opacity:.4}
 .chip.pop{animation:chipPop .55s ease}
@@ -724,7 +725,7 @@ const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5c
 
 let SESSION_CODE = genCode();
 let UNIV = '';
-const APP_VERSION='v4.10 · 07-nov-2026 00:50';
+const APP_VERSION='v4.11 · 07-nov-2026 01:05';
 function toastAction(msg,label,fn){const t=document.getElementById('toast');if(!t)return;t.className='';t.innerHTML='';
   const sp=document.createElement('span');sp.textContent=msg+' ';t.appendChild(sp);
   const b=document.createElement('button');b.textContent=label;b.style.cssText='margin-left:8px;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600';
@@ -1452,9 +1453,13 @@ window.grpClickZona=function(g,ev){
   if(ev&&(ev.target.tagName==='INPUT'||ev.target.tagName==='BUTTON'))return;
   if(grpSelIdx>=0&&!grpBusy)grpSet(grpSelIdx,g);
 };
-function chipHTML(x,i,g){
+function grpCapitan(g){
+  const p=gr.draft.pila.find(i=>gr.items[i]&&gr.items[i].g===g);
+  return p!==undefined?p:gr.items.findIndex(x=>x.g===g);
+}
+function chipHTML(x,i,g,cap){
   const col=g>=0?grpColor(g):'#64748b';
-  return `<div class="chip${grpSelIdx===i?' sel':''}${grpPop===i?' pop':''}" style="--gc:${col}" draggable="true" ondragstart="grpDrag(event,${i})" ondragend="grpDragEnd(event)" onclick="grpClickChip(event,${i})"><i>${esc(iniciales(x.nombre).toUpperCase())}</i><span>${esc(x.nombre)}</span></div>`;
+  return `<div class="chip${grpSelIdx===i?' sel':''}${grpPop===i?' pop':''}" style="--gc:${col}" draggable="true" ondragstart="grpDrag(event,${i})" ondragend="grpDragEnd(event)" onclick="grpClickChip(event,${i})"><i>${esc(iniciales(x.nombre).toUpperCase())}</i><span>${esc(x.nombre)}</span>${cap?'<em class="cap">Capitán</em>':''}</div>`;
 }
 function grpMiembros(g){return gr.items.filter(x=>x.g===g);}
 function renderGrupos(){
@@ -1474,7 +1479,8 @@ function renderGrupos(){
   if(grpSelIdx>=0&&gr.items[grpSelIdx]){sel.style.display='block';sel.innerHTML='Seleccionado: <b>'+esc(gr.items[grpSelIdx].nombre)+'</b>. Haz clic en el grupo.';}
   else if(!grpBusy&&gr.modo==='draft'&&gr.items.length){
     sel.style.display='block';
-    sel.innerHTML=sin>0?('Asignación: <b>Grupo '+grpLabel(turnoG)+'</b>'):'Asignación completa.';
+    {const c=sin>0?grpCapitan(turnoG):-1;
+    sel.innerHTML=sin>0?('Asignación: <b>Grupo '+grpLabel(turnoG)+'</b>'+(c>=0?' · Elige: <b>'+esc(gr.items[c].nombre)+'</b>':' · primer integrante')):'Asignación completa.';}
   }
   else if(!grpBusy)sel.style.display='none';
   document.getElementById('grp-pool-n').textContent=sin?'('+sin+')':'';
@@ -1483,7 +1489,7 @@ function renderGrupos(){
   root.innerHTML=[...Array(gr.n).keys()].map(g=>{
     const m=gr.items.map((x,i)=>({x,i})).filter(o=>o.x.g===g);
     return `<div class="grp-card${g===turnoG?' turn':''}" style="--gc:${grpColor(g)}" ondragover="grpOver(event)" ondragleave="grpLeave(event)" ondrop="grpDrop(event,${g})" onclick="grpClickZona(${g},event)"><div class="grp-head">Grupo ${grpLabel(g)}<span>${m.length} integrante${m.length===1?'':'s'}</span></div><input class="grp-tema" placeholder="Tema del proyecto (opcional)" value="${esc(gr.temas[g]||'')}" oninput="grpTema(${g},this.value)"><div class="grp-body">`+
-      (m.length?m.map(o=>chipHTML(o.x,o.i,g)).join(''):'<div class="grp-empty">Suelta aquí un nombre</div>')+'</div></div>';
+      (m.length?m.map(o=>chipHTML(o.x,o.i,g,gr.modo==='draft'&&o.i===grpCapitan(g))).join(''):'<div class="grp-empty">Suelta aquí un nombre</div>')+'</div></div>';
   }).join('');
 }
 function grpTexto(){
