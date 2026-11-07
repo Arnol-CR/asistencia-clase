@@ -128,6 +128,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .grp-field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:6px}
 .grp-field select{width:100%;padding:9px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}
 .grp-layout{display:grid;grid-template-columns:minmax(430px,520px) 1fr;gap:18px;align-items:start}
+.grp-layout.pool-s{grid-template-columns:270px 1fr}
+.grp-layout.pool-s #grp-roster{grid-template-columns:1fr}
+.grp-layout.pool-0{grid-template-columns:1fr}
+.grp-pool-msg{display:none;font-size:12px;color:var(--muted)}
+.pool-0 .grp-pool{display:flex;align-items:center;gap:14px;min-height:0;padding:9px 14px;max-height:none;border-width:1px}
+.pool-0 .grp-pool .rul-label{margin:0!important;white-space:nowrap}
+.pool-0 #grp-roster,.pool-0 .grp-hint{display:none}
+.pool-0 .grp-pool-msg{display:block}
 #grp-roster{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 #grp-roster .grp-empty{grid-column:1/-1}
 @media(max-width:560px){#grp-roster{grid-template-columns:1fr}}
@@ -155,7 +163,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 @keyframes turnPulse{0%,100%{box-shadow:0 0 6px 2px color-mix(in srgb,var(--gc) 45%,transparent)}50%{box-shadow:0 0 22px 8px color-mix(in srgb,var(--gc) 55%,transparent)}}
 .grp-sel{margin-bottom:12px;padding:9px 14px;border-radius:var(--radius-sm);background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);font-size:13px}
 @keyframes chipPop{0%{transform:scale(.4);opacity:0;background:#fde68a}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-@media(max-width:1100px){.grp-layout{grid-template-columns:1fr}}
+@media(max-width:1100px){.grp-layout,.grp-layout.pool-s,.grp-layout.pool-l,.grp-layout.pool-0{grid-template-columns:1fr}}
 .rul-grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:28px;align-items:start;text-align:left}
 .rul-left{text-align:center}
 .rul-right{display:flex;flex-direction:column;gap:14px}
@@ -638,10 +646,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
         <div id="grp-info" style="font-size:12px;color:var(--muted);margin-bottom:14px"></div>
         <div id="grp-sel" class="grp-sel" style="display:none"></div>
-        <div class="grp-layout">
+        <div class="grp-layout pool-l" id="grp-layout">
           <div class="grp-pool" id="grp-pool" ondragover="grpOver(event)" ondragleave="grpLeave(event)" ondrop="grpDrop(event,-1)" onclick="grpClickZona(-1,event)">
             <div class="rul-label" style="margin-bottom:2px">Sin asignar <span id="grp-pool-n"></span></div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Arrastra un nombre al grupo, o haz clic en el nombre y luego en el grupo.</div>
+            <div class="grp-hint" style="font-size:11px;color:var(--muted);margin-bottom:10px">Arrastra un nombre al grupo, o haz clic en el nombre y luego en el grupo.</div>
+            <div class="grp-pool-msg">Todos tienen grupo. Suelta aquí un nombre para dejarlo sin grupo.</div>
             <div id="grp-roster"></div>
           </div>
           <div id="grp-cards" class="grp-cards"></div>
@@ -715,7 +724,7 @@ const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5c
 
 let SESSION_CODE = genCode();
 let UNIV = '';
-const APP_VERSION='v4.9 · 07-nov-2026 00:35';
+const APP_VERSION='v4.10 · 07-nov-2026 00:50';
 function toastAction(msg,label,fn){const t=document.getElementById('toast');if(!t)return;t.className='';t.innerHTML='';
   const sp=document.createElement('span');sp.textContent=msg+' ';t.appendChild(sp);
   const b=document.createElement('button');b.textContent=label;b.style.cssText='margin-left:8px;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600';
@@ -1469,6 +1478,7 @@ function renderGrupos(){
   }
   else if(!grpBusy)sel.style.display='none';
   document.getElementById('grp-pool-n').textContent=sin?'('+sin+')':'';
+  {const L=document.getElementById('grp-layout');if(L){const modoL=grpBusy?(gr.items.length>8?'l':'s'):(sin===0?'0':(sin>8?'l':'s'));L.className='grp-layout pool-'+modoL;}}
   document.getElementById('grp-roster').innerHTML=gr.items.map((x,i)=>x.g<0?chipHTML(x,i,-1):'').join('')||'<div class="grp-empty">'+(gr.items.length?'Todos tienen grupo.':'Sin estudiantes.')+'</div>';
   root.innerHTML=[...Array(gr.n).keys()].map(g=>{
     const m=gr.items.map((x,i)=>({x,i})).filter(o=>o.x.g===g);
