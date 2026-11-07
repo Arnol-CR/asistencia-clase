@@ -48,8 +48,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 #modo-alumno{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
 .student-shell{width:100%;max-width:420px}
 .student-brand{text-align:center;margin-bottom:32px}
-.brand-dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);display:inline-block;margin-bottom:12px}
-.brand-name{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;margin-bottom:4px}
+.brand-dot{display:none}
+.brand-name{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.08em;margin-bottom:4px}
 .brand-title{font-size:26px;font-weight:600;color:var(--text);margin-bottom:4px}
 .brand-prof{font-size:13px;color:var(--muted)}
 .s-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
@@ -79,10 +79,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 /* MODO PROFESOR */
 #modo-profesor{display:none}
 .app{max-width:960px;margin:0 auto;padding:24px 16px}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;padding-bottom:16px;border-bottom:2px solid var(--accent)}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
-.logo-text{font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.05em}
+.logo-dot{display:none}
+.logo-text{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;line-height:1.3;max-width:560px}
+.logo-sub{font-size:12px;color:var(--muted);margin-top:2px;letter-spacing:.02em}
+.brand-univ{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:10px;line-height:1.4}
 .header-right{text-align:right}
 .header-title{font-size:20px;font-weight:600;color:var(--text)}
 .header-prof{font-size:13px;color:var(--muted)}
@@ -270,6 +272,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="setup-card">
       <div class="setup-section">Información de la clase</div>
       <div class="setup-field">
+        <label>Universidad o institución</label>
+        <input type="text" id="setup-univ" placeholder="Ej: Universidad Pedagógica Nacional Francisco Morazán" autocomplete="off"/>
+      </div>
+      <div class="setup-field">
         <label>Nombre de la clase</label>
         <input type="text" id="setup-clase" placeholder="Ej: Programación I, Cálculo II..." autocomplete="off"/>
       </div>
@@ -291,7 +297,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <input type="number" class="dur-custom" id="dur-custom" placeholder="Minutos personalizados (ej: 45)" style="display:none" oninput="customDur(this.value)"/>
       <div class="setup-err" id="setup-err">Por favor completa todos los campos.</div>
     </div>
-    <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión de clase →</button>
+    <button class="start-btn" onclick="iniciarSesion()">Iniciar sesión de clase</button>
   </div>
 </div>
 
@@ -299,7 +305,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <div id="modo-alumno">
   <div class="student-shell">
     <div class="student-brand">
-      <div class="brand-dot"></div>
+      <div class="brand-univ" id="s-univ-lbl"></div>
       <div class="brand-name" id="s-clase-lbl">PROGRAMACIÓN I</div>
       <div class="brand-title">Registro de asistencia</div>
       <div class="brand-prof" id="s-docente-lbl">Ing. Arnol Carranza</div>
@@ -315,9 +321,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <input type="text" id="s-code" placeholder="Ej: TECH-A3F2" style="text-transform:uppercase;letter-spacing:.1em;font-family:'Space Mono',monospace" oninput="this.value=this.value.toUpperCase()"/>
         </div>
         <div class="s-field">
-          <label id="s-nombre-lbl">✏️ Tu nombre completo</label>
+          <label id="s-nombre-lbl">Tu nombre completo</label>
           <select id="s-select" style="display:none;width:100%;padding:12px 14px;font-size:15px;border:2px solid var(--accent);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif"></select>
-          <input type="text" id="s-nombre" class="highlight" placeholder="👉 Escribe aquí tu nombre y apellido" autocomplete="name"/>
+          <input type="text" id="s-nombre" class="highlight" placeholder="Escribe aquí tu nombre y apellido" autocomplete="name"/>
         </div>
       </div>
       <div class="s-hint">Un solo registro por dispositivo por sesión</div>
@@ -329,18 +335,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="s-suc-name" id="s-suc-name"></div>
       <div class="s-suc-sub" id="s-suc-sub"></div>
-      <div class="s-suc-badge">PRESENTE ✓</div>
+      <div class="s-suc-badge">PRESENTE</div>
     </div>
 
     <!-- AUTOEVALUACION ALUMNO -->
     <div id="auto-waiting" style="display:none;margin-top:16px;background:var(--accent-dim);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;text-align:center;">
-      <div style="font-size:28px;margin-bottom:8px;">📋</div>
+      
       <p style="font-size:13px;color:var(--accent);">El docente activará la autoevaluación en breve.<br>Esta pantalla se actualizará automáticamente.</p>
     </div>
     <div id="auto-form-alumno" style="display:none;margin-top:16px;">
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;">
         <div style="background:var(--accent);padding:12px 18px;"><span style="font-size:14px;font-weight:500;color:#E6F1FB;" id="auto-form-title">Autoevaluación</span></div>
-        <div style="padding:9px 16px;background:var(--accent-dim);border-bottom:1px solid var(--border2);font-size:12px;color:var(--accent);">Marca con ✓ la opción que mejor describe tu desempeño.</div>
+        <div style="padding:9px 16px;background:var(--accent-dim);border-bottom:1px solid var(--border2);font-size:12px;color:var(--accent);">Marca la opción que mejor describe tu desempeño.</div>
         <div style="display:flex;gap:14px;padding:9px 16px;border-bottom:1px solid var(--border);">
           <span style="display:flex;align-items:center;gap:5px;font-size:12px;"><span style="background:var(--accent-dim);color:var(--accent);font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;">MB</span>Muy bien</span>
           <span style="display:flex;align-items:center;gap:5px;font-size:12px;"><span style="background:var(--green-dim);color:var(--green);font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;">B</span>Bien</span>
@@ -372,8 +378,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="app">
     <div class="header">
       <div class="logo">
-        <div class="logo-dot"></div>
-        <span class="logo-text">ASISTENCIA.APP</span>
+        <div>
+          <div class="logo-text" id="header-univ">Registro de asistencia</div>
+          <div class="logo-sub">Control de asistencia y participación</div>
+        </div>
       </div>
       <div class="header-right">
         <div class="header-title" id="header-clase">Programación I</div>
@@ -388,7 +396,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="tab" onclick="switchTab('autoevaluacion',this)">Autoevaluación</button>
     </div>
     <div id="receso-bar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0;padding:8px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);font-size:13px;color:var(--muted)">
-      <span>☕ Receso a las</span>
+      <span>Receso a las</span>
       <input type="time" id="receso-hora" value="08:40" onchange="recesoGuardar()" style="padding:5px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text)">
       <span>por</span>
       <input type="number" id="receso-min" value="20" min="1" max="120" onchange="recesoGuardar()" style="width:56px;padding:5px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);text-align:center">
@@ -420,6 +428,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="bottom-bar">
         <button class="btn" onclick="terminarSesion()">Terminar sesión</button>
+        <button class="btn" style="border-color:#dc2626;color:#dc2626" onclick="cerrarTodasSesiones(true)">Cerrar todas las sesiones</button>
         <button class="btn" onclick="abrirAgregar()">+ Agregar alumno</button>
         <button class="btn btn-excel" onclick="exportExcel()">Descargar Excel</button>
       </div>
@@ -508,8 +517,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
             <div class="roulette-count" id="roulette-count"></div>
             <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
-              <button class="btn" id="undo-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="deshacer()">↶ Deshacer último</button>
-              <button class="btn" id="skip-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="saltar()">⏭ Saltar y girar de nuevo</button>
+              <button class="btn" id="undo-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="deshacer()">Deshacer último</button>
+              <button class="btn" id="skip-btn" style="display:none;padding:6px 12px;font-size:12px" onclick="saltar()">Saltar y girar de nuevo</button>
             </div>
           </div>
           <div class="rul-right">
@@ -519,9 +528,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <div id="res-btns" style="display:none">
                 <input type="text" id="ej-input" maxlength="60" placeholder="¿Qué ejercicio hizo? (ej. 3, o 5 y 7)" style="width:100%;margin-bottom:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px">
                 <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  <button class="rbtn" style="background:#16a34a" onclick="marcarResultado('si')">✔ Lo hizo</button>
-                  <button class="rbtn" style="background:#d97706" onclick="marcarResultado('medias')">½ A medias</button>
-                  <button class="rbtn" style="background:#dc2626" onclick="marcarResultado('no')">✘ No lo hizo</button>
+                  <button class="rbtn" style="background:#16a34a" onclick="marcarResultado('si')">Lo hizo</button>
+                  <button class="rbtn" style="background:#d97706" onclick="marcarResultado('medias')">A medias</button>
+                  <button class="rbtn" style="background:#dc2626" onclick="marcarResultado('no')">No lo hizo</button>
                   <button class="rbtn" style="background:#475569" onclick="marcarResultado('sinpc')">Sin computadora</button>
                 </div>
                 <input type="text" id="obs-input" maxlength="140" placeholder="¿Qué pasó? (opcional: no le salió la fórmula, se desconectó…)" style="width:100%;margin-top:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px">
@@ -529,12 +538,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <div id="res-hint" style="font-size:13px;color:var(--muted)">Gira la ruleta para elegir al siguiente estudiante.</div>
             </div>
             <div class="rul-panel" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)">
-              <span>⏱</span>
+              <span>Cronómetro</span>
               <b id="cron-disp" style="font-family:'Space Mono',monospace;font-size:28px;color:var(--text);min-width:96px">05:00</b>
               <input type="number" id="cron-min" value="5" min="1" max="60" onchange="cronSet()" style="width:56px;padding:6px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);text-align:center"><span>min</span>
-              <button class="btn" onclick="cronStart()" style="padding:6px 12px">▶</button>
-              <button class="btn" onclick="cronPause()" style="padding:6px 12px">⏸</button>
-              <button class="btn" onclick="cronReset()" style="padding:6px 12px">↺</button>
+              <button class="btn" onclick="cronStart()" style="padding:6px 12px">Iniciar</button>
+              <button class="btn" onclick="cronPause()" style="padding:6px 12px">Pausar</button>
+              <button class="btn" onclick="cronReset()" style="padding:6px 12px">Reiniciar</button>
               <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="cron-auto" checked> iniciar al girar</label>
             </div>
             <div class="rul-panel">
@@ -563,8 +572,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <button onclick="agregarPregunta()" style="padding:9px 16px;font-size:13px;font-weight:500;border:1px solid var(--accent);border-radius:var(--radius-sm);cursor:pointer;background:var(--accent-dim);color:var(--accent);font-family:'DM Sans',sans-serif;">+ Agregar</button>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--border);">
-            <button id="btn-activar-auto" onclick="activarAutoevaluacion()" class="btn" style="background:var(--green-dim);border-color:var(--green);color:var(--green);">▶ Activar autoevaluación</button>
-            <button id="btn-desactivar-auto" onclick="desactivarAutoevaluacion()" class="btn" style="display:none;background:var(--red-dim);border-color:var(--red);color:var(--red);">⏹ Desactivar</button>
+            <button id="btn-activar-auto" onclick="activarAutoevaluacion()" class="btn" style="background:var(--green-dim);border-color:var(--green);color:var(--green);">Activar autoevaluación</button>
+            <button id="btn-desactivar-auto" onclick="desactivarAutoevaluacion()" class="btn" style="display:none;background:var(--red-dim);border-color:var(--red);color:var(--red);">Desactivar</button>
             <button onclick="descargarFormatoVacio()" class="btn">Descargar formato vacío</button>
           </div>
         </div>
@@ -611,6 +620,7 @@ const db = getDatabase(app);
 const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#e11d48','#0ea5e9','#a855f7','#22c55e','#eab308'];
 
 let SESSION_CODE = genCode();
+let UNIV = '';
 let timerSec = 3600; // 1 hora predeterminado
 let selectedDurMin = 300;
 let registros = [];
@@ -688,6 +698,7 @@ window.customDur = function(v){
 window.iniciarSesion = function(){
   const clase = document.getElementById('setup-clase').value.trim();
   const docente = document.getElementById('setup-docente').value.trim();
+  UNIV = document.getElementById('setup-univ').value.trim(); try{localStorage.setItem('asis_univ',UNIV);}catch(e){}
   const errEl = document.getElementById('setup-err');
   const durMin = selectedDurMin || parseInt(document.getElementById('dur-custom').value||'0');
   if(!clase||!docente||durMin<1){errEl.className='setup-err show';return;}
@@ -697,7 +708,7 @@ window.iniciarSesion = function(){
   try{localStorage.removeItem('asis_hist');localStorage.removeItem('asis_usados');}catch(e){}
   hist=[];usados=[];
   localStorage.setItem('asistencia_session',JSON.stringify({
-    code:SESSION_CODE,clase:CLASE,docente:DOCENTE,
+    code:SESSION_CODE,clase:CLASE,docente:DOCENTE,univ:UNIV,
     expiresAt:Date.now()+(timerSec*1000)
   }));
   document.getElementById('modo-setup').style.display='none';
@@ -707,13 +718,14 @@ window.iniciarSesion = function(){
 }
 
 function aplicarNombres(){
+  const hu=document.getElementById('header-univ');if(hu)hu.textContent=UNIV||'Registro de asistencia';
   document.getElementById('header-clase').textContent=CLASE;
   document.getElementById('header-docente').textContent=DOCENTE;
 }
 
 function guardarEstado(){
   localStorage.setItem('asistencia_session',JSON.stringify({
-    code:SESSION_CODE,clase:CLASE,docente:DOCENTE,
+    code:SESSION_CODE,clase:CLASE,docente:DOCENTE,univ:UNIV,
     expiresAt:Date.now()+(timerSec*1000)
   }));
 }
@@ -725,6 +737,7 @@ if(IS_STUDENT){
       const m=snap.val();
       document.getElementById('s-clase-lbl').textContent=(m.clase||'').toUpperCase();
       document.getElementById('s-docente-lbl').textContent=m.docente||'';
+      document.getElementById('s-univ-lbl').textContent=(m.univ||'').toUpperCase();
     }
   });
   document.getElementById('modo-alumno').style.display='flex';
@@ -737,7 +750,7 @@ if(IS_STUDENT){
   const saved=JSON.parse(localStorage.getItem('asistencia_session')||'null');
   const now=Date.now();
   if(saved&&saved.code&&saved.expiresAt&&now<saved.expiresAt){
-    SESSION_CODE=saved.code; CLASE=saved.clase; DOCENTE=saved.docente;
+    SESSION_CODE=saved.code; CLASE=saved.clase; DOCENTE=saved.docente; UNIV=saved.univ||'';
     timerSec=Math.max(0,Math.floor((saved.expiresAt-now)/1000));
     document.getElementById('modo-profesor').style.display='block';
     aplicarNombres();
@@ -750,6 +763,7 @@ if(IS_STUDENT){
 }
 
 /* ── ALUMNO ── */
+{const su=document.getElementById('setup-univ');if(su){let u='';try{u=localStorage.getItem('asis_univ')||'';}catch(e){} su.value=u||'Universidad Pedagógica Nacional Francisco Morazán';}}
 async function cargarListaAlumno(){
   try{
     const ls=await get(ref(db,'sesiones/'+SESSION_CODE+'/lista'));
@@ -762,7 +776,7 @@ async function cargarListaAlumno(){
     sel.innerHTML='<option value="">— Selecciona tu nombre —</option>'+arr.filter(n=>!tomados.includes(norm(n))).map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('');
     sel.style.display='block';
     document.getElementById('s-nombre').style.display='none';
-    document.getElementById('s-nombre-lbl').textContent='👇 Selecciona tu nombre de la lista';
+    document.getElementById('s-nombre-lbl').textContent='Selecciona tu nombre de la lista';
     USAR_LISTA=true;
   }catch(e){}
 }
@@ -832,8 +846,8 @@ function initProfesor(isNew){
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
   cargarListaLocal(); publicarLista();
   profActivo=true;
-  if(isNew) set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE,expiresAt:Date.now()+timerSec*1000});
-  else set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE,expiresAt:Date.now()+timerSec*1000});
+  if(isNew) set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE,univ:UNIV,expiresAt:Date.now()+timerSec*1000});
+  else set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE,univ:UNIV,expiresAt:Date.now()+timerSec*1000});
   {const tx=lsGet('asis_lista_txt','');if(tx)set(ref(db,'sesiones/'+SESSION_CODE+'/listaTxt'),tx);
    set(ref(db,'sesiones/'+SESSION_CODE+'/hist'),hist);set(ref(db,'sesiones/'+SESSION_CODE+'/usados'),usados);
    const rc=lsGet('asis_receso',null);if(rc)set(ref(db,'sesiones/'+SESSION_CODE+'/receso'),rc);}
@@ -906,7 +920,7 @@ function updateSessionPanel(){
   document.getElementById('inf-date').textContent=new Date().toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});
   const slt=document.getElementById('share-link-text');if(slt)slt.textContent=link;
   const pm=document.getElementById('preview-msg');
-  if(pm)pm.innerHTML='📚 <strong style="color:var(--text)">Registro de asistencia</strong><br>'+CLASE+' · '+DOCENTE+'<br><br>🔗 <span style="color:#818cf8">'+link+'</span><br>📝 Código: <strong style="color:var(--text);letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
+  if(pm)pm.innerHTML='<strong style="color:var(--text)">Registro de asistencia</strong><br>'+CLASE+' · '+DOCENTE+'<br><br><span style="color:#818cf8">'+link+'</span><br>Código: <strong style="color:var(--text);letter-spacing:.1em">'+SESSION_CODE+'</strong><br><br><span style="font-size:11px">Abre el enlace y escribe tu nombre.</span>';
 }
 
 window.copyLink=function(){
@@ -914,7 +928,7 @@ window.copyLink=function(){
 }
 window.copyMsg=function(){
   const link=getPageURL()+'?code='+SESSION_CODE;
-  const msg='📚 *Registro de asistencia*\n'+CLASE+' · '+DOCENTE+'\n\n🔗 '+link+'\n📝 Código: *'+SESSION_CODE+'*\n\nAbre el enlace y escribe tu nombre.';
+  const msg='*Registro de asistencia*\n'+(UNIV?UNIV+'\n':'')+CLASE+' · '+DOCENTE+'\n\nEnlace: '+link+'\nCódigo: *'+SESSION_CODE+'*\n\nAbre el enlace y escribe tu nombre.';
   navigator.clipboard.writeText(msg).then(()=>flashCopy('copy-msg-btn','¡Copiado!'));
 }
 function flashCopy(id,txt){
@@ -1029,7 +1043,7 @@ window.reanudarSesion = async function(code, mins){
   try{snap=await get(ref(db,'sesiones/'+code));}catch(e){if(msg)msg.textContent='No se pudo conectar con Firebase.';return;}
   if(!snap.exists()){if(msg)msg.textContent='No existe una sesión con ese código.';return;}
   const d=snap.val(),m=d.meta||{};
-  SESSION_CODE=code; CLASE=m.clase||'Clase'; DOCENTE=m.docente||'Docente';
+  SESSION_CODE=code; CLASE=m.clase||'Clase'; DOCENTE=m.docente||'Docente'; UNIV=m.univ||(function(){try{return localStorage.getItem('asis_univ')||'';}catch(e){return '';}})();
   const min=Math.max(10,parseInt(mins||(document.getElementById('resume-min')||{}).value)||180); timerSec=min*60;
   try{
     if(d.listaTxt)localStorage.setItem('asis_lista_txt',JSON.stringify(d.listaTxt));
@@ -1047,6 +1061,19 @@ window.reanudarSesion = async function(code, mins){
    const ce=document.getElementById('cron-min');if(ce&&d.cronMin){ce.value=d.cronMin;cronSet();}}
   initProfesor(false);
 };
+window.cerrarTodasSesiones = async function(desdeProf){
+  if(!confirm('¿Cerrar TODAS las sesiones activas? Los estudiantes ya no podrán registrarse con ningún enlace anterior.'))return;
+  let n=0,fallo=false;
+  try{
+    const snap=await get(ref(db,'sesiones')); const tareas=[];
+    if(snap.exists()) snap.forEach(c=>{const v=c.val()||{};if(v.activa===true){tareas.push(set(ref(db,'sesiones/'+c.key+'/activa'),false));n++;}});
+    await Promise.all(tareas);
+  }catch(e){fallo=true;}
+  if(fallo){alert('No se pudieron cerrar las sesiones. Revisa la conexión o las reglas de Firebase.');return;}
+  try{localStorage.removeItem('asistencia_session');}catch(e){}
+  if(desdeProf){profActivo=false;terminarSesion();}
+  else{cargarSesionesActivas();const m=document.getElementById('resume-msg');if(m){m.style.color='#16a34a';m.textContent='Se cerraron '+n+' sesiones.';}}
+};
 window.cerrarSesionRemota = async function(code){
   try{await set(ref(db,'sesiones/'+code+'/activa'),false);}catch(e){}
   cargarSesionesActivas();
@@ -1055,11 +1082,12 @@ async function cargarSesionesActivas(){
   const el=document.getElementById('resume-list'); if(!el)return;
   try{
     const snap=await get(ref(db,'sesiones')); const arr=[];
-    if(snap.exists()) snap.forEach(c=>{const v=c.val()||{};if(v.activa===true&&v.meta){const nr=v.registros?Object.keys(v.registros).length:0;arr.push({code:c.key,clase:v.meta.clase||'',nr,exp:v.meta.expiresAt||0});}});
+    if(snap.exists()) snap.forEach(c=>{const v=c.val()||{};if(v.activa===true){const nr=v.registros?Object.keys(v.registros).length:0;arr.push({code:c.key,clase:(v.meta&&v.meta.clase)||'Sin nombre',nr,exp:(v.meta&&v.meta.expiresAt)||0});}});
     arr.sort((a,b)=>b.exp-a.exp);
     if(!arr.length){el.textContent='No hay sesiones activas. Crea una nueva abajo, o escribe un código para reanudar.';return;}
     el.innerHTML=arr.slice(0,8).map(x=>`<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span><b style="font-family:'Space Mono',monospace;color:var(--text)">${esc(x.code)}</b> · ${esc(x.clase)} · ${x.nr} registrados</span><span style="display:flex;gap:6px"><button class="btn" style="padding:4px 12px;font-size:12px" data-act="res" data-code="${esc(x.code)}">Reanudar</button><button class="btn" style="padding:4px 12px;font-size:12px" data-act="cer" data-code="${esc(x.code)}">Cerrar</button></span></div>`).join('');
-    el.onclick=ev=>{const b=ev.target.closest('button[data-act]');if(!b)return;const c=b.dataset.code;if(b.dataset.act==='res')reanudarSesion(c);else cerrarSesionRemota(c);};
+    el.insertAdjacentHTML('beforeend','<div style="margin-top:10px"><button class="btn" style="padding:6px 14px;font-size:12px;border-color:#dc2626;color:#dc2626" data-act="all">Cerrar todas las sesiones ('+arr.length+')</button></div>');
+    el.onclick=ev=>{const b=ev.target.closest('button[data-act]');if(!b)return;const c=b.dataset.code;if(b.dataset.act==='res')reanudarSesion(c);else if(b.dataset.act==='all')cerrarTodasSesiones(false);else cerrarSesionRemota(c);};
   }catch(e){el.textContent='No se pudieron leer las sesiones (revisa la conexión).';}
 }
 window.extenderSesion = function(min){
@@ -1086,6 +1114,7 @@ window.exportExcel = function(){
   // Hoja de asistencia
   const wsData=[
     ['ACTA DE ASISTENCIA'],
+    ['Institución:', UNIV||'—'],
     ['Clase:', CLASE||'—'],
     ['Profesor:', DOCENTE||'—'],
     ['Fecha:', dateStr],
@@ -1299,7 +1328,8 @@ function renderWheelFrozen(pool){
 window.renderWheel=renderWheel;
 const RES_LBL={si:'LO HIZO',medias:'A MEDIAS',no:'NO LO HIZO',sinpc:'SIN COMPUTADORA'};
 const RES_COL={si:'#16a34a',medias:'#d97706',no:'#dc2626',sinpc:'#64748b'};
-const RES_ICO={si:'✔',medias:'½',no:'✘',sinpc:'💻'};
+const RES_ICO={si:'',medias:'',no:'',sinpc:''};
+const RES_SHORT={si:'Sí',medias:'Medias',no:'No',sinpc:'Sin PC'};
 function updUndo(){const u=document.getElementById('undo-btn');if(u)u.style.display=hist.length?'inline-block':'none';}
 window.marcarResultado=function(r){
   if(!ultimoSorteo)return;
@@ -1310,7 +1340,7 @@ window.marcarResultado=function(r){
   const rb=document.getElementById('res-btns'); if(rb)rb.style.display='none';
   const sk=document.getElementById('skip-btn'); if(sk)sk.style.display='none';
   const rd=document.getElementById('result-display');
-  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+RES_COL[r]+'">'+RES_ICO[r]+' '+RES_LBL[r]+(ultimoSorteo.ejercicio?' · Ej. '+esc(ultimoSorteo.ejercicio):'')+(ultimoSorteo.obs?' · '+esc(ultimoSorteo.obs):'')+'</div>');
+  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+RES_COL[r]+'">'+RES_LBL[r]+(ultimoSorteo.ejercicio?' · Ej. '+esc(ultimoSorteo.ejercicio):'')+(ultimoSorteo.obs?' · '+esc(ultimoSorteo.obs):'')+'</div>');
   const hn=document.getElementById('res-hint');if(hn){hn.style.display='block';hn.textContent='Listo. Gira la ruleta para el siguiente estudiante.';}
 };
 window.marcarHist=function(i,r){
@@ -1344,10 +1374,10 @@ function renderHist(){
   const el=document.getElementById('hist-list');if(!el)return;
   if(!hist.length){el.innerHTML='<div style="color:var(--muted)">Aún no hay participaciones.</div>';return;}
   const c=k=>hist.filter(h=>h.resultado===k).length, sm=hist.filter(h=>!h.resultado).length;
-  const resumen='<div style="margin-bottom:8px;font-size:12px;color:var(--muted)">✔ <b style="color:#16a34a">'+c('si')+'</b> · ½ <b style="color:#b45309">'+c('medias')+'</b> · ✘ <b style="color:#dc2626">'+c('no')+'</b> · 💻 <b>'+c('sinpc')+'</b> · Sin marcar: <b>'+sm+'</b></div>';
+  const resumen='<div style="margin-bottom:8px;font-size:12px;color:var(--muted)">Lo hizo <b style="color:#16a34a">'+c('si')+'</b> · A medias <b style="color:#b45309">'+c('medias')+'</b> · No lo hizo <b style="color:#dc2626">'+c('no')+'</b> · Sin computadora <b>'+c('sinpc')+'</b> · Sin marcar <b>'+sm+'</b></div>';
   const rows=hist.map((h,i)=>({h,i})).reverse().slice(0,25).map(({h,i})=>{
-    const b=r=>`<button class="btn" style="padding:2px 8px;font-size:12px;${h.resultado===r?'background:'+RES_COL[r]+';color:#fff;border-color:transparent':''}" title="${RES_LBL[r]}" onclick="marcarHist(${i},'${r}')">${RES_ICO[r]}</button>`;
-    return `<div class="log-item" style="align-items:flex-start;gap:8px"><span style="flex:1">${i+1}. ${esc(h.nombre)}${h.celular?' 📱':''}${h.presente===false?' <span style="color:#dc2626">(ausente)</span>':''}<span style="color:var(--muted);font-size:11px"> ${h.ejercicio?' · Ej. '+esc(h.ejercicio):''} · ${esc(h.hora)}</span>${h.obs?`<br><span style="color:var(--muted);font-size:12px">📝 ${esc(h.obs)}</span>`:''}</span><span style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${b('si')}${b('medias')}${b('no')}${b('sinpc')}<button class="btn" style="padding:2px 8px;font-size:12px" title="Ejercicio que hizo" onclick="editarEj(${i})">Ej.</button><button class="btn" style="padding:2px 8px;font-size:12px" title="Qué pasó" onclick="editarObs(${i})">📝</button></span></div>`;
+    const b=r=>`<button class="btn" style="padding:2px 8px;font-size:12px;${h.resultado===r?'background:'+RES_COL[r]+';color:#fff;border-color:transparent':''}" title="${RES_LBL[r]}" onclick="marcarHist(${i},'${r}')">${RES_SHORT[r]}</button>`;
+    return `<div class="log-item" style="align-items:flex-start;gap:8px"><span style="flex:1">${i+1}. ${esc(h.nombre)}${h.celular?' (celular)':''}${h.presente===false?' <span style="color:#dc2626">(ausente)</span>':''}<span style="color:var(--muted);font-size:11px"> ${h.ejercicio?' · Ej. '+esc(h.ejercicio):''} · ${esc(h.hora)}</span>${h.obs?`<br><span style="color:var(--muted);font-size:12px">Obs.: ${esc(h.obs)}</span>`:''}</span><span style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${b('si')}${b('medias')}${b('no')}${b('sinpc')}<button class="btn" style="padding:2px 8px;font-size:12px" title="Ejercicio que hizo" onclick="editarEj(${i})">Ej.</button><button class="btn" style="padding:2px 8px;font-size:12px" title="Qué pasó" onclick="editarObs(${i})">Nota</button></span></div>`;
   }).join('');
   el.innerHTML=resumen+rows;
 }
@@ -1406,9 +1436,9 @@ function renderAutoItemsAlumno(preguntas){
     <div style="display:flex;align-items:center;border-bottom:1px solid var(--border);" data-idx="${i}">
       <div style="flex:1;padding:10px 14px;font-size:12.5px;color:var(--text);line-height:1.5;"><strong style="color:var(--muted);font-size:11px;margin-right:6px;">${i+1}.</strong>${q}</div>
       <div style="display:flex;flex-shrink:0;">
-        <button onclick="selAuto(${i},'mb',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">✓ MB</button>
-        <button onclick="selAuto(${i},'b',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">✓ B</button>
-        <button onclick="selAuto(${i},'r',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">✓ R</button>
+        <button onclick="selAuto(${i},'mb',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">MB</button>
+        <button onclick="selAuto(${i},'b',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">B</button>
+        <button onclick="selAuto(${i},'r',this)" style="width:60px;height:44px;border:none;border-left:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);">R</button>
       </div>
     </div>`).join('');
 }
@@ -1465,7 +1495,7 @@ function renderPreguntasDocente(){
     <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;">
       <span style="font-size:11px;font-weight:600;color:var(--muted);min-width:20px;">${i+1}.</span>
       <span style="flex:1;font-size:13px;color:var(--text);">${q}</span>
-      <button onclick="eliminarPregunta(${i})" style="background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:16px;" title="Eliminar">✕</button>
+      <button onclick="eliminarPregunta(${i})" style="background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:16px;" title="Eliminar">Quitar</button>
     </div>`).join('');
 }
 
