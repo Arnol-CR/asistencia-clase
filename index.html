@@ -533,10 +533,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <div id="res-btns" style="display:none">
                 <input type="text" id="ej-input" maxlength="60" placeholder="¿Qué ejercicio hizo? (ej. 3, o 5 y 7)" style="width:100%;margin-bottom:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px">
                 <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  <button class="rbtn" style="background:#16a34a" onclick="marcarResultado('si')">Lo hizo</button>
-                  <button class="rbtn" style="background:#d97706" onclick="marcarResultado('medias')">A medias</button>
-                  <button class="rbtn" style="background:#dc2626" onclick="marcarResultado('no')">No lo hizo</button>
-                  <button class="rbtn" style="background:#475569" onclick="marcarResultado('sinpc')">Sin computadora</button>
+                  <button class="rbtn" style="background:#16a34a" onclick="marcarResultado('si')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Completado</button>
+                  <button class="rbtn" style="background:#d97706" onclick="marcarResultado('medias')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17" /><path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="currentColor"/></svg> Parcial</button>
+                  <button class="rbtn" style="background:#dc2626" onclick="marcarResultado('no')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M6 6l12 12M18 6L6 18"/></svg> No realizado</button>
+                  <button class="rbtn" style="background:#475569" onclick="marcarResultado('sinpc')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16.5V20"/><path d="M3 3l18 18"/></svg> Sin computadora</button>
                 </div>
                 <input type="text" id="obs-input" maxlength="140" placeholder="¿Qué pasó? (opcional: no le salió la fórmula, se desconectó…)" style="width:100%;margin-top:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px">
               </div>
@@ -552,7 +552,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="cron-auto" checked> iniciar al girar</label>
             </div>
             <div class="rul-panel">
-              <div class="rul-label">Participaciones</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+                <div class="rul-label" style="margin-bottom:0">Participaciones</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button class="btn" style="padding:5px 12px;font-size:12px" onclick="exportParticipaciones()">Descargar Excel</button>
+                  <button class="btn" style="padding:5px 12px;font-size:12px;border-color:#dc2626;color:#dc2626" onclick="pedirReinicioTotal()">Reiniciar ruleta</button>
+                </div>
+              </div>
               <div id="hist-list" style="font-size:13px;color:var(--text);max-height:430px;overflow:auto"></div>
             </div>
           </div>
@@ -626,7 +632,13 @@ const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5c
 
 let SESSION_CODE = genCode();
 let UNIV = '';
-const APP_VERSION='v4.3 · 06-nov-2026 22:55';
+const APP_VERSION='v4.4 · 06-nov-2026 23:10';
+function toastAction(msg,label,fn){const t=document.getElementById('toast');if(!t)return;t.className='';t.innerHTML='';
+  const sp=document.createElement('span');sp.textContent=msg+' ';t.appendChild(sp);
+  const b=document.createElement('button');b.textContent=label;b.style.cssText='margin-left:8px;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600';
+  b.onclick=()=>{t.style.display='none';fn();};t.appendChild(b);
+  const c=document.createElement('button');c.textContent='Ahora no';c.style.cssText='margin-left:6px;padding:6px 10px;border:none;background:transparent;color:#cbd5e1;cursor:pointer;font-size:12px';c.onclick=()=>{t.style.display='none';};t.appendChild(c);
+  t.style.display='block';clearTimeout(window.__tt);window.__tt=setTimeout(()=>{t.style.display='none';},20000);}
 function toast(msg,err){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className=err?'err':'';t.style.display='block';clearTimeout(window.__tt);window.__tt=setTimeout(()=>{t.style.display='none';},err?9000:4500);}
 let timerSec = 3600; // 1 hora predeterminado
 let selectedDurMin = 300;
@@ -735,38 +747,6 @@ function guardarEstado(){
     code:SESSION_CODE,clase:CLASE,docente:DOCENTE,univ:UNIV,
     expiresAt:Date.now()+(timerSec*1000)
   }));
-}
-
-if(IS_STUDENT){
-  SESSION_CODE=urlCode.toUpperCase();
-  get(ref(db,'sesiones/'+SESSION_CODE+'/meta')).then(snap=>{
-    if(snap.exists()){
-      const m=snap.val();
-      document.getElementById('s-clase-lbl').textContent=(m.clase||'').toUpperCase();
-      document.getElementById('s-docente-lbl').textContent=m.docente||'';
-      document.getElementById('s-univ-lbl').textContent=(m.univ||'').toUpperCase();
-    }
-  });
-  document.getElementById('modo-alumno').style.display='flex';
-  document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
-  document.getElementById('s-code').value=SESSION_CODE;
-  checkDuplicate();
-  cargarListaAlumno();
-  escucharAutoevaluacion();
-} else {
-  const saved=JSON.parse(localStorage.getItem('asistencia_session')||'null');
-  const now=Date.now();
-  if(saved&&saved.code&&saved.expiresAt&&now<saved.expiresAt){
-    SESSION_CODE=saved.code; CLASE=saved.clase; DOCENTE=saved.docente; UNIV=saved.univ||'';
-    timerSec=Math.max(0,Math.floor((saved.expiresAt-now)/1000));
-    document.getElementById('modo-profesor').style.display='block';
-    aplicarNombres();
-    initProfesor(false);
-  } else {
-    localStorage.removeItem('asistencia_session');
-    document.getElementById('modo-setup').style.display='flex';
-    cargarSesionesActivas();
-  }
 }
 
 /* ── ALUMNO ── */
@@ -1118,6 +1098,28 @@ window.renewCode = function(){
   updateSessionPanel();updateTimerUI();
 }
 
+function addParticipacionSheets(wb){
+  {
+    const L=k=>({si:'COMPLETADO',medias:'PARCIAL',no:'NO REALIZADO',sinpc:'SIN COMPUTADORA'}[k]||'SIN MARCAR');
+    const pres2=new Set(registros.map(r=>norm(r.nombre)));
+    const base=lista.length?lista.map(x=>x.nombre):registros.map(r=>r.nombre);
+    const extra=hist.map(h=>h.nombre).filter(n=>!base.some(b=>norm(b)===norm(n)));
+    const nombres=[...new Set([...base,...extra])].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
+    const filas=nombres.map((n,i)=>{
+      const hs=hist.filter(h=>norm(h.nombre)===norm(n)), c=k=>hs.filter(h=>h.resultado===k).length;
+      return [i+1,n,pres2.has(norm(n))?'PRESENTE':'AUSENTE',hs.length?'SÍ':'NO',hs.length,c('si'),c('medias'),c('no'),c('sinpc'),hs.map(h=>(h.ejercicio?'Ej. '+h.ejercicio+': ':'')+L(h.resultado)+(h.obs?' ('+h.obs+')':'')).join(' | '),''];
+    });
+    const wr=XLSX.utils.aoa_to_sheet([['RESUMEN POR ESTUDIANTE'],[],['#','Nombre','Asistencia','Participó','Veces','Lo hizo','A medias','No lo hizo','Sin computadora','Detalle (qué pasó)','Puntos obtenidos'],...filas]);
+    wr['!cols']=[{wch:5},{wch:35},{wch:12},{wch:10},{wch:7},{wch:9},{wch:9},{wch:11},{wch:16},{wch:60},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, wr, 'Resumen');
+  }
+  if(hist.length){
+    const L=k=>({si:'COMPLETADO',medias:'PARCIAL',no:'NO REALIZADO',sinpc:'SIN COMPUTADORA'}[k]||'SIN MARCAR');
+    const wh=XLSX.utils.aoa_to_sheet([['PARTICIPACIONES'],[],['#','Nombre','Ejercicio','Resultado','Qué pasó','Hora','Puntos obtenidos'],...hist.map((h,i)=>[i+1,h.nombre,h.ejercicio||'',L(h.resultado),h.obs||'',h.hora,''])]);
+    wh['!cols']=[{wch:5},{wch:35},{wch:11},{wch:19},{wch:45},{wch:10},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, wh, 'Participaciones');
+  }
+}
 window.exportExcel = function(){
   const date=new Date();
   const dateStr=date.toLocaleDateString('es',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
@@ -1167,27 +1169,9 @@ window.exportExcel = function(){
     wl['!cols']=[{wch:5},{wch:35},{wch:12},{wch:10},{wch:9},{wch:18}];
     XLSX.utils.book_append_sheet(wb, wl, 'Lista completa');
   }
-  {
-    const L=k=>({si:'LO HIZO',medias:'A MEDIAS',no:'NO LO HIZO',sinpc:'SIN COMPUTADORA'}[k]||'SIN MARCAR');
-    const pres2=new Set(registros.map(r=>norm(r.nombre)));
-    const base=lista.length?lista.map(x=>x.nombre):registros.map(r=>r.nombre);
-    const extra=hist.map(h=>h.nombre).filter(n=>!base.some(b=>norm(b)===norm(n)));
-    const nombres=[...new Set([...base,...extra])].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
-    const filas=nombres.map((n,i)=>{
-      const hs=hist.filter(h=>norm(h.nombre)===norm(n)), c=k=>hs.filter(h=>h.resultado===k).length;
-      return [i+1,n,pres2.has(norm(n))?'PRESENTE':'AUSENTE',hs.length?'SÍ':'NO',hs.length,c('si'),c('medias'),c('no'),c('sinpc'),hs.map(h=>(h.ejercicio?'Ej. '+h.ejercicio+': ':'')+L(h.resultado)+(h.obs?' ('+h.obs+')':'')).join(' | '),''];
-    });
-    const wr=XLSX.utils.aoa_to_sheet([['RESUMEN POR ESTUDIANTE'],[],['#','Nombre','Asistencia','Participó','Veces','Lo hizo','A medias','No lo hizo','Sin computadora','Detalle (qué pasó)','Puntos obtenidos'],...filas]);
-    wr['!cols']=[{wch:5},{wch:35},{wch:12},{wch:10},{wch:7},{wch:9},{wch:9},{wch:11},{wch:16},{wch:60},{wch:16}];
-    XLSX.utils.book_append_sheet(wb, wr, 'Resumen');
-  }
-  if(hist.length){
-    const L=k=>({si:'LO HIZO',medias:'A MEDIAS',no:'NO LO HIZO',sinpc:'SIN COMPUTADORA'}[k]||'SIN MARCAR');
-    const wh=XLSX.utils.aoa_to_sheet([['PARTICIPACIONES'],[],['#','Nombre','Ejercicio','Resultado','Qué pasó','Hora','Puntos obtenidos'],...hist.map((h,i)=>[i+1,h.nombre,h.ejercicio||'',L(h.resultado),h.obs||'',h.hora,''])]);
-    wh['!cols']=[{wch:5},{wch:35},{wch:11},{wch:19},{wch:45},{wch:10},{wch:16}];
-    XLSX.utils.book_append_sheet(wb, wh, 'Participaciones');
-  }
+  addParticipacionSheets(wb);
   XLSX.writeFile(wb, 'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
+  toastAction('Excel descargado.','Reiniciar ruleta y participaciones',()=>pedirReinicioTotal());
 }
 
 function updateTimerUI(){
@@ -1241,6 +1225,27 @@ function getPool(){
   if(skipNorm&&base.length>1) base=base.filter(p=>norm(p.nombre)!==skipNorm);
   return base;
 }
+window.exportParticipaciones=function(){
+  if(!hist.length){toast('Aún no hay participaciones para descargar.',true);return;}
+  const wb=XLSX.utils.book_new(); addParticipacionSheets(wb);
+  XLSX.writeFile(wb,'participaciones-'+SESSION_CODE+'-'+new Date().toISOString().slice(0,10)+'.xlsx');
+  toastAction('Participaciones descargadas.','Reiniciar ruleta y participaciones',()=>pedirReinicioTotal());
+};
+window.pedirReinicioTotal=function(){
+  if(!hist.length&&!usados.length){toast('La ruleta ya está en blanco.');return;}
+  if(!window.confirm('Se borrarán las participaciones y la ruleta volverá a empezar con todos los estudiantes. ¿Ya descargaste el Excel?'))return;
+  reiniciarTodo();
+};
+window.reiniciarTodo=function(){
+  hist=[];usados=[];ultimoSorteo=null;skipNorm='';
+  lsSet('asis_hist',hist);lsSet('asis_usados',usados);
+  const rd=document.getElementById('result-display');if(rd)rd.innerHTML='<span style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</span>';
+  const cn=document.getElementById('cur-name');if(cn)cn.textContent='—';
+  const rb=document.getElementById('res-btns');if(rb)rb.style.display='none';
+  const hn=document.getElementById('res-hint');if(hn){hn.style.display='block';hn.textContent='Gira la ruleta para elegir al siguiente estudiante.';}
+  const sk=document.getElementById('skip-btn');if(sk)sk.style.display='none';
+  cronReset();renderHist();renderWheel();updUndo();toast('Ruleta y participaciones reiniciadas.');
+};
 window.cambiarModo=function(v){ruletaModo=v;renderWheel();};
 window.reiniciarRuleta=function(){
   usados=[];ejUsados=[];lsSet('asis_usados',usados);lsSet('asis_ej_usados',ejUsados);
@@ -1340,9 +1345,11 @@ function renderWheelFrozen(pool){
   ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fillStyle='#0a0e1a';ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=2;ctx.stroke();
 }
 window.renderWheel=renderWheel;
-const RES_LBL={si:'LO HIZO',medias:'A MEDIAS',no:'NO LO HIZO',sinpc:'SIN COMPUTADORA'};
+const RES_LBL={si:'COMPLETADO',medias:'PARCIAL',no:'NO REALIZADO',sinpc:'SIN COMPUTADORA'};
+const RES_NAME={si:'Completado',medias:'Parcial',no:'No realizado',sinpc:'Sin computadora'};
 const RES_COL={si:'#16a34a',medias:'#d97706',no:'#dc2626',sinpc:'#64748b'};
-const RES_ICO={si:'',medias:'',no:'',sinpc:''};
+const SVGI={'si': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', 'medias': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17" /><path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="currentColor"/></svg>', 'no': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M6 6l12 12M18 6L6 18"/></svg>', 'sinpc': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16.5V20"/><path d="M3 3l18 18"/></svg>'};
+const RES_ICO=SVGI;
 const RES_SHORT={si:'Sí',medias:'Medias',no:'No',sinpc:'Sin PC'};
 function updUndo(){const u=document.getElementById('undo-btn');if(u)u.style.display=hist.length?'inline-block':'none';}
 window.marcarResultado=function(r){
@@ -1354,7 +1361,7 @@ window.marcarResultado=function(r){
   const rb=document.getElementById('res-btns'); if(rb)rb.style.display='none';
   const sk=document.getElementById('skip-btn'); if(sk)sk.style.display='none';
   const rd=document.getElementById('result-display');
-  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+RES_COL[r]+'">'+RES_LBL[r]+(ultimoSorteo.ejercicio?' · Ej. '+esc(ultimoSorteo.ejercicio):'')+(ultimoSorteo.obs?' · '+esc(ultimoSorteo.obs):'')+'</div>');
+  if(rd) rd.insertAdjacentHTML('beforeend','<div style="margin-top:8px;font-size:13px;font-weight:600;color:'+RES_COL[r]+'">'+SVGI[r]+' '+RES_NAME[r]+(ultimoSorteo.ejercicio?' · Ej. '+esc(ultimoSorteo.ejercicio):'')+(ultimoSorteo.obs?' · '+esc(ultimoSorteo.obs):'')+'</div>');
   const hn=document.getElementById('res-hint');if(hn){hn.style.display='block';hn.textContent='Listo. Gira la ruleta para el siguiente estudiante.';}
 };
 window.marcarHist=function(i,r){
@@ -1388,9 +1395,9 @@ function renderHist(){
   const el=document.getElementById('hist-list');if(!el)return;
   if(!hist.length){el.innerHTML='<div style="color:var(--muted)">Aún no hay participaciones.</div>';return;}
   const c=k=>hist.filter(h=>h.resultado===k).length, sm=hist.filter(h=>!h.resultado).length;
-  const resumen='<div style="margin-bottom:8px;font-size:12px;color:var(--muted)">Lo hizo <b style="color:#16a34a">'+c('si')+'</b> · A medias <b style="color:#b45309">'+c('medias')+'</b> · No lo hizo <b style="color:#dc2626">'+c('no')+'</b> · Sin computadora <b>'+c('sinpc')+'</b> · Sin marcar <b>'+sm+'</b></div>';
+  const resumen='<div style="margin-bottom:8px;font-size:12px;color:var(--muted)">Completado <b style="color:#16a34a">'+c('si')+'</b> · Parcial <b style="color:#b45309">'+c('medias')+'</b> · No realizado <b style="color:#dc2626">'+c('no')+'</b> · Sin computadora <b>'+c('sinpc')+'</b> · Sin marcar <b>'+sm+'</b></div>';
   const rows=hist.map((h,i)=>({h,i})).reverse().slice(0,25).map(({h,i})=>{
-    const b=r=>`<button class="btn" style="padding:2px 8px;font-size:12px;${h.resultado===r?'background:'+RES_COL[r]+';color:#fff;border-color:transparent':''}" title="${RES_LBL[r]}" onclick="marcarHist(${i},'${r}')">${RES_SHORT[r]}</button>`;
+    const b=r=>`<button class="btn" style="padding:2px 8px;font-size:12px;${h.resultado===r?'background:'+RES_COL[r]+';color:#fff;border-color:transparent':''}" title="${RES_NAME[r]}" onclick="marcarHist(${i},'${r}')">${SVGI[r]}</button>`;
     return `<div class="log-item" style="align-items:flex-start;gap:8px"><span style="flex:1">${i+1}. ${esc(h.nombre)}${h.celular?' (celular)':''}${h.presente===false?' <span style="color:#dc2626">(ausente)</span>':''}<span style="color:var(--muted);font-size:11px"> ${h.ejercicio?' · Ej. '+esc(h.ejercicio):''} · ${esc(h.hora)}</span>${h.obs?`<br><span style="color:var(--muted);font-size:12px">Obs.: ${esc(h.obs)}</span>`:''}</span><span style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">${b('si')}${b('medias')}${b('no')}${b('sinpc')}<button class="btn" style="padding:2px 8px;font-size:12px" title="Ejercicio que hizo" onclick="editarEj(${i})">Ej.</button><button class="btn" style="padding:2px 8px;font-size:12px" title="Qué pasó" onclick="editarObs(${i})">Nota</button></span></div>`;
   }).join('');
   el.innerHTML=resumen+rows;
@@ -1601,6 +1608,41 @@ window.exportAutoPDF = function(){
   });
   doc.save('autoevaluacion.pdf');
 }
+
+
+/* ── ARRANQUE (al final, cuando todo ya está definido) ── */
+if(IS_STUDENT){
+  SESSION_CODE=urlCode.toUpperCase();
+  get(ref(db,'sesiones/'+SESSION_CODE+'/meta')).then(snap=>{
+    if(snap.exists()){
+      const m=snap.val();
+      document.getElementById('s-clase-lbl').textContent=(m.clase||'').toUpperCase();
+      document.getElementById('s-docente-lbl').textContent=m.docente||'';
+      document.getElementById('s-univ-lbl').textContent=(m.univ||'').toUpperCase();
+    }
+  });
+  document.getElementById('modo-alumno').style.display='flex';
+  document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
+  document.getElementById('s-code').value=SESSION_CODE;
+  checkDuplicate();
+  cargarListaAlumno();
+  escucharAutoevaluacion();
+} else {
+  const saved=JSON.parse(localStorage.getItem('asistencia_session')||'null');
+  const now=Date.now();
+  if(saved&&saved.code&&saved.expiresAt&&now<saved.expiresAt){
+    SESSION_CODE=saved.code; CLASE=saved.clase; DOCENTE=saved.docente; UNIV=saved.univ||'';
+    timerSec=Math.max(0,Math.floor((saved.expiresAt-now)/1000));
+    document.getElementById('modo-profesor').style.display='block';
+    aplicarNombres();
+    initProfesor(false);
+  } else {
+    localStorage.removeItem('asistencia_session');
+    document.getElementById('modo-setup').style.display='flex';
+    cargarSesionesActivas();
+  }
+}
+
 
 </script>
 </body>
