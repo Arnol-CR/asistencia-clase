@@ -724,7 +724,7 @@ const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5c
 
 let SESSION_CODE = genCode();
 let UNIV = '';
-const APP_VERSION='v4.12 · 07-nov-2026 01:20';
+const APP_VERSION='v4.13 · 07-nov-2026 01:35';
 function toastAction(msg,label,fn){const t=document.getElementById('toast');if(!t)return;t.className='';t.innerHTML='';
   const sp=document.createElement('span');sp.textContent=msg+' ';t.appendChild(sp);
   const b=document.createElement('button');b.textContent=label;b.style.cssText='margin-left:8px;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600';
@@ -1453,8 +1453,9 @@ window.grpClickZona=function(g,ev){
   if(grpSelIdx>=0&&!grpBusy)grpSet(grpSelIdx,g);
 };
 function grpQuienElige(g){
-  const p=gr.draft.pila.find(i=>gr.items[i]&&gr.items[i].g===g);
-  return p!==undefined?p:gr.items.findIndex(x=>x.g===g);
+  const p=gr.draft.pila;
+  for(let k=p.length-1;k>=0;k--){const it=gr.items[p[k]];if(it&&it.g>=0&&it.g!==g)return p[k];}
+  return -1;
 }
 function chipHTML(x,i,g){
   const col=g>=0?grpColor(g):'#64748b';
@@ -1479,7 +1480,7 @@ function renderGrupos(){
   else if(!grpBusy&&gr.modo==='draft'&&gr.items.length){
     sel.style.display='block';
     {const c=sin>0?grpQuienElige(turnoG):-1;
-    sel.innerHTML=sin>0?('Asignación: <b>Grupo '+grpLabel(turnoG)+'</b>'+(c>=0?' · Elige: <b>'+esc(gr.items[c].nombre)+'</b>':' · primer integrante')):'Asignación completa.';}
+    sel.innerHTML=sin>0?('Asignación: <b>Grupo '+grpLabel(turnoG)+'</b>'+(c>=0?' · Elige: <b>'+esc(gr.items[c].nombre)+'</b>':' · Elige: al azar o a tu criterio')):'Asignación completa.';}
   }
   else if(!grpBusy)sel.style.display='none';
   document.getElementById('grp-pool-n').textContent=sin?'('+sin+')':'';
