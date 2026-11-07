@@ -297,7 +297,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <input type="text" id="s-code" placeholder="Ej: TECH-A3F2" style="text-transform:uppercase;letter-spacing:.1em;font-family:'Space Mono',monospace" oninput="this.value=this.value.toUpperCase()"/>
         </div>
         <div class="s-field">
-          <label>✏️ Tu nombre completo</label>
+          <label id="s-nombre-lbl">✏️ Tu nombre completo</label>
+          <select id="s-select" style="display:none;width:100%;padding:12px 14px;font-size:15px;border:2px solid var(--accent);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif"></select>
           <input type="text" id="s-nombre" class="highlight" placeholder="👉 Escribe aquí tu nombre y apellido" autocomplete="name"/>
         </div>
       </div>
@@ -364,6 +365,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="tabs">
       <button class="tab active" onclick="switchTab('panel',this)">Panel</button>
       <button class="tab" onclick="switchTab('sesion',this)">Sesión activa</button>
+      <button class="tab" onclick="switchTab('lista',this)">Lista</button>
       <button class="tab" onclick="switchTab('ruleta',this)">Ruleta</button>
       <button class="tab" onclick="switchTab('autoevaluacion',this)">Autoevaluación</button>
     </div>
@@ -377,7 +379,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="stat"><div class="sn nb" id="st-fraud">0</div><div class="sl">Bloqueados</div></div>
       </div>
       <div class="prog-wrap">
-        <div class="prog-top"><span>Registros en tiempo real</span><span id="prog-time" style="font-family:'Space Mono',monospace;font-size:11px"></span></div>
+        <div class="prog-top"><span>Registros en tiempo real <b id="prog-lista" style="color:var(--text);margin-left:8px"></b></span><span id="prog-time" style="font-family:'Space Mono',monospace;font-size:11px"></span></div>
         <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
       </div>
       <div id="fraud-section" class="fraud-section" style="display:none">
@@ -439,12 +441,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
 
+    <!-- LISTA -->
+    <div id="view-lista" class="view">
+      <div class="roulette-wrap" style="text-align:left">
+        <div class="roulette-title">Lista de estudiantes</div>
+        <div class="roulette-sub" style="margin-bottom:14px">Pega los nombres, uno por línea (puedes copiarlos desde Excel). Al final de un nombre escribe <b>*</b> si participa desde celular, por ejemplo: <i>Martha Azucena *</i>. Los estudiantes elegirán su nombre de esta lista al registrarse.</div>
+        <textarea id="lista-text" rows="14" placeholder="Nombre Apellido&#10;Nombre Apellido&#10;Nombre Apellido *" style="width:100%;padding:12px 14px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);outline:none;font-family:'DM Sans',sans-serif;line-height:1.6;resize:vertical"></textarea>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px">
+          <button class="btn btn-primary" onclick="guardarLista()">Guardar lista</button>
+          <span id="lista-count" style="font-size:12px;color:var(--muted)"></span>
+        </div>
+        <div id="lista-msg" style="font-size:12px;color:var(--green);margin-top:8px;min-height:16px"></div>
+      </div>
+    </div>
+
     <!-- RULETA -->
     <div id="view-ruleta" class="view">
       <div class="roulette-wrap">
         <div class="roulette-title">Ruleta de participación</div>
-        <div class="roulette-sub">Selecciona un alumno al azar</div>
-        <div id="no-students-msg" class="no-students" style="display:none">No hay alumnos registrados aún.</div>
+        <div class="roulette-sub">Selecciona un estudiante al azar</div>
+        <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:18px;font-size:13px;color:var(--muted)">
+          <select id="rul-modo" onchange="cambiarModo(this.value)" style="padding:8px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif">
+            <option value="lista">Toda la lista</option>
+            <option value="presentes">Solo presentes</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="rul-norep" checked onchange="renderWheel()"> No repetir hasta completar</label>
+          <button class="btn" style="padding:6px 12px;font-size:12px" onclick="reiniciarRuleta()">Reiniciar</button>
+        </div>
+        <div id="no-students-msg" class="no-students" style="display:none">No hay estudiantes para sortear.</div>
         <div class="wheel-container">
           <canvas id="wheel-canvas" width="260" height="260"></canvas>
           <div class="wheel-pointer"></div>
@@ -455,6 +479,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
         <button class="spin-btn" id="spin-btn" onclick="spinWheel()">Girar ruleta</button>
         <div class="roulette-count" id="roulette-count"></div>
+        <div style="border-top:1px solid var(--border);margin-top:22px;padding-top:18px">
+          <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)">
+            <span>Ejercicios del 1 al</span>
+            <input type="number" id="ej-max" value="14" min="2" max="60" style="width:64px;padding:7px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);text-align:center" onchange="resetEj()">
+            <button class="btn" onclick="sortearEjercicio()">Sortear ejercicio</button>
+            <span id="ej-result" style="font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--text)"></span>
+          </div>
+        </div>
+        <div style="text-align:left;margin-top:22px">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:8px">Participaciones</div>
+          <div id="hist-list" style="font-size:13px;color:var(--text)"></div>
+        </div>
       </div>
     </div>
 
@@ -538,14 +574,34 @@ let autoRespuestas = [];
 let autoActiva = false;
 let autoSelecciones = {};
 
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function norm(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
+function rnd(n){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n;}
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+let lista=[];        // [{nombre,celular}]
+let usados=[];       // nombres ya sorteados (normalizados)
+let ejUsados=[];     // ejercicios ya sorteados
+let hist=[];         // historial de participaciones
+let ruletaModo='lista';
+let ultimoSorteo=null;
+let USAR_LISTA=false;
 function genCode(){return 'TECH-'+Math.random().toString(36).substr(2,4).toUpperCase();}
 
 function getFingerprint(){
-  const s=window.screen,n=navigator;
-  const raw=[n.language||'',n.platform||'',s.colorDepth||'',s.width+'x'+s.height,n.hardwareConcurrency||'',Intl.DateTimeFormat().resolvedOptions().timeZone||'',n.userAgent.replace(/\s+/g,'').slice(0,50)].join('|');
-  let h=0;for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
-  const hex=Math.abs(h).toString(16).toUpperCase().padStart(8,'0');
-  return hex.slice(0,4)+'-'+hex.slice(4);
+  // ID aleatorio guardado en el navegador: ya no se repite entre celulares iguales
+  try{
+    let id=localStorage.getItem('asis_device_id');
+    if(!id){
+      const raw=(window.crypto&&crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now().toString(16)).replace(/[^A-Za-z0-9]/g,'');
+      id=raw.slice(0,8).toUpperCase().padEnd(8,'0'); id=id.slice(0,4)+'-'+id.slice(4);
+      localStorage.setItem('asis_device_id',id);
+    }
+    return id;
+  }catch(e){
+    const raw=(String(Math.random()).slice(2)+Date.now().toString(16)).replace(/[^A-Za-z0-9]/g,'').toUpperCase().padEnd(8,'0');
+    return raw.slice(0,4)+'-'+raw.slice(4,8);
+  }
 }
 
 const MY_FP = getFingerprint();
@@ -614,6 +670,7 @@ if(IS_STUDENT){
   document.getElementById('s-dev-chip').textContent='DEV-'+MY_FP;
   document.getElementById('s-code').value=SESSION_CODE;
   checkDuplicate();
+  cargarListaAlumno();
   escucharAutoevaluacion();
 } else {
   const saved=JSON.parse(localStorage.getItem('asistencia_session')||'null');
@@ -631,6 +688,22 @@ if(IS_STUDENT){
 }
 
 /* ── ALUMNO ── */
+async function cargarListaAlumno(){
+  try{
+    const ls=await get(ref(db,'sesiones/'+SESSION_CODE+'/lista'));
+    if(!ls.exists())return;
+    const arr=Object.values(ls.val()).filter(Boolean);
+    if(!arr.length)return;
+    let tomados=[];
+    try{const rs=await get(ref(db,'sesiones/'+SESSION_CODE+'/registros'));rs.forEach(c=>tomados.push(norm(c.val().nombre)));}catch(e){}
+    const sel=document.getElementById('s-select');
+    sel.innerHTML='<option value="">— Selecciona tu nombre —</option>'+arr.filter(n=>!tomados.includes(norm(n))).map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('');
+    sel.style.display='block';
+    document.getElementById('s-nombre').style.display='none';
+    document.getElementById('s-nombre-lbl').textContent='👇 Selecciona tu nombre de la lista';
+    USAR_LISTA=true;
+  }catch(e){}
+}
 async function checkDuplicate(){
   const snap = await get(ref(db,'sesiones/'+SESSION_CODE+'/dispositivos/'+MY_FP));
   if(snap.exists()){
@@ -642,12 +715,12 @@ async function checkDuplicate(){
 
 window.registrarAlumno = async function(){
   const code = document.getElementById('s-code').value.trim().toUpperCase();
-  const nombre = document.getElementById('s-nombre').value.trim();
+  const nombre = USAR_LISTA ? document.getElementById('s-select').value.trim() : document.getElementById('s-nombre').value.trim();
   const errEl = document.getElementById('s-err');
   errEl.className='alert a-err';
 
   if(!nombre||nombre.length<3){
-    errEl.textContent='Escribe tu nombre completo (mínimo 3 caracteres).';
+    errEl.textContent=USAR_LISTA?'Selecciona tu nombre de la lista.':'Escribe tu nombre completo (mínimo 3 caracteres).';
     errEl.className='alert a-err show';return;
   }
 
@@ -668,6 +741,14 @@ window.registrarAlumno = async function(){
     errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
   }
 
+  try{
+    const rs=await get(ref(db,'sesiones/'+code+'/registros'));
+    let dup=false; if(rs.exists()) rs.forEach(c=>{if(norm(c.val().nombre)===norm(nombre))dup=true;});
+    if(dup){
+      errEl.textContent='Ese nombre ya está registrado en esta sesión. Si es el tuyo y hubo un error, avisa al docente.';
+      errEl.className='alert a-err show';btn.disabled=false;btn.textContent='Confirmar asistencia';return;
+    }
+  }catch(e){}
   const now=new Date();
   const timeStr=now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
 
@@ -687,6 +768,7 @@ function initProfesor(isNew){
   updateTimerUI();
   suscribir();
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  cargarListaLocal(); publicarLista();
   if(isNew) set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE});
   setInterval(()=>{
     if(timerSec>0){timerSec--;updateTimerUI();guardarEstado();}
@@ -774,7 +856,7 @@ function flashCopy(id,txt){
   setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
 }
 
-window.expulsarAlumno = async function(nombre, fp){
+window.expulsarAlumno = async function(nombre){
   if(!confirm('¿Expulsar a '+nombre+'? Podrá volver a registrarse.')) return;
   // Buscar y eliminar registro
   const snap = await get(ref(db,'sesiones/'+SESSION_CODE+'/registros'));
@@ -797,13 +879,13 @@ function updateGrid(){
   g.innerHTML=registros.map(r=>`
     <div class="rc present">
       <div class="rc-top">
-        <div class="av">${initials(r.nombre)}</div>
-        <div><div class="rc-name">${r.nombre}</div><div class="rc-time">${r.time}</div></div>
+        <div class="av">${esc(initials(r.nombre))}</div>
+        <div><div class="rc-name">${esc(r.nombre)}</div><div class="rc-time">${esc(r.time)}</div></div>
       </div>
-      <div class="rc-dev">${r.device}</div>
+      <div class="rc-dev">${esc(r.device)}</div>
       <div class="rc-footer">
         <span class="badge">PRESENTE</span>
-        <button class="expel-btn" onclick="expulsarAlumno('${r.nombre.replace(/'/g,"\\'")}','${r.device}')">Expulsar</button>
+        <button class="expel-btn" data-n="${esc(r.nombre)}" onclick="expulsarAlumno(this.dataset.n)">Expulsar</button>
       </div>
     </div>`).join('');
 }
@@ -814,7 +896,8 @@ function updateStats(){
   document.getElementById('st-fraud').textContent=fraudLog.length;
   document.getElementById('inf-regs').textContent=registros.length;
   document.getElementById('inf-fraud2').textContent=fraudLog.length;
-  document.getElementById('prog-fill').style.width=Math.min(100,Math.round((registros.length/30)*100))+'%';
+  document.getElementById('prog-fill').style.width=Math.min(100,Math.round((registros.length/(lista.length||30))*100))+'%';
+  const pl=document.getElementById('prog-lista');if(pl)pl.textContent=lista.length?(registros.length+' de '+lista.length+' en la lista'):'';
   document.getElementById('prog-time').textContent=new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
 }
 
@@ -822,13 +905,13 @@ function updateRecentLog(){
   const last5=registros.slice(-5).reverse();
   document.getElementById('recent-log').innerHTML=!last5.length
     ?'<div style="font-size:12px;color:var(--muted)">Sin registros aún</div>'
-    :last5.map(r=>`<div class="log-item"><span style="color:var(--text)">${r.nombre}</span><span style="color:var(--green);font-family:'Space Mono',monospace;font-size:11px">${r.time}</span></div>`).join('');
+    :last5.map(r=>`<div class="log-item"><span style="color:var(--text)">${esc(r.nombre)}</span><span style="color:var(--green);font-family:'Space Mono',monospace;font-size:11px">${esc(r.time)}</span></div>`).join('');
 }
 
 function updateFraud(){
   if(!fraudLog.length){document.getElementById('fraud-section').style.display='none';return;}
   document.getElementById('fraud-section').style.display='block';
-  document.getElementById('fraud-log').innerHTML=fraudLog.map(f=>`<div class="fi"><div class="fdot"></div><span>Intento: <strong>${f.nombre}</strong> — dispositivo ya registrado como <strong>${f.prevName}</strong></span></div>`).join('');
+  document.getElementById('fraud-log').innerHTML=fraudLog.map(f=>`<div class="fi"><div class="fdot"></div><span>Intento: <strong>${esc(f.nombre)}</strong> — dispositivo ya registrado como <strong>${esc(f.prevName)}</strong></span></div>`).join('');
 }
 
 window.abrirAgregar = function(){
@@ -873,6 +956,7 @@ window.renewCode = function(){
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
   SESSION_CODE=genCode();timerSec=1800;
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  publicarLista();
   suscribir();
   updateSessionPanel();updateTimerUI();
 }
@@ -919,6 +1003,17 @@ window.exportExcel = function(){
   }
 
   XLSX.utils.book_append_sheet(wb, ws, 'Asistencia');
+  if(lista.length){
+    const pres=new Map(registros.map(r=>[norm(r.nombre),r.time]));
+    const wl=XLSX.utils.aoa_to_sheet([['LISTA COMPLETA'],[],['#','Nombre','Estado','Hora','Celular'],...lista.map((x,i)=>[i+1,x.nombre,pres.has(norm(x.nombre))?'PRESENTE':'AUSENTE',pres.get(norm(x.nombre))||'',x.celular?'Sí':''])]);
+    wl['!cols']=[{wch:5},{wch:35},{wch:12},{wch:10},{wch:9}];
+    XLSX.utils.book_append_sheet(wb, wl, 'Lista completa');
+  }
+  if(hist.length){
+    const wh=XLSX.utils.aoa_to_sheet([['PARTICIPACIONES'],[],['#','Nombre','Ejercicio','Hora','Puntos obtenidos'],...hist.map((h,i)=>[i+1,h.nombre,h.ejercicio||'',h.hora,''])]);
+    wh['!cols']=[{wch:5},{wch:35},{wch:11},{wch:10},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, wh, 'Participaciones');
+  }
   XLSX.writeFile(wb, 'asistencia-'+SESSION_CODE+'-'+date.toISOString().slice(0,10)+'.xlsx');
 }
 
@@ -931,24 +1026,72 @@ function updateTimerUI(){
   else{dot.className='tdot err';lbl.textContent='Sesión expirada';}
 }
 
+/* LISTA */
+function parseLista(txt){
+  const vistos=new Set();
+  return String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(x=>({nombre:x.replace(/\*\s*$/,'').trim(),celular:/\*\s*$/.test(x)}))
+    .filter(x=>{const k=norm(x.nombre);if(x.nombre.length<2||vistos.has(k))return false;vistos.add(k);return true;});
+}
+function cargarListaLocal(){
+  const txt=lsGet('asis_lista_txt','');
+  if(txt&&!lista.length){lista=parseLista(txt);const t=document.getElementById('lista-text');if(t)t.value=txt;}
+  usados=lsGet('asis_usados',[]);ejUsados=lsGet('asis_ej_usados',[]);hist=lsGet('asis_hist',[]);
+  actualizarListaUI();renderHist();
+}
+function actualizarListaUI(){
+  const c=document.getElementById('lista-count');if(c)c.textContent=lista.length?(lista.length+' estudiantes'+(lista.filter(x=>x.celular).length?' · '+lista.filter(x=>x.celular).length+' con celular':'')):'Sin lista guardada';
+}
+function publicarLista(){
+  if(!lista.length)return;
+  set(ref(db,'sesiones/'+SESSION_CODE+'/lista'),lista.map(x=>x.nombre));
+}
+window.guardarLista=function(){
+  const txt=document.getElementById('lista-text').value;
+  lista=parseLista(txt);
+  lsSet('asis_lista_txt',txt);
+  usados=[];ejUsados=[];lsSet('asis_usados',usados);lsSet('asis_ej_usados',ejUsados);
+  if(lista.length)publicarLista(); else set(ref(db,'sesiones/'+SESSION_CODE+'/lista'),null);
+  actualizarListaUI();updateStats();renderWheel();
+  const m=document.getElementById('lista-msg');m.textContent=lista.length?('Lista guardada: '+lista.length+' estudiantes. Ya aparece en el registro de los alumnos.'):'Lista vacía: los alumnos escribirán su nombre.';
+};
+
 /* RULETA */
+function getPool(){
+  const presentes=new Set(registros.map(r=>norm(r.nombre)));
+  const cel=n=>{const f=lista.find(x=>norm(x.nombre)===norm(n));return f?f.celular:false;};
+  let base;
+  if(ruletaModo==='lista'&&lista.length) base=lista.map(x=>({nombre:x.nombre,celular:x.celular,presente:presentes.has(norm(x.nombre))}));
+  else base=registros.map(r=>({nombre:r.nombre,celular:cel(r.nombre),presente:true}));
+  const norep=document.getElementById('rul-norep');
+  if(norep&&norep.checked) base=base.filter(p=>!usados.includes(norm(p.nombre)));
+  return base;
+}
+window.cambiarModo=function(v){ruletaModo=v;renderWheel();};
+window.reiniciarRuleta=function(){
+  usados=[];ejUsados=[];lsSet('asis_usados',usados);lsSet('asis_ej_usados',ejUsados);
+  document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Gira la ruleta para seleccionar</span>';
+  document.getElementById('ej-result').textContent='';
+  renderWheel();
+};
 function renderWheel(){
   const canvas=document.getElementById('wheel-canvas');if(!canvas)return;
   const ctx=canvas.getContext('2d');
-  const names=registros.map(r=>r.nombre);
+  const pool=getPool(),names=pool.map(p=>p.nombre);
   const size=canvas.width,cx=size/2,cy=size/2,r=size/2-4;
   ctx.clearRect(0,0,size,size);
   const noMsg=document.getElementById('no-students-msg');
   const spinBtn=document.getElementById('spin-btn');
   const countEl=document.getElementById('roulette-count');
-  if(noMsg)noMsg.style.display=names.length===0?'block':'none';
-  if(spinBtn)spinBtn.disabled=names.length===0;
-  if(countEl)countEl.textContent=names.length>0?names.length+' alumno'+(names.length!==1?'s':'')+' en ruleta':'';
+  const norep=document.getElementById('rul-norep');
+  const completo=names.length===0&&norep&&norep.checked&&usados.length>0;
+  if(noMsg){noMsg.style.display=names.length===0?'block':'none';noMsg.textContent=completo?'Ya participaron todos. Pulsa Reiniciar para empezar otra ronda.':(ruletaModo==='lista'&&!lista.length?'Aún no hay lista. Cárgala en la pestaña Lista o cambia a Solo presentes.':'No hay estudiantes para sortear.');}
+  if(spinBtn&&!isSpinning)spinBtn.disabled=names.length===0;
+  if(countEl)countEl.textContent=names.length>0?(names.length+' en la ruleta'+(usados.length&&norep&&norep.checked?' · '+usados.length+' ya participaron':'')):'';
   if(!names.length){
     ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#1a2234';ctx.fill();
     ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=2;ctx.stroke();
     ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='13px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('Sin alumnos',cx,cy);return;
+    ctx.fillText(completo?'Ronda completa':'Sin estudiantes',cx,cy+48);return;
   }
   const slice=(Math.PI*2)/names.length;
   names.forEach((name,i)=>{
@@ -958,7 +1101,7 @@ function renderWheel(){
     ctx.strokeStyle='rgba(10,14,26,0.5)';ctx.lineWidth=2;ctx.stroke();
     ctx.save();ctx.translate(cx,cy);ctx.rotate(start+slice/2);
     ctx.textAlign='right';ctx.fillStyle='rgba(255,255,255,0.95)';
-    const fs=Math.min(13,Math.max(9,180/names.length));
+    const fs=Math.min(13,Math.max(8,180/names.length));
     ctx.font=`600 ${fs}px DM Sans`;
     ctx.fillText(name.split(' ')[0].slice(0,10),r-10,4);
     ctx.restore();
@@ -968,39 +1111,67 @@ function renderWheel(){
 }
 
 window.spinWheel=function(){
-  if(isSpinning||!registros.length)return;
+  const pool=getPool();
+  if(isSpinning||!pool.length)return;
   isSpinning=true;
   document.getElementById('spin-btn').disabled=true;
   document.getElementById('result-display').innerHTML='<span style="color:var(--muted);font-size:13px">Girando...</span>';
-
-  const names=registros.map(r=>r.nombre);
+  const names=pool.map(p=>p.nombre);
   const slice=(Math.PI*2)/names.length;
-
-  // Elegir ganador y calcular cuánto debe girar para que quede apuntado arriba
-  const winner=Math.floor(Math.random()*names.length);
-  // El ganador debe quedar en el tope (ángulo 0 = arriba = -PI/2 en canvas)
-  // Sector del ganador empieza en: wheelAngle + winner*slice - PI/2
-  // Para que quede centrado arriba: ángulo final = -(winner*slice + slice/2)
-  const spinsExtra=(Math.PI*2)*(5+Math.floor(Math.random()*4)); // 5-8 vueltas extra
-  const targetAngle=spinsExtra - (winner*slice + slice/2);
-  const totalRotation=targetAngle - (wheelAngle%(Math.PI*2));
-
-  const duration=4000+Math.random()*1500;
+  const winner=rnd(names.length);                       // sorteo con aleatoriedad criptográfica
+  const spinsExtra=(Math.PI*2)*(5+rnd(4));
+  const targetAngle=spinsExtra-(winner*slice+slice/2);
+  const totalRotation=targetAngle-(wheelAngle%(Math.PI*2));
+  const duration=4000+rnd(1500);
   const t0=performance.now(),a0=wheelAngle;
   function ease(t){return 1-Math.pow(1-t,3);}
   function frame(now){
     const t=Math.min((now-t0)/duration,1);
     wheelAngle=a0+totalRotation*ease(t);
-    renderWheel();
+    renderWheelFrozen(pool);
     if(t<1){requestAnimationFrame(frame);return;}
-    isSpinning=false;document.getElementById('spin-btn').disabled=false;
-    // Ganador = el que quedó apuntado por el puntero (arriba = ángulo -PI/2)
-    const normalized=(((-wheelAngle)%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
-    const winnerIdx=Math.floor(normalized/slice)%names.length;
-    const w=registros[winnerIdx];
-    document.getElementById('result-display').innerHTML=`<div><span class="result-name">${w.nombre}</span><span class="result-badge">PRESENTE</span></div>`;
+    isSpinning=false;
+    const w=pool[winner];
+    const badge=!w.presente?'<span class="result-badge" style="background:var(--red-dim);color:#fca5a5">AUSENTE</span>':'<span class="result-badge">PRESENTE</span>';
+    const cb=w.celular?'<span class="result-badge" style="background:rgba(245,158,11,.15);color:#fcd34d">CELULAR</span>':'';
+    document.getElementById('result-display').innerHTML=`<div><span class="result-name">${esc(w.nombre)}</span>${badge}${cb}</div>`;
+    ultimoSorteo={nombre:w.nombre,ejercicio:'',hora:new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),presente:w.presente,celular:w.celular};
+    hist.push(ultimoSorteo);lsSet('asis_hist',hist);renderHist();
+    const nrp=document.getElementById('rul-norep');
+    if(nrp&&nrp.checked&&!usados.includes(norm(w.nombre))){usados.push(norm(w.nombre));lsSet('asis_usados',usados);}
+    setTimeout(()=>{renderWheel();},1600);
   }
   requestAnimationFrame(frame);
+}
+function renderWheelFrozen(pool){
+  // dibuja con el pool fijo durante el giro
+  const canvas=document.getElementById('wheel-canvas');const ctx=canvas.getContext('2d');
+  const names=pool.map(p=>p.nombre),size=canvas.width,cx=size/2,cy=size/2,r=size/2-4,slice=(Math.PI*2)/names.length;
+  ctx.clearRect(0,0,size,size);
+  names.forEach((name,i)=>{
+    const start=wheelAngle+i*slice-Math.PI/2,end=start+slice;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
+    ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();ctx.strokeStyle='rgba(10,14,26,0.5)';ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(start+slice/2);ctx.textAlign='right';ctx.fillStyle='rgba(255,255,255,0.95)';
+    ctx.font=`600 ${Math.min(13,Math.max(8,180/names.length))}px DM Sans`;ctx.fillText(name.split(' ')[0].slice(0,10),r-10,4);ctx.restore();
+  });
+  ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fillStyle='#0a0e1a';ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=2;ctx.stroke();
+}
+window.renderWheel=renderWheel;
+window.resetEj=function(){ejUsados=[];lsSet('asis_ej_usados',ejUsados);};
+window.sortearEjercicio=function(){
+  const max=Math.max(2,parseInt(document.getElementById('ej-max').value)||14);
+  let libres=[];for(let i=1;i<=max;i++)if(!ejUsados.includes(i))libres.push(i);
+  if(!libres.length){ejUsados=[];for(let i=1;i<=max;i++)libres.push(i);}
+  const n=libres[rnd(libres.length)];
+  ejUsados.push(n);lsSet('asis_ej_usados',ejUsados);
+  document.getElementById('ej-result').textContent='Ejercicio '+n;
+  if(ultimoSorteo&&!ultimoSorteo.ejercicio){ultimoSorteo.ejercicio=n;lsSet('asis_hist',hist);renderHist();}
+};
+function renderHist(){
+  const el=document.getElementById('hist-list');if(!el)return;
+  if(!hist.length){el.innerHTML='<div style="color:var(--muted)">Aún no hay participaciones.</div>';return;}
+  el.innerHTML=hist.slice().reverse().slice(0,15).map((h,i)=>`<div class="log-item"><span>${hist.length-i}. ${esc(h.nombre)}${h.celular?' 📱':''}${h.presente===false?' <span style="color:#fca5a5">(ausente)</span>':''}</span><span style="color:var(--muted);font-family:'Space Mono',monospace;font-size:11px">${h.ejercicio?'Ej. '+esc(h.ejercicio)+' · ':''}${esc(h.hora)}</span></div>`).join('');
 }
 
 /* ── AUTOEVALUACION ── */
