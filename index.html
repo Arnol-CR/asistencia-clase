@@ -257,6 +257,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="setup-logo">ASISTENCIA<span>.</span>APP</div>
       <div class="setup-sub">Configura tu sesión antes de iniciar</div>
     </div>
+    <div class="setup-card" id="resume-card" style="border-color:var(--accent)">
+      <div class="setup-section">¿Ya tienes una sesión abierta?</div>
+      <div id="resume-list" style="font-size:13px;color:var(--muted);margin-bottom:10px">Buscando sesiones activas…</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)">
+        <input type="text" id="resume-code" placeholder="Código (ej. TECH-AB12)" style="flex:1;min-width:150px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);text-transform:uppercase;font-family:'Space Mono',monospace">
+        <input type="number" id="resume-min" value="180" min="10" max="720" style="width:70px;padding:10px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);text-align:center"><span>min</span>
+        <button class="btn" onclick="reanudarSesion(document.getElementById('resume-code').value)">Reanudar</button>
+      </div>
+      <div id="resume-msg" style="font-size:12px;color:#dc2626;margin-top:8px"></div>
+    </div>
     <div class="setup-card">
       <div class="setup-section">Información de la clase</div>
       <div class="setup-field">
@@ -271,11 +281,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="setup-card">
       <div class="setup-section">Duración de la sesión</div>
       <div class="dur-grid">
-        <button class="dur-btn" onclick="selDur(30,this)">30 min<span class="dur-label">Media clase</span></button>
-        <button class="dur-btn active" onclick="selDur(60,this)">1 hora<span class="dur-label">Predeterminado</span></button>
-        <button class="dur-btn" onclick="selDur(90,this)">1:30 h<span class="dur-label">Extendida</span></button>
+        <button class="dur-btn" onclick="selDur(60,this)">1 hora<span class="dur-label">Corta</span></button>
         <button class="dur-btn" onclick="selDur(120,this)">2 horas<span class="dur-label">Doble</span></button>
         <button class="dur-btn" onclick="selDur(180,this)">3 horas<span class="dur-label">Taller</span></button>
+        <button class="dur-btn" onclick="selDur(240,this)">4 horas<span class="dur-label">Extendida</span></button>
+        <button class="dur-btn active" onclick="selDur(300,this)">5 horas<span class="dur-label">Clase completa</span></button>
         <button class="dur-btn" onclick="selDur(0,this)">Otro<span class="dur-label">Personalizado</span></button>
       </div>
       <input type="number" class="dur-custom" id="dur-custom" placeholder="Minutos personalizados (ej: 45)" style="display:none" oninput="customDur(this.value)"/>
@@ -428,7 +438,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div class="tdot ok" id="tdot"></div>
             <span class="timer-label" id="tlabel">Sesión activa</span>
             <span class="timer-count" id="tcountdown">30:00</span>
-            <button class="btn" style="padding:5px 14px;font-size:12px" onclick="renewCode()">Renovar</button>
+            <button class="btn" style="padding:5px 12px;font-size:12px" onclick="extenderSesion(30)">+30 min</button>
+            <button class="btn" style="padding:5px 12px;font-size:12px" onclick="extenderSesion(60)">+1 h</button>
           </div>
           <div class="share-card">
             <div class="share-title">Compartir con alumnos</div>
@@ -601,7 +612,7 @@ const COLORS=['#6366f1','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6','#8b5c
 
 let SESSION_CODE = genCode();
 let timerSec = 3600; // 1 hora predeterminado
-let selectedDurMin = 60;
+let selectedDurMin = 300;
 let registros = [];
 let registroKeys = {};
 let fraudLog = [];
@@ -619,7 +630,13 @@ function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;',
 function norm(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
 function rnd(n){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n;}
 function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
-function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+let profActivo=false;
+const FB_MIRROR={asis_lista_txt:'listaTxt',asis_hist:'hist',asis_usados:'usados',asis_receso:'receso',asis_cron_min:'cronMin'};
+function lsSet(k,v){
+  try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}
+  try{ if(profActivo&&FB_MIRROR[k]&&SESSION_CODE) set(ref(db,'sesiones/'+SESSION_CODE+'/'+FB_MIRROR[k]),v); }catch(e){}
+}
+const toArr=x=>Array.isArray(x)?x:(x&&typeof x==='object'?Object.values(x):[]);
 let lista=[];        // [{nombre,celular}]
 let usados=[];       // nombres ya sorteados (normalizados)
 let ejUsados=[];     // ejercicios ya sorteados
@@ -677,6 +694,8 @@ window.iniciarSesion = function(){
   errEl.className='setup-err';
   CLASE=clase; DOCENTE=docente;
   SESSION_CODE=genCode(); timerSec=durMin*60;
+  try{localStorage.removeItem('asis_hist');localStorage.removeItem('asis_usados');}catch(e){}
+  hist=[];usados=[];
   localStorage.setItem('asistencia_session',JSON.stringify({
     code:SESSION_CODE,clase:CLASE,docente:DOCENTE,
     expiresAt:Date.now()+(timerSec*1000)
@@ -726,6 +745,7 @@ if(IS_STUDENT){
   } else {
     localStorage.removeItem('asistencia_session');
     document.getElementById('modo-setup').style.display='flex';
+    cargarSesionesActivas();
   }
 }
 
@@ -811,9 +831,14 @@ function initProfesor(isNew){
   suscribir();
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
   cargarListaLocal(); publicarLista();
-  if(isNew) set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE});
+  profActivo=true;
+  if(isNew) set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE,expiresAt:Date.now()+timerSec*1000});
+  else set(ref(db,'sesiones/'+SESSION_CODE+'/meta'),{clase:CLASE,docente:DOCENTE,expiresAt:Date.now()+timerSec*1000});
+  {const tx=lsGet('asis_lista_txt','');if(tx)set(ref(db,'sesiones/'+SESSION_CODE+'/listaTxt'),tx);
+   set(ref(db,'sesiones/'+SESSION_CODE+'/hist'),hist);set(ref(db,'sesiones/'+SESSION_CODE+'/usados'),usados);
+   const rc=lsGet('asis_receso',null);if(rc)set(ref(db,'sesiones/'+SESSION_CODE+'/receso'),rc);}
   setInterval(()=>{
-    if(timerSec>0){timerSec--;updateTimerUI();guardarEstado();}
+    if(timerSec>0){timerSec--;updateTimerUI();guardarEstado();if(timerSec%60===0)set(ref(db,'sesiones/'+SESSION_CODE+'/meta/expiresAt'),Date.now()+timerSec*1000);}
     else{terminarSesion();}
   },1000);
 }
@@ -977,6 +1002,7 @@ window.agregarManual = async function(){
 }
 
 window.terminarSesion = function(){
+  profActivo=false;
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
   localStorage.removeItem('asistencia_session');
   document.getElementById('m-total').textContent=registros.length;
@@ -986,6 +1012,7 @@ window.terminarSesion = function(){
 
 window.cerrarModal = function(){
   document.getElementById('modal-fin').className='modal-overlay';
+  cargarSesionesActivas();
   registros=[];fraudLog=[];
   document.getElementById('modo-profesor').style.display='none';
   // Pre-rellenar setup con datos anteriores
@@ -994,6 +1021,52 @@ window.cerrarModal = function(){
   document.getElementById('modo-setup').style.display='flex';
 }
 
+window.reanudarSesion = async function(code, mins){
+  const msg=document.getElementById('resume-msg'); if(msg)msg.textContent='';
+  code=String(code||'').trim().toUpperCase();
+  if(!code){if(msg)msg.textContent='Escribe el código de la sesión.';return;}
+  let snap;
+  try{snap=await get(ref(db,'sesiones/'+code));}catch(e){if(msg)msg.textContent='No se pudo conectar con Firebase.';return;}
+  if(!snap.exists()){if(msg)msg.textContent='No existe una sesión con ese código.';return;}
+  const d=snap.val(),m=d.meta||{};
+  SESSION_CODE=code; CLASE=m.clase||'Clase'; DOCENTE=m.docente||'Docente';
+  const min=Math.max(10,parseInt(mins||(document.getElementById('resume-min')||{}).value)||180); timerSec=min*60;
+  try{
+    if(d.listaTxt)localStorage.setItem('asis_lista_txt',JSON.stringify(d.listaTxt));
+    localStorage.setItem('asis_hist',JSON.stringify(toArr(d.hist)));
+    localStorage.setItem('asis_usados',JSON.stringify(toArr(d.usados)));
+    if(d.receso)localStorage.setItem('asis_receso',JSON.stringify(d.receso));
+    if(d.cronMin)localStorage.setItem('asis_cron_min',JSON.stringify(d.cronMin));
+  }catch(e){}
+  lista=[];hist=toArr(d.hist);usados=toArr(d.usados);
+  guardarEstado();
+  document.getElementById('modo-setup').style.display='none';
+  document.getElementById('modo-profesor').style.display='block';
+  aplicarNombres();
+  {const r=lsGet('asis_receso',null);if(r){const h=document.getElementById('receso-hora'),mm=document.getElementById('receso-min');if(h&&r.h)h.value=r.h;if(mm&&r.m)mm.value=r.m;}
+   const ce=document.getElementById('cron-min');if(ce&&d.cronMin){ce.value=d.cronMin;cronSet();}}
+  initProfesor(false);
+};
+window.cerrarSesionRemota = async function(code){
+  try{await set(ref(db,'sesiones/'+code+'/activa'),false);}catch(e){}
+  cargarSesionesActivas();
+};
+async function cargarSesionesActivas(){
+  const el=document.getElementById('resume-list'); if(!el)return;
+  try{
+    const snap=await get(ref(db,'sesiones')); const arr=[];
+    if(snap.exists()) snap.forEach(c=>{const v=c.val()||{};if(v.activa===true&&v.meta){const nr=v.registros?Object.keys(v.registros).length:0;arr.push({code:c.key,clase:v.meta.clase||'',nr,exp:v.meta.expiresAt||0});}});
+    arr.sort((a,b)=>b.exp-a.exp);
+    if(!arr.length){el.textContent='No hay sesiones activas. Crea una nueva abajo, o escribe un código para reanudar.';return;}
+    el.innerHTML=arr.slice(0,8).map(x=>`<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span><b style="font-family:'Space Mono',monospace;color:var(--text)">${esc(x.code)}</b> · ${esc(x.clase)} · ${x.nr} registrados</span><span style="display:flex;gap:6px"><button class="btn" style="padding:4px 12px;font-size:12px" data-act="res" data-code="${esc(x.code)}">Reanudar</button><button class="btn" style="padding:4px 12px;font-size:12px" data-act="cer" data-code="${esc(x.code)}">Cerrar</button></span></div>`).join('');
+    el.onclick=ev=>{const b=ev.target.closest('button[data-act]');if(!b)return;const c=b.dataset.code;if(b.dataset.act==='res')reanudarSesion(c);else cerrarSesionRemota(c);};
+  }catch(e){el.textContent='No se pudieron leer las sesiones (revisa la conexión).';}
+}
+window.extenderSesion = function(min){
+  timerSec += min*60; updateTimerUI(); guardarEstado();
+  set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),true);
+  set(ref(db,'sesiones/'+SESSION_CODE+'/meta/expiresAt'),Date.now()+timerSec*1000);
+};
 window.renewCode = function(){
   set(ref(db,'sesiones/'+SESSION_CODE+'/activa'),false);
   SESSION_CODE=genCode();timerSec=1800;
